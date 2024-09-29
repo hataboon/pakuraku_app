@@ -1,0 +1,6 @@
+[submodule "back"]
+	path = back
+	url = git@github.com:hataboon/back.git
+[submodule "front"]
+	path = front
+	url = git@github.com:hataboon/front.git
