@@ -4,6 +4,9 @@
 ## 画面遷移図
 - [Figma 画面遷移図](https://www.figma.com/design/0cojSDS4xJ1ybwfGGIWLzH/%E3%83%91%E3%82%AF%E3%83%A9%E3%82%AF?node-id=8-2743&node-type=frame&t=21CuoaJOQqYR9uaC-0)
 
+## ER図
+- [diagram ER図](https://dbdiagram.io/d/66fcd79efb079c7ebd0ae79b)
+
 ## サービス概要
 家庭にある食材をもとに、生成AIが栄養を考えた子供と大人向けの食べやすい献立を提案します。また、摂取した栄養の可視化機能も提供します。
 
