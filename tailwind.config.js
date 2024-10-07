@@ -6,3 +6,8 @@ module.exports = {
     './app/javascript/**/*.js'
   ]
 }
+// tailwind.config.js
+
+plugins: [
+  require('daisyui'),
+]
