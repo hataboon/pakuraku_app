@@ -15,8 +15,10 @@
     <link rel="apple-touch-icon" href="/icon.png">
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
-  </head>
+   <link rel="stylesheet" href="/toastui-calendar.min.css" />
+<script src="/toastui-calendar.min.js" defer></script>
 
+  </head>
   <body>
     <div class="flash-messages">
       <% flash.each do |key, message| %>
@@ -27,6 +29,7 @@
     </div>
 
     <%= render 'shared/header' %>
+    <div id="calendar"></div>
     <%= yield %>
   </body>
 </html>

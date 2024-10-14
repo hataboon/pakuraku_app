@@ -1,30 +1,25 @@
 require_relative "boot"
-
 require "rails/all"
 
-# Require the gems listed in Gemfile, including any gems
-# you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
 module Myapp
   class Application < Rails::Application
-    # Initialize configuration defaults for originally generated Rails version.
+    # Rails 7.2の初期設定
     config.load_defaults 7.2
-    # config/application.rb
+
+    # デフォルトのロケールを日本語に設定
     config.i18n.default_locale = :ja
 
+    # assetsパスにJavaScriptフォルダを追加
+    config.assets.paths << Rails.root.join('app', 'assets', 'javascripts')
 
-    # Please, add to the `ignore` list any other `lib` subdirectories that do
-    # not contain `.rb` files, or that should not be reloaded or eager loaded.
-    # Common ones are `templates`, `generators`, or `middleware`, for example.
-    config.autoload_lib(ignore: %w[assets tasks])
+    # タイムゾーン設定（例：日本時間）
+    config.time_zone = "Tokyo"
 
-    # Configuration for the application, engines, and railties goes here.
-    #
-    # These settings can be overridden in specific environments using the files
-    # in config/environments, which are processed later.
-    #
-    # config.time_zone = "Central Time (US & Canada)"
-    # config.eager_load_paths << Rails.root.join("extras")
+    # lib以下のディレクトリを自動読み込み
+    config.autoload_paths << Rails.root.join('lib')
+
+    # その他の設定は必要に応じて追加
   end
 end
