@@ -3,7 +3,7 @@
   <head>
     <title><%= content_for(:title) || "パクラク（献立提案アプリ）" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="turbo-cache-control" content="no-cache">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -13,11 +13,9 @@
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
+    <link rel="preload" href="/assets/application.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <%= javascript_importmap_tags %>
-   <link rel="stylesheet" href="/toastui-calendar.min.css" />
-<script src="/toastui-calendar.min.js" defer></script>
-
+    <link rel="stylesheet" href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css" />
   </head>
   <body>
     <div class="flash-messages">
@@ -29,7 +27,7 @@
     </div>
 
     <%= render 'shared/header' %>
-    <div id="calendar"></div>
     <%= yield %>
-  </body>
+    <script src="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.js"></script>
+    <script src="/assets/calendar.js"></script> <!-- calendar.jsはアセットにあると仮定 -->  </body>
 </html>
