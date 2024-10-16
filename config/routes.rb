@@ -4,4 +4,6 @@ Rails.application.routes.draw do
     sessions: "users/sessions"
   }
   root "static_pages#top"
+
+  get "calendar", to: "calendars#index"
 end

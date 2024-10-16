@@ -1,4 +1,5 @@
-# Pin npm packages by running ./bin/importmap
-
-pin "application", to: "application.js"
-pin "@hotwired/turbo-rails", to: "turbo.js"
+# config/importmap.rb
+# pin "application", to: "application.js"
+# pin "@hotwired/turbo-rails", to: "turbo.js"
+# pin "calendar", to: "calendar.js"
+# pin "@toast-ui/calendar", to: "node_modules/@toast-ui/calendar/dist/toastui-calendar.min.js"
