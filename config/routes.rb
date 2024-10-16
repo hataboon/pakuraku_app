@@ -5,5 +5,5 @@ Rails.application.routes.draw do
   }
   root "static_pages#top"
 
-  get 'calendar', to: 'calendars#index'
+  get "calendar", to: "calendars#index"
 end
