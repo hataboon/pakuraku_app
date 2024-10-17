@@ -12,5 +12,4 @@ document.addEventListener('DOMContentLoaded', () => {
     useDetailPopup: true,  // 詳細ポップアップを有効化
   });
 
-  console.log('Calendar initialized:', calendar); // ログを確認
 });

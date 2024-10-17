@@ -1,0 +1,23 @@
+<div class="foods-page">
+  <h1 class="text-xl font-bold mb-4">献立管理ページ</h1>
+
+  <div class="flex justify-between items-start">
+    <!-- 左側：献立の画像や情報 -->
+    <div class="w-2/5 p-4 bg-gray-100 rounded-lg shadow-md">
+      <h2 class="text-lg font-semibold">今日の献立</h2>
+      <div class="menu-info">
+        <p>献立画像</p>
+      </div>
+    </div>
+
+    <!-- 右側：カレンダー部分 -->
+    <div class="w-3/5 p-4 bg-white border border-gray-300 rounded-lg shadow-md">
+      <%= render 'calendars/calendar' %>
+      
+      <!-- 献立作成ボタン -->
+      <div class="mt-4 text-right">
+        <%= link_to '献立を作成', "#", class: 'btn btn-primary' %>
+      </div>
+    </div>
+  </div>
+</div>
