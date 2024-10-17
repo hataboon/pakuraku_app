@@ -5,5 +5,6 @@ Rails.application.routes.draw do
   }
   root "static_pages#top"
 
-  get "calendar", to: "calendars#index"
+  resources :foods, only: [:index, :new, :create, :edit, :update, :destroy]
+
 end
