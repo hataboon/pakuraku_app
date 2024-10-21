@@ -13,10 +13,10 @@
     <!-- 右側：カレンダー部分 -->
     <div class="w-3/5 p-4 bg-white border border-gray-300 rounded-lg shadow-md">
       <%= render 'calendars/calendar' %>
-      
+
       <!-- 献立作成ボタン -->
       <div class="mt-4 text-right">
-        <%= link_to '献立を作成', "#", class: 'btn btn-primary' %>
+        <%= link_to '献立を作成', recipes_path, class: 'btn btn-primary' %>
       </div>
     </div>
   </div>
