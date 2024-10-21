@@ -1,5 +1,5 @@
 class RecipesController < ApplicationController
-  require 'httpclient'
+  require "httpclient"
   def index
     if params[:search].blank?
       query = "banana"

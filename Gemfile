@@ -40,8 +40,8 @@ gem "importmap-rails"
 gem "rails-i18n"
 gem "devise-i18n"
 
-gem 'dotenv-rails'
-gem 'httpclient'
+gem "dotenv-rails"
+gem "httpclient"
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
