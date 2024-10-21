@@ -1,0 +1,119 @@
+<div class="menu-creation-page text-center">
+  <h1 class="text-2xl font-bold mb-6">献立作成</h1>
+
+  <!-- カレンダー部分 -->
+  <div class="calendar-section w-3/5 mx-auto bg-white shadow-md rounded-lg p-4 mb-6">
+    <!-- カレンダーのサイズを小さく、横長に調整 -->
+    <div class="w-full mx-auto" style="max-width: 700px;">
+      <%= render 'calendars/calendar' %> <!-- カレンダー表示部分 -->
+    </div>
+  </div>
+
+  <!-- フォーム部分 -->
+  <div class="form-section mt-6">
+    <!-- 食材入力フォーム -->
+    <h2 class="text-lg font-semibold mb-2">使いたい食材を入力 (最大5個まで)</h2>
+    <div class="ingredient-input">
+      <!-- 食材を追加するボタン -->
+      <button id="addIngredientButton" class="bg-blue-500 text-white px-4 py-2 rounded-lg">
+        食材を追加
+      </button>
+
+      <!-- 食材入力フィールドが表示される領域 -->
+      <div id="ingredientFields" class="mt-4">
+        <!-- JavaScriptで追加されるフィールド -->
+      </div>
+    </div>
+
+    <!-- 栄養素入力トグル -->
+    <h2 class="text-lg font-semibold mt-6">摂取したい栄養素を選択 (最大5つ)</h2>
+    <button id="toggleNutrientList" class="bg-blue-500 text-white px-4 py-2 rounded-lg mt-2">
+      栄養素を選択
+    </button>
+
+    <!-- トグル式栄養素入力 -->
+    <div id="nutrientList" class="hidden mt-4">
+      <select id="nutrientSelect" class="block w-1/2 mx-auto border border-gray-300 rounded-lg p-2 mb-2">
+        <option value="">栄養素を選択</option>
+        <option value="ビタミン">ビタミン</option>
+        <option value="ミネラル">ミネラル</option>
+        <option value="タンパク質">タンパク質</option>
+        <option value="炭水化物">炭水化物</option>
+        <option value="脂質">脂質</option>
+      </select>
+    </div>
+
+    <!-- 選択された栄養素リスト -->
+    <div id="selectedNutrients" class="mt-4">
+      <!-- 選択された栄養素がここに追加されます -->
+    </div>
+
+    <!-- 献立作成・戻るボタン -->
+    <div class="action-buttons mt-6 flex justify-center space-x-4">
+      <%= button_to '戻る', root_path, class: 'btn btn-secondary' %>
+      <%= submit_tag '献立作成', class: 'btn btn-primary' %>
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+  let ingredientCount = 0;
+
+  // 食材を追加するボタンのクリックイベント
+  document.getElementById('addIngredientButton').addEventListener('click', function() {
+    if (ingredientCount >= 5) {
+      alert('食材は最大5つまでしか追加できません。');
+      return;
+    }
+
+    const ingredientFields = document.getElementById('ingredientFields');
+    const ingredientInput = document.createElement('input');
+    ingredientInput.type = 'text';
+    ingredientInput.name = 'ingredients[]';
+    ingredientInput.placeholder = `食材${ingredientCount + 1}`;
+    ingredientInput.classList.add('block', 'w-1/2', 'mx-auto', 'border', 'border-gray-300', 'rounded-lg', 'p-2', 'mb-2');
+    ingredientFields.appendChild(ingredientInput);
+
+    ingredientCount++;
+  });
+
+  // トグルボタンとリストの表示・非表示
+  document.getElementById('toggleNutrientList').addEventListener('click', function() {
+    const nutrientList = document.getElementById('nutrientList');
+    nutrientList.classList.toggle('hidden');
+  });
+
+  // 栄養素が選択されたときに表示するロジック
+  document.getElementById('nutrientSelect').addEventListener('change', function(event) {
+    const selectedNutrients = document.getElementById('selectedNutrients');
+    const nutrient = event.target.value;
+
+    // 最大5つの制限
+    if (selectedNutrients.children.length >= 5) {
+      alert('栄養素は最大5つまでしか選べません。');
+      return;
+    }
+
+    // 重複チェック
+    const alreadySelected = Array.from(selectedNutrients.children).some(function(nutrientItem) {
+      return nutrientItem.textContent.includes(nutrient);
+    });
+    if (alreadySelected) {
+      alert('この栄養素はすでに選択されています。');
+      return;
+    }
+
+    // 栄養素が選択された場合に追加
+    if (nutrient) {
+      const nutrientItem = document.createElement('div');
+      nutrientItem.classList.add('flex', 'justify-between', 'items-center', 'mt-2', 'bg-gray-100', 'p-2', 'rounded-lg');
+      nutrientItem.innerHTML = `
+        <span>${nutrient}</span>
+        <button class="text-red-500" onclick="this.parentElement.remove()">削除</button>
+      `;
+      selectedNutrients.appendChild(nutrientItem);
+      event.target.value = ''; // 選択リセット
+    }
+  });
+</script>
