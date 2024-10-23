@@ -1,15 +1,14 @@
-<!-- app/views/recipes/_form.html.erb -->
 <%= form_with url: recipes_path, method: :post, local: true do |form| %>
   <div class="form-section mt-6">
-    <%= form.label :ingredients, "使いたい食材を入力 (最大5個まで)" %>
+    <%= form.label :ingredients, "使いたい食材を入力 (最大5個まで)", class: "block mb-4 text-lg" %>
     <div id="ingredientFields">
-      <input type="text" name="ingredients[]" placeholder="食材１" class="form-control mb-2">
+      <input type="text" name="ingredients[]" placeholder="食材１" class="block w-full border border-gray-300 rounded-lg p-2 mb-2">
     </div>
     <button type="button" id="addIngredientButton" class="bg-blue-500 text-white px-4 py-2 rounded-lg">食材を追加</button> 
 
-    <%= form.label :nutrients, "栄養素を選択 (最大5つ)" %>
-    <%= form.select :nutrients, ["ビタミン", "ミネラル", "タンパク質", "炭水化物", "脂質"], {}, class: "form-control" %>
+    <%= form.label :nutrients, "栄養素を選択 (最大5つ)", class: "block mb-4 text-lg" %>
+    <%= form.select :nutrients, ["ビタミン", "ミネラル", "タンパク質", "炭水化物", "脂質"], {}, class: "block w-full border border-gray-300 rounded-lg p-2 mb-4" %>
 
-    <%= form.submit '献立作成', class: 'btn btn-primary mt-4' %>
+    <%= form.submit '献立作成', class: 'bg-green-500 text-white px-4 py-2 rounded-lg mt-4' %>
   </div>
 <% end %>

@@ -1,18 +1,20 @@
 <!-- app/views/recipes/new.html.erb -->
-<!-- カレンダー部分 -->
-<div class="calendar-section w-3/5 mx-auto bg-white shadow-md rounded-lg p-4 mb-6">
-  <!-- カレンダーのサイズを小さく、横長に調整 -->
-  <div class="w-full mx-auto" style="max-width: 700px;">
-    <%= render 'calendars/calendar' %> <!-- カレンダー表示部分 -->
+<div class="container mx-auto">
+  <h1 class="text-2xl font-bold mb-6">献立作成</h1>
+
+  <!-- カレンダー表示部分 -->
+<div class="calendar-section w-3/5 mx-auto bg-white shadow-md rounded-lg p-2 mb-4"> <!-- p-4からp-2に変更 -->
+  <div class="w-full mx-auto" style="max-width: 900px;">
+    <%= render 'calendars/calendar' %>
   </div>
 </div>
 
-<div class="menu-creation-page text-center">
-  <h1 class="text-2xl font-bold mb-6">献立作成</h1>
 
-  <!-- フォーム部分 -->
+
+  <!-- フォームをレンダリング -->
   <%= render 'form' %>
 </div>
+
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
