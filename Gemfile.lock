@@ -336,6 +336,7 @@ DEPENDENCIES
   devise
   devise-i18n
   dotenv-rails
+  faraday-net_http
   httpclient
   importmap-rails
   jbuilder
