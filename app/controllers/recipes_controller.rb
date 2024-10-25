@@ -1,13 +1,88 @@
 class RecipesController < ApplicationController
-  require "httpclient"
-  def index
-    if params[:search].blank?
-      query = "banana"
+  def new
+    @recipe = Recipe.new
+  end
+
+  def create
+    if params[:ingredients].present?
+      # 食材をOpenAIで翻訳
+      translated_ingredients = params[:ingredients].map { |ingredient| translate_ingredient(ingredient) }
+      query = translated_ingredients.reject(&:blank?).join(",")
     else
-      query = params[:search]
+      render :new
+      return  # アクション終了
     end
-    client = HTTPClient.new()
-    res = client.get("https://api.edamam.com/api/recipes/v2?type=public&q=#{query}&app_id=#{ENV['application_id']}&app_key=#{ENV['application_keys']}")
-    @foods = JSON.parse(res.body)
+
+    # Edamam APIリクエスト
+    begin
+      client = HTTPClient.new()
+      res = client.get("https://api.edamam.com/api/recipes/v2?type=public&q=#{CGI.escape(query)}&app_id=#{ENV['application_id']}&app_key=#{ENV['application_keys']}")
+      recipes = JSON.parse(res.body)["hits"]
+    rescue => e
+      puts "Edamam APIでエラー発生: #{e.message}"
+      render plain: "Edamam APIでエラーが発生しました。"
+      return  # エラーが発生した場合はここで終了
+    end
+
+    # 1つの献立を生成
+    @meal_plan = generate_single_meal_plan(recipes)
+    render :show
+  end
+
+  private
+
+  # 1つの献立を生成
+  def generate_single_meal_plan(recipes)
+    client = OpenAI::Client.new
+    begin
+      # 1つのレシピを使って献立を作成するリクエスト
+      recipe = recipes.first["recipe"]["label"]  # 最初のレシピのラベルを取得
+      response = client.chat(
+        parameters: {
+          model: "gpt-3.5-turbo",
+          messages: [ { role: "user", content: "Create a single meal using the following recipe: #{recipe}" } ],
+          max_tokens: 150  # トークン数を少し減らして1つの献立だけを生成
+        }
+      )
+      response["choices"].first["message"]["content"]
+    rescue Faraday::TooManyRequestsError => e
+      puts "OpenAI APIのリクエスト制限エラー: #{e.message}"
+      render plain: "OpenAI APIのリクエスト制限に達しました。しばらくしてから再試行してください。"
+      nil  # エラー時にreturnでアクション終了
+    rescue => e
+      puts "OpenAI APIでその他のエラー発生: #{e.message}"
+      render plain: "OpenAI APIでエラーが発生しました。"
+      nil  # その他のエラー時にreturnでアクション終了
+    end
+  end
+
+  def translate_ingredient(ingredient)
+    client = OpenAI::Client.new
+    retries = 0
+
+    begin
+      response = client.chat(
+        parameters: {
+          model: "gpt-3.5-turbo",
+          messages: [ { role: "user", content: "Translate the following ingredient to English: #{ingredient}" } ]
+        }
+      )
+      response["choices"].first["message"]["content"].strip
+    rescue Faraday::TooManyRequestsError => e
+      # リクエスト制限エラー時のバックオフ処理
+      if retries < 3  # 最大3回までリトライ
+        retries += 1
+        sleep(2 ** retries)  # 2秒、4秒、8秒と待機時間を増加
+        retry
+      else
+        puts "OpenAI APIのリクエスト制限エラー: #{e.message}"
+        render plain: "OpenAI APIのリクエスト制限に達しました。しばらくしてから再試行してください。"
+        nil  # エラー時にreturnでアクション終了
+      end
+    rescue => e
+      puts "OpenAI APIでその他のエラー発生: #{e.message}"
+      render plain: "OpenAI APIでエラーが発生しました。"
+      nil  # その他のエラー時にreturnでアクション終了
+    end
   end
 end
