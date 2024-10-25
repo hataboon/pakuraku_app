@@ -43,9 +43,9 @@ gem "devise-i18n"
 gem "dotenv-rails"
 gem "httpclient"
 
-gem 'ruby-openai'
+gem "ruby-openai"
 
-gem 'faraday-net_http'
+gem "faraday-net_http"
 
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]

@@ -36,23 +36,23 @@ class RecipesController < ApplicationController
     client = OpenAI::Client.new
     begin
       # 1つのレシピを使って献立を作成するリクエスト
-      recipe = recipes.first['recipe']['label']  # 最初のレシピのラベルを取得
+      recipe = recipes.first["recipe"]["label"]  # 最初のレシピのラベルを取得
       response = client.chat(
         parameters: {
-          model: 'gpt-3.5-turbo',
-          messages: [{ role: 'user', content: "Create a single meal using the following recipe: #{recipe}" }],
+          model: "gpt-3.5-turbo",
+          messages: [ { role: "user", content: "Create a single meal using the following recipe: #{recipe}" } ],
           max_tokens: 150  # トークン数を少し減らして1つの献立だけを生成
         }
       )
-      response['choices'].first['message']['content']
+      response["choices"].first["message"]["content"]
     rescue Faraday::TooManyRequestsError => e
       puts "OpenAI APIのリクエスト制限エラー: #{e.message}"
       render plain: "OpenAI APIのリクエスト制限に達しました。しばらくしてから再試行してください。"
-      return  # エラー時にreturnでアクション終了
+      nil  # エラー時にreturnでアクション終了
     rescue => e
       puts "OpenAI APIでその他のエラー発生: #{e.message}"
       render plain: "OpenAI APIでエラーが発生しました。"
-      return  # その他のエラー時にreturnでアクション終了
+      nil  # その他のエラー時にreturnでアクション終了
     end
   end
 
@@ -63,11 +63,11 @@ class RecipesController < ApplicationController
     begin
       response = client.chat(
         parameters: {
-          model: 'gpt-3.5-turbo',
-          messages: [{ role: 'user', content: "Translate the following ingredient to English: #{ingredient}" }]
+          model: "gpt-3.5-turbo",
+          messages: [ { role: "user", content: "Translate the following ingredient to English: #{ingredient}" } ]
         }
       )
-      response['choices'].first['message']['content'].strip
+      response["choices"].first["message"]["content"].strip
     rescue Faraday::TooManyRequestsError => e
       # リクエスト制限エラー時のバックオフ処理
       if retries < 3  # 最大3回までリトライ
@@ -77,12 +77,12 @@ class RecipesController < ApplicationController
       else
         puts "OpenAI APIのリクエスト制限エラー: #{e.message}"
         render plain: "OpenAI APIのリクエスト制限に達しました。しばらくしてから再試行してください。"
-        return  # エラー時にreturnでアクション終了
+        nil  # エラー時にreturnでアクション終了
       end
     rescue => e
       puts "OpenAI APIでその他のエラー発生: #{e.message}"
       render plain: "OpenAI APIでエラーが発生しました。"
-      return  # その他のエラー時にreturnでアクション終了
+      nil  # その他のエラー時にreturnでアクション終了
     end
   end
 end

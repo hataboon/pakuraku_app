@@ -6,5 +6,5 @@ Rails.application.routes.draw do
   root "static_pages#top"
 
   resources :foods, only: [ :index, :new, :create, :edit, :update, :destroy ]
-  resources :recipes, only: [ :index, :new, :create, :edit, :update, :destroy]
+  resources :recipes, only: [ :index, :new, :create, :edit, :update, :destroy ]
 end
