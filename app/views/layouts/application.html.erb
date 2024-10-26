@@ -15,7 +15,9 @@
     <link rel="apple-touch-icon" href="/icon.png">
     <link rel="preload" href="/assets/application.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <link rel="stylesheet" href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css" />
+
+    <!-- CSSを読み込む（必要に応じて追加） -->
+    <link rel="stylesheet" href="/toastui-calendar.min.css" />
   </head>
   <body>
     <div class="flash-messages">
@@ -28,6 +30,26 @@
 
     <%= render 'shared/header' %>
     <%= yield %>
-    <script src="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.js"></script>
-    <script src="/assets/calendar.js"></script> <!-- calendar.jsはアセットにあると仮定 -->  </body>
+    <div id="calendar"></div>
+
+    <!-- toastui-calendar.js を読み込む -->
+    <script src="/toastui-calendar.js"></script>
+    <script>
+      // カレンダーの初期化コードを直接ここに書きます
+      document.addEventListener('DOMContentLoaded', () => {
+        const calendarElement = document.getElementById('calendar');
+        if (calendarElement) {
+          const calendar = new tui.Calendar(calendarElement, {
+            defaultView: 'month',
+            taskView: false,
+            scheduleView: ['time'],
+            useDetailPopup: true,
+          });
+          console.log("カレンダーが初期化されました:", calendar);
+        } else {
+          console.error("カレンダーの要素が見つかりません！");
+        }
+      });
+    </script>
+  </body>
 </html>
