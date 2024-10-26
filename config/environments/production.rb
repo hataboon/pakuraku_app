@@ -34,7 +34,7 @@ Rails.application.configure do
   config.assets.precompile += %w[application.css]
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
-  config.asset_host = "https://pakuraku-app.onrender.com"
+  # config.asset_host = "https://pakuraku-app.onrender.com"
 
   # Specifies the header that your server uses for sending files.
   # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for Apache
