@@ -25,22 +25,27 @@ class RecipesController < ApplicationController
     end
 
     # 1つの献立を生成
-    @meal_plan = generate_single_meal_plan(recipes)
+    @meal_plan = generate_single_meal_plan_in_japanese(recipes)
     render :show
   end
 
   private
 
   # 1つの献立を生成
-  def generate_single_meal_plan(recipes)
+  def generate_single_meal_plan_in_japanese(recipes)
     client = OpenAI::Client.new
     begin
       # 1つのレシピを使って献立を作成するリクエスト
-      recipe = recipes.first["recipe"]["label"]  # 最初のレシピのラベルを取得
+      recipe = recipes.first["recipe"]
+      recipe_label = recipe["label"]
+      ingredients = recipe["ingredientLines"].join(", ")
+
       response = client.chat(
         parameters: {
           model: "gpt-3.5-turbo",
-          messages: [ { role: "user", content: "Create a single meal using the following recipe: #{recipe}" } ],
+          messages: [
+          { role: "user", content: "Translate the following recipe into Japanese: Recipe name: #{recipe_label}. Ingredients: #{ingredients}" }
+        ],
           max_tokens: 150  # トークン数を少し減らして1つの献立だけを生成
         }
       )
