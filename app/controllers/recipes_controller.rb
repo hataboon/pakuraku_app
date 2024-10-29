@@ -1,6 +1,6 @@
 # app/controllers/recipes_controller.rb
-require 'openai'
-require 'httpclient'
+require "openai"
+require "httpclient"
 
 class RecipesController < ApplicationController
   def new
@@ -12,7 +12,7 @@ class RecipesController < ApplicationController
       # 食材をOpenAIで翻訳
       translated_ingredients = params[:ingredients].map { |ingredient| translate_ingredient(ingredient) }
       query = translated_ingredients.reject(&:blank?).join(",")
-      nutrients = params[:nutrients].is_a?(Array) ? params[:nutrients] : [params[:nutrients]]
+      nutrients = params[:nutrients].is_a?(Array) ? params[:nutrients] : [ params[:nutrients] ]
       # OpenAIで献立を生成
       @meal_plan = generate_menu_with_openai(translated_ingredients, nutrients)
 
@@ -32,7 +32,7 @@ class RecipesController < ApplicationController
 
   # OpenAIを使って献立を生成するメソッド
   def generate_menu_with_openai(ingredients, nutrients)
-    client = OpenAI::Client.new(access_token: ENV['OPENAI_API_KEY'])
+    client = OpenAI::Client.new(access_token: ENV["OPENAI_API_KEY"])
 
     # OpenAIに送る指示（プロンプト）
     prompt = <<~TEXT
@@ -46,7 +46,7 @@ class RecipesController < ApplicationController
     response = client.chat(
       parameters: {
         model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: prompt }],
+        messages: [ { role: "user", content: prompt } ],
         max_tokens: 500
       }
     )
@@ -57,8 +57,8 @@ class RecipesController < ApplicationController
   # Edamam APIから栄養情報を取得するメソッド
   def fetch_nutrition(ingredient)
     client = HTTPClient.new
-    app_id = ENV['EDAMAM_APP_ID']
-    app_key = ENV['EDAMAM_APP_KEY']
+    app_id = ENV["EDAMAM_APP_ID"]
+    app_key = ENV["EDAMAM_APP_KEY"]
 
     endpoint = "https://api.edamam.com/api/nutrition-data"
     response = client.get(endpoint, {
