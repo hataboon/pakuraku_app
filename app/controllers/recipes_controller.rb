@@ -1,3 +1,7 @@
+# app/controllers/recipes_controller.rb
+require "openai"
+require "httpclient"
+
 class RecipesController < ApplicationController
   def new
     @recipe = Recipe.new
@@ -8,86 +12,75 @@ class RecipesController < ApplicationController
       # 食材をOpenAIで翻訳
       translated_ingredients = params[:ingredients].map { |ingredient| translate_ingredient(ingredient) }
       query = translated_ingredients.reject(&:blank?).join(",")
+      nutrients = params[:nutrients].is_a?(Array) ? params[:nutrients] : [ params[:nutrients] ]
+      # OpenAIで献立を生成
+      @meal_plan = generate_menu_with_openai(translated_ingredients, nutrients)
+
+      # Edamam APIで栄養情報を取得
+      @nutrition_info = translated_ingredients.each_with_object({}) do |ingredient, info|
+        info[ingredient] = fetch_nutrition(ingredient)
+      end
     else
       render :new
       return  # アクション終了
     end
 
-    # Edamam APIリクエスト
-    begin
-      client = HTTPClient.new()
-      res = client.get("https://api.edamam.com/api/recipes/v2?type=public&q=#{CGI.escape(query)}&app_id=#{ENV['application_id']}&app_key=#{ENV['application_keys']}")
-      recipes = JSON.parse(res.body)["hits"]
-    rescue => e
-      puts "Edamam APIでエラー発生: #{e.message}"
-      render plain: "Edamam APIでエラーが発生しました。"
-      return  # エラーが発生した場合はここで終了
-    end
-
-    # 1つの献立を生成
-    @meal_plan = generate_single_meal_plan_in_japanese(recipes)
     render :show
   end
 
   private
 
-  # 1つの献立を生成
-  def generate_single_meal_plan_in_japanese(recipes)
-    client = OpenAI::Client.new
-    begin
-      # 1つのレシピを使って献立を作成するリクエスト
-      recipe = recipes.first["recipe"]
-      recipe_label = recipe["label"]
-      ingredients = recipe["ingredientLines"].join(", ")
+  # OpenAIを使って献立を生成するメソッド
+  def generate_menu_with_openai(ingredients, nutrients)
+    client = OpenAI::Client.new(access_token: ENV["OPENAI_API_KEY"])
 
-      response = client.chat(
-        parameters: {
-          model: "gpt-3.5-turbo",
-          messages: [
-          { role: "user", content: "Translate the following recipe into Japanese: Recipe name: #{recipe_label}. Ingredients: #{ingredients}" }
-        ],
-          max_tokens: 150  # トークン数を少し減らして1つの献立だけを生成
-        }
-      )
-      response["choices"].first["message"]["content"]
-    rescue Faraday::TooManyRequestsError => e
-      puts "OpenAI APIのリクエスト制限エラー: #{e.message}"
-      render plain: "OpenAI APIのリクエスト制限に達しました。しばらくしてから再試行してください。"
-      nil  # エラー時にreturnでアクション終了
-    rescue => e
-      puts "OpenAI APIでその他のエラー発生: #{e.message}"
-      render plain: "OpenAI APIでエラーが発生しました。"
-      nil  # その他のエラー時にreturnでアクション終了
-    end
+    # OpenAIに送る指示（プロンプト）
+    prompt = <<~TEXT
+      以下の食材と栄養素を考慮して、**完全に日本語で**バランスの良い1日分の朝・昼・晩の献立を提案してください。
+      食材: #{ingredients.join(", ")}
+      栄養素: #{nutrients.join(", ")}
+
+      各食事に簡単な調理手順も含めてください。
+    TEXT
+
+    response = client.chat(
+      parameters: {
+        model: "gpt-3.5-turbo",
+        messages: [ { role: "user", content: prompt } ],
+        max_tokens: 500
+      }
+    )
+
+    response["choices"].first["message"]["content"]
   end
 
+  # Edamam APIから栄養情報を取得するメソッド
+  def fetch_nutrition(ingredient)
+    client = HTTPClient.new
+    app_id = ENV["EDAMAM_APP_ID"]
+    app_key = ENV["EDAMAM_APP_KEY"]
+
+    endpoint = "https://api.edamam.com/api/nutrition-data"
+    response = client.get(endpoint, {
+      query: {
+        "app_id" => app_id,
+        "app_key" => app_key,
+        "ingr" => ingredient
+      }
+    })
+
+    JSON.parse(response.body)
+  end
+
+  # 食材の翻訳メソッド
   def translate_ingredient(ingredient)
     client = OpenAI::Client.new
-    retries = 0
-
-    begin
-      response = client.chat(
-        parameters: {
-          model: "gpt-3.5-turbo",
-          messages: [ { role: "user", content: "Translate the following ingredient to English: #{ingredient}" } ]
-        }
-      )
-      response["choices"].first["message"]["content"].strip
-    rescue Faraday::TooManyRequestsError => e
-      # リクエスト制限エラー時のバックオフ処理
-      if retries < 3  # 最大3回までリトライ
-        retries += 1
-        sleep(2 ** retries)  # 2秒、4秒、8秒と待機時間を増加
-        retry
-      else
-        puts "OpenAI APIのリクエスト制限エラー: #{e.message}"
-        render plain: "OpenAI APIのリクエスト制限に達しました。しばらくしてから再試行してください。"
-        nil  # エラー時にreturnでアクション終了
-      end
-    rescue => e
-      puts "OpenAI APIでその他のエラー発生: #{e.message}"
-      render plain: "OpenAI APIでエラーが発生しました。"
-      nil  # その他のエラー時にreturnでアクション終了
-    end
+    response = client.chat(
+      parameters: {
+        model: "gpt-3.5-turbo",
+        messages: [ { role: "user", content: "Translate the following ingredient to English: #{ingredient}" } ]
+      }
+    )
+    response["choices"].first["message"]["content"].strip
   end
 end
