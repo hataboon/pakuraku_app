@@ -1,3 +1,16 @@
 <!-- app/views/recipes/show.html.erb -->
-<h1>献立の生成結果</h1>
+<h1>生成された献立</h1>
+
 <p><%= @meal_plan %></p>
+
+<h2>栄養情報</h2>
+<ul>
+  <% @nutrition_info.each do |ingredient, data| %>
+    <li>
+      <strong><%= ingredient %></strong>: カロリー: <%= data["calories"] %> kcal, 
+      タンパク質: <%= data.dig("totalNutrients", "PROCNT", "quantity") %> g, 
+      脂質: <%= data.dig("totalNutrients", "FAT", "quantity") %> g, 
+      炭水化物: <%= data.dig("totalNutrients", "CHOCDF", "quantity") %> g
+    </li>
+  <% end %>
+</ul>
