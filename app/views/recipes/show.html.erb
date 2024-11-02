@@ -6,6 +6,7 @@
   <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
     <!-- レシピタイトルと画像 -->
     <h2 class="text-2xl font-semibold mb-4"><%= @meal_plan[:title] %></h2>
+
     <div class="text-center mb-6">
       <img src="<%= @meal_plan[:image] %>" alt="レシピ画像" class="mx-auto rounded-lg shadow-lg">
     </div>
@@ -30,12 +31,17 @@
     <h2 class="text-2xl font-semibold mb-4">栄養情報</h2>
     <% if @nutrition_info.present? %>
       <ul class="space-y-4 mb-6">
-        <% @nutrition_info.each do |ingredient, data| %>
-          <% if data.dig("totalNutrients", "ENERC_KCAL", "quantity") %>
-            <p><strong><%= ingredient %></strong>: カロリー: <%= data.dig("totalNutrients", "ENERC_KCAL", "quantity") %> kcal</p>
-          <% else %>
-            <p><strong><%= ingredient %></strong>: 栄養情報が取得できませんでした。</p>
-          <% end %>
+        <% @nutrition_info.each do |ingredient, nutrients| %>
+          <li>
+            <strong><%= ingredient %></strong>
+            <ul class="list-disc list-inside ml-4">
+              <!-- ここから修正: 栄養情報のリスト表示を調整（行46-50） -->
+              <% nutrients.each do |nutrient, value| %>
+                <li><%= nutrient %>: <%= value %></li>
+              <% end %>
+              <!-- ここまで修正: 栄養情報のリスト表示を調整 -->
+            </ul>
+          </li>
         <% end %>
       </ul>
     <% else %>
