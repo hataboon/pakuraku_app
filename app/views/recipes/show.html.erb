@@ -1,14 +1,16 @@
 <!-- app/views/recipes/show.html.erb -->
 
 <h1 class="text-3xl font-bold text-center mb-6">生成された献立</h1>
-
 <% if @meal_plan.present? %>
   <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
     <!-- レシピタイトルと画像 -->
     <h2 class="text-2xl font-semibold mb-4"><%= @meal_plan[:title] %></h2>
 
     <div class="text-center mb-6">
-      <img src="<%= @meal_plan[:image] %>" alt="レシピ画像" class="mx-auto rounded-lg shadow-lg">
+      <!-- 画像サイズを統一するためのクラス追加 -->
+      <img src="<%= @meal_plan[:image] %>" alt="レシピ画像" 
+           class="mx-auto rounded-lg shadow-lg" 
+           style="max-width: 300px; max-height: 200px; object-fit: cover;">
     </div>
 
     <!-- 材料 -->
@@ -35,11 +37,9 @@
           <li>
             <strong><%= ingredient %></strong>
             <ul class="list-disc list-inside ml-4">
-              <!-- ここから修正: 栄養情報のリスト表示を調整（行46-50） -->
               <% nutrients.each do |nutrient, value| %>
                 <li><%= nutrient %>: <%= value %></li>
               <% end %>
-              <!-- ここまで修正: 栄養情報のリスト表示を調整 -->
             </ul>
           </li>
         <% end %>
