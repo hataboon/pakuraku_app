@@ -20,13 +20,14 @@ class RecipesController < ApplicationController
         ingredients = @meal_plan[:ingredients] # ここで献立の食材リストを使用
         # OpenAI APIで五大栄養素を取得
         @nutrition_info = analyze_nutrition_with_openai(ingredients)
+        Rails.logger.info("createアクションないの@nutrition_info: #{@nutrition_info.inspect}")
       else
-        flash[:alert] = "該当するレシピが見つかりませんでした。別の食材をお試しください。"
+        flash.now[:alert] = "該当するレシピが見つかりませんでした。別の食材をお試しください。"
         render :new
         return
       end
     else
-      flash[:alert] = "食材を入力してください。"
+      flash.now[:alert] = "食材を入力してください。"
       render :new
       return
     end
@@ -91,9 +92,7 @@ class RecipesController < ApplicationController
     if recipe_data["result"].present?
       # ランダムでレシピを取得
       matching_recipe = recipe_data["result"].sample
-      Rails.logger.info("取得したレシピ: #{matching_recipe.inspect}")
     else
-      Rails.logger.info("カテゴリに該当するレシピが存在しませんでした")
       flash[:alert] = "該当するカテゴリにレシピが見つかりませんでした。"
       return nil
     end
@@ -110,39 +109,69 @@ class RecipesController < ApplicationController
     }
   end
 
-
-# OpenAIを使用して食材の栄養情報を取得するメソッド
-# OpenAIを使用して食材の栄養情報を取得するメソッド
 # OpenAIを使用して食材の栄養情報を取得するメソッド
 def analyze_nutrition_with_openai(ingredients)
   client = OpenAI::Client.new(access_token: ENV["OPENAI_API_KEY"])
+
+  # プロンプトの修正部分を保持
+  prompt = <<~PROMPT
+    以下の食材について、それぞれの五大栄養素（炭水化物、脂質、タンパク質、ビタミン、ミネラル）をできる限り数値またはパーセンテージで示してください。ビタミンやミネラルは種類ごとにmgまたはµgの単位で示してください。
+    食材名: <食材名>
+  - 炭水化物: <数値><単位>
+  - 脂質: <数値><単位>
+  - タンパク質: <数値><単位>
+  - ビタミン: ビタミンC <数値><単位>, ビタミンA <数値><単位>（ビタミンがない場合は「なし」と記載）
+  - ミネラル: カリウム <数値><単位>, カルシウム <数値><単位>（ミネラルがない場合は「なし」と記載）
+    食材リスト: #{ingredients.join(', ')}
+PROMPT
+
   response = client.chat(
     parameters: {
       model: "gpt-3.5-turbo",
-      messages: [ { role: "user", content: "次の食材の栄養素について五大栄養素（炭水化物、脂質、タンパク質、ビタミン、ミネラル）の内容を教えてください: #{ingredients.join(', ')}" } ]
+      messages: [ { role: "user", content: prompt } ]
     }
   )
+  Rails.logger.info("OpenAI APIのレスポンス: #{response.inspect}")
 
-  # 取得した内容をテキストとして取り出し
+  # OpenAIからの応答をテキストとして取得
   nutrition_text = response["choices"].first["message"]["content"].strip
   Rails.logger.info("OpenAIからの栄養素データ: #{nutrition_text}")
 
-  # 文字列を解析して構造化データに変換する処理
+  # 解析した栄養情報の初期化
   nutrition_info = {}
   current_ingredient = nil
-  nutrition_text.lines.each do |line|
-    line.strip!
-    # 食材名の行（例: "天然舞茸："）
-    if line.match?(/：$/)
-      current_ingredient = line.sub(/：$/, "")
-      nutrition_info[current_ingredient] = {}
-    elsif current_ingredient && line.start_with?("- ")
-      # 栄養素情報の行（例: "- 炭水化物：ほとんど含まれていない"）
-      key, value = line.sub("- ", "").split("：", 2)
-      nutrition_info[current_ingredient][key] = value
+
+  begin
+    # 1行ずつOpenAIのレスポンスを解析する
+    nutrition_text.lines.each do |line|
+      Rails.logger.info("解析中の行: #{line.strip}")
+      line.strip!
+
+      # 食材名を検出するための正規表現を使用して条件を明確化
+      if line.match?(/^食材名: /)
+        current_ingredient = line.split(/：|:/, 2).last.strip  # 食材名を取得
+        nutrition_info[current_ingredient] = {}
+        Rails.logger.info("新しい食材を追加: #{current_ingredient}")
+      elsif current_ingredient && line.start_with?("- ")
+        # 栄養情報の行をパースし、栄養素の内容がある場合に追加する
+        key, value = line.sub("- ", "").split(/：|:/, 2)
+        if key && value
+          nutrition_info[current_ingredient][key.strip] = value.strip
+          Rails.logger.info("栄養情報を追加 - 食材: #{current_ingredient}, 栄養素: #{key.strip}, 値: #{value.strip}")
+        else
+          Rails.logger.warn("パースできなかった行: #{line.strip}")
+        end
+      end
     end
+  rescue StandardError => e
+    Rails.logger.error("栄養情報の解析に失敗しました: #{e.message}")
+    Rails.logger.error("解析に失敗したテキスト: #{nutrition_text}")
+    Rails.logger.error("解析途中のデータ: #{nutrition_info.inspect}")
+    nutrition_info = {} # エラー発生時は空の構造にする
   end
 
+  # デバッグ用ログで解析結果を出力
+  Rails.logger.info("解析後の栄養情報: #{nutrition_info.inspect}")
   nutrition_info
 end
 end
