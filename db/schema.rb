@@ -10,9 +10,31 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_22_033928) do
+ActiveRecord::Schema[7.2].define(version: 2024_11_13_062224) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "foods", force: :cascade do |t|
+    t.bigint "recipe_id", null: false
+    t.string "name", null: false
+    t.string "unit", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "image_url"
+    t.index ["recipe_id"], name: "index_foods_on_recipe_id"
+  end
+
+  create_table "nutritions", force: :cascade do |t|
+    t.float "protein"
+    t.float "fat"
+    t.float "carbohydrates"
+    t.string "vitamins"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "food_id", null: false
+    t.float "mineral"
+    t.index ["food_id"], name: "index_nutritions_on_food_id"
+  end
 
   create_table "recipes", force: :cascade do |t|
     t.string "name"
@@ -33,4 +55,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_22_033928) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
+
+  add_foreign_key "foods", "recipes"
+  add_foreign_key "nutritions", "foods"
 end

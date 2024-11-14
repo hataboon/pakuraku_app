@@ -3,7 +3,7 @@
 <div class="calendar-section w-3/5 mx-auto bg-white shadow-md rounded-lg p-4 mb-6">
   <!-- カレンダーのサイズを小さく、横長に調整 -->
   <div class="w-full mx-auto" style="max-width: 700px;">
-    <%= render 'calendars/calendar' %> <!-- カレンダー表示部分 -->
+    <div id="calendar" style="width: 100%; height: 500px;"></div> <!-- カレンダー表示部分 -->
   </div>
 </div>
 
@@ -14,31 +14,6 @@
   <%= render 'form' %>
 </div>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    let ingredientCount = 1;
-    const maxIngredients = 5;
-
-    document.getElementById('addIngredientButton').addEventListener('click', function() {
-      if (ingredientCount >= maxIngredients) {
-        alert('食材は最大5つまでしか追加できません。');
-        return;
-      }
-
-      const ingredientFields = document.getElementById('ingredientFields');
-      const ingredientInput = document.createElement('input');
-      ingredientInput.type = 'text';
-      ingredientInput.name = 'ingredients[]';
-      ingredientInput.placeholder = `食材${ingredientCount + 1}`;
-      ingredientInput.classList.add('block', 'w-1/2', 'mx-auto', 'border', 'border-gray-300', 'rounded-lg', 'p-2', 'mb-2');
-      ingredientFields.appendChild(ingredientInput);
-
-      ingredientCount++;
-    });
-
-    document.getElementById('toggleNutrientList').addEventListener('click', function() {
-      const nutrientList = document.getElementById('nutrientList');
-      nutrientList.classList.toggle('hidden');
-    });
-  });
-</script>
+<% content_for :additional_js do %>
+  <%= javascript_include_tag 'calendar', defer: true %>
+<% end %>
