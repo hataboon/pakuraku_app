@@ -2,5 +2,5 @@
 import "@hotwired/turbo-rails";
 import "./controllers";
 import { Turbo } from "@hotwired/turbo-rails";
-import "./calendar";
+import "./packs/calendar";
 Turbo.session.drive = false;  // Turboを無効化
