@@ -1,88 +1,33 @@
 <!-- app/views/recipes/show.html.erb -->
-
 <h1 class="text-3xl font-bold text-center mb-6">生成された献立</h1>
+
 <% if @meal_plans.present? %>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-  <% @meal_plans.each do |meal_plan| %>
+  <% @meal_plans.each_with_index do |plan, index| %>
   <div class="bg-white rounded-lg shadow-md p-6">
-    <%= image_tag(meal_plan[:image], alt: meal_plan[:title], class: "w-full h-48 object-cover rounded-md mb-4") if meal_plan[:image].present? %>
+    <!-- 献立タイトル -->
+    <h2 class="text-2xl font-semibold mb-4"><%= plan[:name] || "タイトル未設定" %></h2>
 
-    <!-- レシピタイトル -->
-    <h2 class="text-2xl font-semibold mb-4"><%= meal_plan[:title] %></h2>
-
-    <!-- 食材 -->
+    <!-- 食材リスト -->
     <h3 class="text-xl font-semibold mb-2">食材</h3>
-    <ul class="list-disc list-inside mb-6 text-gray-700">
-      <% if meal_plan[:ingredients].present? %>
-      <% meal_plan[:ingredients].each do |ingredient| %>
+    <ul>
+      <% plan[:ingredients].each do |ingredient| %>
       <li><%= ingredient %></li>
-      <% end %>
-      <% else %>
-      <li>材料が取得できませんでした。</li>
       <% end %>
     </ul>
 
     <!-- 栄養情報 -->
-    <div class="bg-white rounded-lg shadow-md p-6 mb-6 max-w-4xl mx-auto">
-      <h2 class="text-2xl font-semibold mb-4">献立全体の栄養情報</h2>
-      <ul class="list-disc list-inside mb-6 text-gray-700">
-        <li>タンパク質: <%= @total_nutrition[:protein] %>g</li>
-        <li>脂質: <%= @total_nutrition[:fat] %>g</li>
-        <li>炭水化物: <%= @total_nutrition[:carbohydrates] %>g</li>
-        <li>ビタミン: <%= @total_nutrition[:vitamins].join(", ") %></li>
-        <li>ミネラル: <%= @total_nutrition[:minerals].join(", ") %></li>
-      </ul>
-    </div>
-    <h3 class="text-xl font-semibold mb-2">栄養情報</h3>
-    <% if meal_plan[:nutrients].present? %>
-    <button onclick="document.getElementById('nutrients-<%= meal_plan[:title].parameterize %>').classList.toggle('hidden')" class="text-blue-500 underline">もっと見る</button>
-    <ul id="nutrients-<%= meal_plan[:title].parameterize %>" class="list-disc list-inside mb-6 text-gray-700 hidden">
-      <% meal_plan[:nutrients].each do |nutrient| %>
-      <li>
-        <ul class="list-disc list-inside ml-4">
-          <% nutrient.each do |key, value| %>
-          <% next if key == "ingredient" %>
-          <li>
-            <% case key %>
-            <% when "mineral" %>
-            ミネラル: <%= value %>
-            <% when "protein" %>
-            タンパク質: <%= value %>g
-            <% when "fat" %>
-            脂質: <%= value %>g
-            <% when "carbohydrates" %>
-            炭水化物: <%= value %>g
-            <% when "vitamins" %>
-            ビタミン: <%= value %>
-            <% else %>
-            <%= key %>: <%= value %>
-            <% end %>
-          </li>
-          <% end %>
-        </ul>
-      </li>
-      <% end %>
+    <h3 class="text-xl font-semibold mb-2">栄養判定</h3>
+    <% categorized = @categorized_nutrients[index] %>
+    <ul class="list-disc list-inside mb-6 text-gray-700">
+      <li>ミネラル: <%= categorized[:minerals] || "データなし" %></li>
+      <li>カロリー: <%= categorized[:calories] || "データなし" %></li>
+      <li>タンパク質: <%= categorized[:protein] || "データなし" %></li>
+      <li>脂質: <%= categorized[:fat] || "データなし" %></li>
+      <li>炭水化物: <%= categorized[:carbohydrates] || "データなし" %></li>
     </ul>
-    <% else %>
-    <p>栄養情報が取得できませんでした。</p>
-    <% end %>
-
-    <div class="flex justify-center mt-4">
-      <%= link_to 'この献立を再作成', recipe_path(meal_plan[:id]), method: :post, class: 'btn btn-primary' %>
-    </div>
-    <% if meal_plan[:url].present? %>
-    <p>
-      <%= link_to '楽天レシピの詳細を見る', meal_plan[:url], target: "_blank", rel: "noopener" %>
-    </p>
-    <% end %>
   </div>
   <% end %>
-</div>
-
-<div class="flex justify-between mt-10 max-w-4xl mx-auto">
-  <%= link_to '作成', new_recipe_path, class: 'btn btn-primary' %>
-  <%= link_to 'Xへ投稿', '#', class: 'btn btn-primary' %>
-  <%= link_to '閉じる', recipes_path, class: 'btn btn-primary' %>
 </div>
 <% else %>
 <p>献立が取得できませんでした。</p>

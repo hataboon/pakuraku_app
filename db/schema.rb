@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_11_13_062224) do
+ActiveRecord::Schema[7.2].define(version: 2024_11_20_132854) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -28,11 +28,16 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_13_062224) do
     t.float "protein"
     t.float "fat"
     t.float "carbohydrates"
-    t.string "vitamins"
+    t.float "vitamins"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "food_id", null: false
     t.float "mineral"
+    t.float "protein_value"
+    t.float "fat_value"
+    t.float "carbohydrates_value"
+    t.float "vitamins_value"
+    t.float "mineral_value"
     t.index ["food_id"], name: "index_nutritions_on_food_id"
   end
 
