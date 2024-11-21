@@ -17,15 +17,15 @@ module NutritionsHelper
       ranges = NUTRIENT_RANGES[type] # 栄養素ごとの基準を取得
       if ranges # 該当する基準があれば判定
         results[type] = case value
-                        when ranges[:low]
+        when ranges[:low]
                           "少ない"
-                        when ranges[:adequate]
+        when ranges[:adequate]
                           "適量"
-                        when ranges[:high]
+        when ranges[:high]
                           "多い"
-                        else
+        else
                           "不明"
-                        end
+        end
       else
         results[type] = "不明な栄養素" # 基準がない場合
       end

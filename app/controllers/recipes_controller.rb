@@ -39,7 +39,7 @@ class RecipesController < ApplicationController
     # セッションからレシピIDを取得
     recipe_ids = session[:created_recipe_ids] || []
     @recipes = Recipe.where(id: recipe_ids)
-  
+
     # 献立データの作成
     @meal_plans = @recipes.map do |recipe|
       {
@@ -57,7 +57,7 @@ class RecipesController < ApplicationController
         end
       }
     end
-  
+
     # 栄養素の判定を追加
     @categorized_nutrients = @meal_plans.map do |meal_plan|
       total_nutrients = {
@@ -69,13 +69,13 @@ class RecipesController < ApplicationController
       }
       categorize_nutrients(total_nutrients) # ヘルパーで判定
     end
-  
+
     # デバッグログを出力
     Rails.logger.debug("生成された@meal_plans: #{@meal_plans.inspect}")
     Rails.logger.debug("判定された@categorized_nutrients: #{@categorized_nutrients.inspect}")
   end
-  
-  
+
+
 
   private
 
@@ -146,7 +146,7 @@ class RecipesController < ApplicationController
       end
     end
 
-    [meal_plans, total_nutrition]
+    [ meal_plans, total_nutrition ]
   end
 
   def generate_meal_plan_with_openai(nutrients_list)
@@ -170,7 +170,7 @@ class RecipesController < ApplicationController
     response = client.chat(
       parameters: {
         model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: prompt }]
+        messages: [ { role: "user", content: prompt } ]
       }
     )
 
