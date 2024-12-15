@@ -1,0 +1,48 @@
+<div class="simple-calendar">
+  <div class="calendar-heading flex justify-between items-center mb-4">
+    <span class="calendar-title text-xl font-bold">
+      <%= "#{start_date.year}年 #{t('date.month_names')[start_date.month]}" %>
+    </span>
+
+    <nav class="flex space-x-4">
+      <%= link_to '前月', calendar.url_for_previous_view, class: 'text-blue-500 hover:underline' %>
+      <%= link_to '今月', calendar.url_for_today_view, class: 'text-blue-500 hover:underline' %>
+      <%= link_to '次月', calendar.url_for_next_view, class: 'text-blue-500 hover:underline' %>
+    </nav>
+  </div>
+
+  <table class="table-auto w-full border-collapse">
+    <thead>
+      <tr>
+        <% date_range.slice(0, 7).each do |day| %>
+        <th class="border border-gray-300 p-2 bg-gray-100 text-center">
+          <%= t('date.abbr_day_names')[day.wday] %>
+        </th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% date_range.each_slice(7) do |week| %>
+      <tr>
+        <% week.each do |day| %>
+        <td class="p-4 border border-gray-200 align-top <%= day == Date.today ? 'bg-blue-100' : '' %>">
+          <div class="text-center font-bold text-lg mb-2"><%= day.day %></div>
+
+          <% plans_for_day = @calendar_plans&.select { |plan| plan.date == day } || [] %>
+
+          <%# チェックボックスと時間帯ラベル、献立名を縦に並べる %>
+          <% { "朝" => "morning", "昼" => "afternoon", "夜" => "evening" }.each do |label, meal_time| %>
+          <% plan = plans_for_day.find { |p| p.meal_time == meal_time } %>
+          <div class="mb-1 flex items-center">
+            <%= check_box_tag "selected_dates[#{day.strftime('%Y-%m-%d')}][]", meal_time %>
+            <span class="ml-1 font-bold"><%= label %></span>
+            <span class="ml-2"><%= plan&.recipe&.name || "" %></span>
+          </div>
+          <% end %>
+        </td>
+        <% end %>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

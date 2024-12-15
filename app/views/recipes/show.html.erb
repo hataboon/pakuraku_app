@@ -1,34 +1,78 @@
 <!-- app/views/recipes/show.html.erb -->
-<h1 class="text-3xl font-bold text-center mb-6">生成された献立</h1>
+<div class="container mx-auto my-12 px-4">
+  <!-- ページタイトル -->
+  <h1 class="text-3xl font-bold text-center mb-6">選択された献立</h1>
 
-<% if @meal_plans.present? %>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-  <% @meal_plans.each_with_index do |plan, index| %>
-  <div class="bg-white rounded-lg shadow-md p-6">
-    <!-- 献立タイトル -->
-    <h2 class="text-2xl font-semibold mb-4"><%= plan[:name] || "タイトル未設定" %></h2>
+  <!-- ボタンエリア -->
+  <div class="flex justify-center space-x-4 mb-8">
+    <!-- 戻るボタン -->
+    <a href="<%= new_recipe_path %>" class="bg-gray-300 text-gray-800 py-2 px-4 rounded-lg shadow hover:bg-gray-400">
+      戻る
+    </a>
 
-    <!-- 食材リスト -->
-    <h3 class="text-xl font-semibold mb-2">食材</h3>
-    <ul>
-      <% plan[:ingredients].each do |ingredient| %>
-      <li><%= ingredient %></li>
+    <!-- もう一度献立作成ボタン -->
+    <%= button_to "もう一度献立作成", recipes_path, method: :post, params: {
+      selected_dates: { params[:id] => @calendar_plans.pluck(:meal_time) }, # 現在表示中の時間帯のみ使用
+      nutrients: [], # 必要なら現在の選択状態を渡す
+    }, class: "bg-blue-500 text-white py-2 px-4 rounded-lg shadow hover:bg-blue-600" %>
+
+    <!-- 投稿ボタン -->
+    <button class="bg-green-500 text-white py-2 px-4 rounded-lg shadow hover:bg-green-600">
+      Xへ投稿
+    </button>
+  </div>
+
+  <% if @calendar_plans.present? %>
+  <% time_mapping = { "morning" => "朝", "afternoon" => "昼", "evening" => "夜" } %>
+
+  <% @calendar_plans.each do |calendar_plan| %>
+  <% meal_plan = JSON.parse(calendar_plan.meal_plan, symbolize_names: true) rescue nil %>
+  <% next unless meal_plan %>
+
+  <div class="mb-12 border border-gray-300 p-4 rounded-lg bg-white shadow-md">
+    <!-- 日付と時間帯の表示 -->
+    <h2 class="text-2xl font-bold mb-4">
+      日付: <%= calendar_plan.date.strftime('%Y年%m月%d日') %> / 時間帯: <%= time_mapping[calendar_plan.meal_time.downcase] || "不明" %>
+    </h2>
+
+    <!-- 献立内容 -->
+    <div class="mb-6">
+      <h3 class="text-xl font-bold mb-2">献立の内容</h3>
+      <ul class="list-disc list-inside">
+        <li>主食: <%= meal_plan[:main] || "データなし" %></li>
+        <li>主菜: <%= meal_plan[:side] || "データなし" %></li>
+        <li>副菜: <%= meal_plan[:salad] || "データなし" %></li>
+      </ul>
+    </div>
+
+    <!-- 栄養素情報 -->
+    <div class="mb-6 bg-blue-50 p-4 rounded-lg">
+      <h3 class="text-xl font-bold text-blue-700 mb-2">栄養素情報</h3>
+      <ul class="list-disc list-inside">
+        <li>タンパク質: <%= meal_plan.dig(:nutrients, :protein) || "データなし" %></li>
+        <li>脂質: <%= meal_plan.dig(:nutrients, :fat) || "データなし" %></li>
+        <li>炭水化物: <%= meal_plan.dig(:nutrients, :carbohydrates) || "データなし" %></li>
+        <li>ビタミン: <%= meal_plan.dig(:nutrients, :vitamins) || "データなし" %></li>
+        <li>ミネラル: <%= meal_plan.dig(:nutrients, :minerals) || "データなし" %></li>
+      </ul>
+    </div>
+
+    <!-- 使用した食材 -->
+    <div>
+      <h3 class="text-xl font-bold mb-2">使用した食材</h3>
+      <% if meal_plan[:ingredients].present? %>
+      <ul class="list-disc list-inside">
+        <% meal_plan[:ingredients].each do |ingredient| %>
+        <li><%= ingredient %></li>
+        <% end %>
+      </ul>
+      <% else %>
+      <p class="text-gray-500">食材情報がありません。</p>
       <% end %>
-    </ul>
-
-    <!-- 栄養情報 -->
-    <h3 class="text-xl font-semibold mb-2">栄養判定</h3>
-    <% categorized = @categorized_nutrients[index] %>
-    <ul class="list-disc list-inside mb-6 text-gray-700">
-      <li>ミネラル: <%= categorized[:minerals] || "データなし" %></li>
-      <li>カロリー: <%= categorized[:calories] || "データなし" %></li>
-      <li>タンパク質: <%= categorized[:protein] || "データなし" %></li>
-      <li>脂質: <%= categorized[:fat] || "データなし" %></li>
-      <li>炭水化物: <%= categorized[:carbohydrates] || "データなし" %></li>
-    </ul>
+    </div>
   </div>
   <% end %>
+  <% else %>
+  <p class="text-gray-500 text-center">献立データがありません。</p>
+  <% end %>
 </div>
-<% else %>
-<p>献立が取得できませんでした。</p>
-<% end %>

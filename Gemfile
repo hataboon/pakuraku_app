@@ -47,6 +47,8 @@ gem "ruby-openai"
 
 gem "faraday-net_http"
 
+gem "simple_calendar"
+
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
