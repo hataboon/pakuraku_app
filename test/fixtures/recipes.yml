@@ -1,9 +1,13 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
 one:
-  name: MyString
-  description: MyText
+  id: 1
+  title: "Recipe 1"
+  description: "Description for Recipe 1"
+  created_at: <%= Time.now %>
+  updated_at: <%= Time.now %>
 
 two:
-  name: MyString
-  description: MyText
+  id: 2
+  title: "Recipe 2"
+  description: "Description for Recipe 2"
+  created_at: <%= Time.now %>
+  updated_at: <%= Time.now %>
