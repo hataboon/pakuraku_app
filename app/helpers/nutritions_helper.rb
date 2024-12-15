@@ -46,7 +46,7 @@ module NutritionsHelper
 
     nutrition_totals
   end
-  # 栄養素の値を計算する（仮のロジック）
+# 栄養素の値を計算する（仮のロジック）
 def calculate_nutrient_value(nutrient, food_name)
   case nutrient
   when "protein"
