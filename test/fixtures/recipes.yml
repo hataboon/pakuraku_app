@@ -1,13 +1,13 @@
 one:
   id: 1
-  title: "Recipe 1"
+  name: "Recipe 1"
   description: "Description for Recipe 1"
   created_at: <%= Time.now %>
   updated_at: <%= Time.now %>
 
 two:
   id: 2
-  title: "Recipe 2"
+  name: "Recipe 2"
   description: "Description for Recipe 2"
   created_at: <%= Time.now %>
   updated_at: <%= Time.now %>
