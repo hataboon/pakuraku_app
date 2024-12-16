@@ -56,6 +56,19 @@ class RecipesController < ApplicationController
     end
   end
 
+  def destroy
+    calendar_plan = CalendarPlan.find_by(id: params[:id], user: current_user)
+
+    if calendar_plan
+      calendar_plan.destroy
+      flash[:notice] = "献立が削除されました。"
+    else
+      flash[:alert] = "指定された献立が見つかりません。"
+    end
+
+    redirect_to new_recipe_path
+  end
+
   private
 
   DEFAULT_NUTRIENTS = {

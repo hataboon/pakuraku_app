@@ -1,11 +1,18 @@
 <!-- app/views/recipes/_form.html.erb -->
-<div class="form-section mt-6">
-  <p>栄養素を選択 (最大5つ)</p>
-  <% ["ミネラル", "たんぱく質", "炭水化物", "ビタミン", "脂質"].each do |nutrient| %>
-  <div class="form-check">
-    <%= check_box_tag "nutrients[]", nutrient, false, class: "form-check-input" %>
-    <%= label_tag "nutrients_#{nutrient}", nutrient, class: "form-check-label ml-2" %>
+<!-- 栄養素選択 -->
+<div class="mb-6">
+  <p class="text-lg font-semibold mb-2">栄養素を選択 (最大5つ)</p>
+  <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+    <% ["ミネラル", "たんぱく質", "炭水化物", "ビタミン", "脂質"].each do |nutrient| %>
+    <div class="form-check flex items-center">
+      <%= check_box_tag "nutrients[]", nutrient, false, class: "form-check-input w-6 h-6" %>
+      <%= label_tag "nutrients_#{nutrient}", nutrient, class: "ml-2 text-lg" %>
+    </div>
+    <% end %>
   </div>
-  <% end %>
-  <%= submit_tag '献立作成', class: 'btn btn-primary mt-4' %>
+</div>
+
+<!-- 送信ボタン -->
+<div class="text-center">
+  <%= submit_tag '献立作成', class: 'btn btn-primary text-lg px-6 py-3 rounded bg-blue-500 text-white hover:bg-blue-700 transition duration-200' %>
 </div>

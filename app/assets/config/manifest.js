@@ -2,3 +2,5 @@
 //= link_directory ../stylesheets .css
 //= link application.css
 //= link calendar.js
+//= link application.js
+//= link application.css
