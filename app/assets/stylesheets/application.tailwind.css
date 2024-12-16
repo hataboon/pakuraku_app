@@ -3,3 +3,16 @@
 @import 'tailwindcss/utilities';
 @import 'toast-ui/toastui-calendar.min.css';
 @import '@toast-ui/calendar/dist/toastui-calendar.min.css';
+
+/* テーブルのスタイル調整（必要なら追加） */
+.table-fixed {
+  table-layout: fixed; /* テーブルのセル幅を固定 */
+}
+
+.break-words {
+  word-wrap: break-word; /* 長い単語を折り返す */
+}
+
+.whitespace-normal {
+  white-space: normal; /* テキストを通常の折り返しに */
+}
