@@ -21,5 +21,6 @@ module Myapp
     config.autoload_paths << Rails.root.join("lib")
 
     # その他の設定は必要に応じて追加
+    config.active_support.to_time_preserves_timezone = :zone
   end
 end
