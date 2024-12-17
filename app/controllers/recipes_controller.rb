@@ -57,16 +57,16 @@ class RecipesController < ApplicationController
   end
 
   def destroy
-    calendar_plan = CalendarPlan.find_by(id: params[:id], user: current_user)
+    @calendar_plan = CalendarPlan.find_by(id: params[:id], user_id: current_user.id)
 
-    if calendar_plan
-      calendar_plan.destroy
-      flash[:notice] = "献立が削除されました。"
+    if @calendar_plan
+      @calendar_plan.destroy
+      flash[:success] = "献立が削除されました。"
+      redirect_back fallback_location: recipes_path # 削除後に一覧ページへ
     else
-      flash[:alert] = "指定された献立が見つかりません。"
+      flash[:error] = "献立が見つかりませんでした。"
+      redirect_back fallback_location: recipes_path # 何も見つからない場合も安全にリダイレクト
     end
-
-    redirect_to new_recipe_path
   end
 
   private

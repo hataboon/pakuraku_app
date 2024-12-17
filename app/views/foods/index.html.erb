@@ -1,5 +1,4 @@
 <div class="foods-page">
-  <h1 class="text-xl font-bold mb-4">献立管理ページ</h1>
 
   <div class="flex justify-between items-start">
     <!-- 左側：献立の画像や情報 -->
@@ -8,17 +7,26 @@
       <div class="menu-info">
         <p>献立画像</p>
       </div>
+      <div class="w-2/5 p-4 bg-gray-100 rounded-lg shadow-md">
+        <%= link_to '献立を作成', new_recipe_path, class: 'mt-4 inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded' %>
+      </div>
     </div>
+
 
     <!-- 右側：カレンダー部分 -->
     <div class="w-3/5 p-4 bg-white border border-gray-300 rounded-lg shadow-md">
-      <div id="calendar" style="width: 100%; height: 500px;"> <!-- 高さと幅を調整 -->
+      <%= month_calendar do |date| %>
+      <div class="text-center">
+        <%= date.day %>
       </div>
-      <%= link_to '献立を作成', new_recipe_path, class: 'btn btn-primary mt-4 text-right' %>
+
+      <% plans_for_day = @calendar_plans.select { |plan| plan.date == date } %>
+      <% plans_for_day.each do |plan| %>
+      <div class="text-sm text-gray-500">
+        <%= plan.meal_time %>: <%= plan.recipe.name %>
+      </div>
+      <% end %>
+      <% end %>
     </div>
   </div>
 </div>
-
-<% content_for :additional_js do %>
-  <%= javascript_include_tag 'calendar', defer: true %>
-<% end %>
