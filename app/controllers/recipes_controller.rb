@@ -1,5 +1,6 @@
 class RecipesController < ApplicationController
   include NutritionsHelper
+  before_action :authenticate_user!, only: [:new, :create]
 
   def new
     @calendar_plans = CalendarPlan.where(user: current_user).includes(:recipe)
