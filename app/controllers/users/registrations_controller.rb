@@ -20,9 +20,9 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def create
     build_resource(sign_up_params)
 
-    resource.save
-    yield resource if block_given?
-    if resource.persisted?
+    if resource.save
+      # 成功時の処理
+      yield resource if block_given?
       if resource.active_for_authentication?
         set_flash_message! :notice, :signed_up
         sign_up(resource_name, resource)
@@ -33,12 +33,14 @@ class Users::RegistrationsController < Devise::RegistrationsController
         respond_with resource, location: after_inactive_sign_up_path_for(resource)
       end
     else
+      # 失敗時の処理
+      Rails.logger.info "User registration failed: #{resource.errors.full_messages.join(", ")}"
+      flash[:alert] = resource.errors.full_messages.join(", ") # フラッシュにエラーメッセージを表示
       clean_up_passwords resource
       set_minimum_password_length
       respond_with resource
     end
   end
-
   # GET /resource/edit
   # def edit
   #   super
