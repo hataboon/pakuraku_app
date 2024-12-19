@@ -1,6 +1,6 @@
 class RecipesController < ApplicationController
   include NutritionsHelper
-  before_action :authenticate_user!, only: [:new, :create]
+  before_action :authenticate_user!, only: [ :new, :create ]
 
   def new
     @calendar_plans = CalendarPlan.where(user: current_user).includes(:recipe)
@@ -58,7 +58,7 @@ class RecipesController < ApplicationController
   end
 
   def destroy
-    @calendar_plan = CalendarPlan.find_by(id: params[:id], user: current_user)
+    @calendar_plan = CalendarPlan.find_by(id: params[:id])
     if @calendar_plan
       @calendar_plan.destroy
       flash[:success] = "献立が削除されました。"

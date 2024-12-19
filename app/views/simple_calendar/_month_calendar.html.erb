@@ -60,7 +60,7 @@
 
             <!-- ゴミ箱マークと削除リンク -->
             <% if plan %>
-            <%= link_to '🗑', recipe_path(plan.recipe), method: :delete, data: { confirm: "本当に削除しますか？" }, class: "text-red-500 ml-2" %>
+            <%= link_to '🗑', recipe_path(plan.recipe_id), method: :delete, data: { confirm: "本当に削除しますか？" }, class: "text-red-500 ml-2" %>
             <% end %>
           </div>
           <% end %>
