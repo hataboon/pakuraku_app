@@ -7,4 +7,5 @@ Rails.application.routes.draw do
 
   resources :foods, only: [ :index, :new, :create, :edit, :update, :destroy ]
   resources :recipes, only: [ :index, :new, :create, :show, :edit, :update, :destroy ]
+  resources :calendar_plans, only: [ :destroy ]
 end

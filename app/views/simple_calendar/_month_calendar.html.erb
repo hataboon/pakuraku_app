@@ -12,7 +12,6 @@
     </nav>
   </div>
 
-  <!-- table-fixedでセル幅を固定 -->
   <table class="table-fixed w-full border-collapse border border-gray-300">
     <thead>
       <tr>
@@ -27,7 +26,7 @@
       <% date_range.each_slice(7) do |week| %>
       <tr>
         <% week.each do |day| %>
-        <td class="p-4 border border-gray-300 align-top break-words whitespace-normal <%= day == Date.today ? 'bg-blue-100' : '' %>">
+        <td class="p-4 border border-gray-300 align-top <%= day == Date.today ? 'bg-blue-100' : '' %>">
           <div class="text-center font-bold text-lg mb-2"><%= day.day %></div>
 
           <% plans_for_day = @calendar_plans&.select { |plan| plan.date == day } || [] %>
@@ -39,7 +38,7 @@
             <%= check_box_tag "selected_dates[#{day.strftime('%Y-%m-%d')}][]", meal_time, false, class: "mr-2" %>
             <span class="font-bold"><%= label %></span>
 
-            <!-- 主菜と副菜を表示 -->
+            <!-- 主菜と副菜のみ表示 -->
             <% if plan&.recipe&.name.present? %>
             <% names = plan.recipe.name.split(",") %>
             <% main = names[1] %>
@@ -60,7 +59,7 @@
 
             <!-- ゴミ箱マークと削除リンク -->
             <% if plan %>
-            <%= link_to '🗑', recipe_path(plan.recipe_id), method: :delete, data: { confirm: "本当に削除しますか？" }, class: "text-red-500 ml-2" %>
+            <%= link_to '🗑', calendar_plan_path(plan.id), method: :delete, data: { confirm: "本当に削除しますか？" }, class: "text-red-500 ml-2" %>
             <% end %>
           </div>
           <% end %>
