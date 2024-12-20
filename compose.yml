@@ -5,7 +5,7 @@ services:
     environment:
       TZ: Asia/Tokyo
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: myapp_production
+      POSTGRES_DB: myapp_development
     volumes:
       - postgresql_data:/var/lib/postgresql
     ports:
@@ -26,10 +26,10 @@ services:
       - .:/myapp
     environment:
       TZ: Asia/Tokyo
-      RAILS_ENV: production
+      RAILS_ENV: development
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: myapp_production
+      POSTGRES_DB: myapp_development
       DB_HOST: db
     ports:
       - "3000:3000"

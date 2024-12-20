@@ -58,7 +58,7 @@
             <% end %>
 
             <!-- ゴミ箱マークと削除リンク -->
-            <% if plan %>
+            <% if plan && plan.user_id == current_user.id %>
             <%= link_to '🗑', calendar_plan_path(plan.id), method: :delete, data: { confirm: "本当に削除しますか？" }, class: "text-red-500 ml-2" %>
             <% end %>
           </div>

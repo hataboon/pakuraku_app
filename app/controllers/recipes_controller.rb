@@ -13,8 +13,11 @@ class RecipesController < ApplicationController
     normalized_selected_nutrients = selected_nutrients.map { |n| n.tr("ァ-ン", "ぁ-ん").downcase }
     plans = []
 
-    # 新しい献立の保存前に既存の献立を削除する
-    CalendarPlan.where(user: current_user, date: selected_dates.keys).destroy_all
+    selected_dates.each do |date, meal_times|
+      meal_times.each do |meal_time|
+        CalendarPlan.where(user: current_user, date: date, meal_time: meal_time).destroy_all
+      end
+    end
 
     selected_dates.each do |date, meal_times|
       meal_times.each do |meal_time|
