@@ -1,22 +1,28 @@
 <!-- views/simple_calendar/_month_calendar.html.erb -->
-<div class="simple-calendar">
+<div class="simple-calendar bg-white shadow rounded-lg p-6">
   <div class="calendar-heading flex justify-between items-center mb-4">
-    <span class="calendar-title text-xl font-bold">
+    <span class="calendar-title text-2xl font-bold text-gray-800">
       <%= "#{start_date.year}年 #{t('date.month_names')[start_date.month]}" %>
     </span>
 
     <nav class="flex space-x-4">
-      <%= link_to '前月', calendar.url_for_previous_view, class: 'text-blue-500 hover:underline' %>
-      <%= link_to '今月', calendar.url_for_today_view, class: 'text-blue-500 hover:underline' %>
-      <%= link_to '次月', calendar.url_for_next_view, class: 'text-blue-500 hover:underline' %>
+      <%= link_to calendar.url_for_previous_view, class: 'p-2 bg-gray-100 rounded hover:bg-gray-200' do %>
+      <span class="material-icons">arrow_back</span>
+      <% end %>
+      <%= link_to calendar.url_for_today_view, class: 'p-2 bg-gray-100 rounded hover:bg-gray-200' do %>
+      <span class="material-icons">home</span>
+      <% end %>
+      <%= link_to calendar.url_for_next_view, class: 'p-2 bg-gray-100 rounded hover:bg-gray-200' do %>
+      <span class="material-icons">arrow_forward</span>
+      <% end %>
     </nav>
   </div>
 
-  <table class="table-fixed w-full border-collapse border border-gray-300">
+  <table class="table-fixed w-full border-collapse">
     <thead>
       <tr>
         <% date_range.slice(0, 7).each do |day| %>
-        <th class="p-2 bg-gray-100 text-center border border-gray-300">
+        <th class="p-2 bg-gray-200 text-center font-semibold text-gray-700">
           <%= t('date.abbr_day_names')[day.wday] %>
         </th>
         <% end %>
@@ -26,42 +32,39 @@
       <% date_range.each_slice(7) do |week| %>
       <tr>
         <% week.each do |day| %>
-        <td class="p-4 border border-gray-300 align-top <%= day == Date.today ? 'bg-blue-100' : '' %>">
-          <div class="text-center font-bold text-lg mb-2"><%= day.day %></div>
+        <td class="p-4 border border-gray-300 align-top bg-white hover:bg-gray-50">
+          <div class="text-center font-bold text-lg mb-2 <%= day == Date.today ? 'text-blue-500' : '' %>">
+            <%= day.day %>
+          </div>
 
           <% plans_for_day = @calendar_plans&.select { |plan| plan.date == day } || [] %>
 
           <% { "朝" => "morning", "昼" => "afternoon", "夜" => "evening" }.each do |label, meal_time| %>
           <% plan = plans_for_day.find { |p| p.meal_time == meal_time } %>
-          <div class="mb-1">
-            <!-- チェックボックス -->
-            <%= check_box_tag "selected_dates[#{day.strftime('%Y-%m-%d')}][]", meal_time, false, class: "mr-2" %>
-            <span class="font-bold"><%= label %></span>
-
-            <!-- 主菜と副菜のみ表示 -->
-            <% if plan&.recipe&.name.present? %>
-            <% names = plan.recipe.name.split(",") %>
-            <% main = names[1] %>
-            <!-- 主菜 -->
-            <% side = names[2] %>
-            <!-- 副菜 -->
-            <div class="ml-2">
+          <% if plan&.recipe&.name.present? %>
+          <% names = plan.recipe.name.split(",") %>
+          <% main = names[1] %>
+          <% side = names[2] %>
+          <div class="mb-2 p-2 bg-gray-50 rounded border border-gray-200 max-w-[200px] mx-auto">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <%= check_box_tag "selected_dates[#{day.strftime('%Y-%m-%d')}][]", meal_time, false, class: "mr-2" %>
+                <span><%= label %></span>
+              </div>
+              <% if plan && plan.user_id == current_user.id %>
+              <%= link_to '🗑', calendar_plan_path(plan.id), method: :delete, data: { confirm: "本当に削除しますか？" }, class: "text-red-500" %>
+              <% end %>
+            </div>
+            <div class="mt-2 text-sm">
               <% if main %>
-              <span class="font-semibold text-blue-500">主菜: <%= main.strip %></span>
+              <span class="text-gray-700">主菜: <%= main.strip %></span>
               <% end %>
               <% if side %>
               <span class="text-gray-600 ml-2">副菜: <%= side.strip %></span>
               <% end %>
             </div>
-            <% else %>
-            <span class="text-gray-400 ml-2">未設定</span>
-            <% end %>
-
-            <!-- ゴミ箱マークと削除リンク -->
-            <% if plan && plan.user_id == current_user.id %>
-            <%= link_to '🗑', calendar_plan_path(plan.id), method: :delete, data: { confirm: "本当に削除しますか？" }, class: "text-red-500 ml-2" %>
-            <% end %>
           </div>
+          <% end %>
           <% end %>
         </td>
         <% end %>
@@ -70,3 +73,20 @@
     </tbody>
   </table>
 </div>
+
+<style>
+  /* スマートフォン用レイアウト調整 */
+  @media (max-width: 768px) {
+    .simple-calendar table {
+      font-size: 0.9rem;
+    }
+
+    .simple-calendar td {
+      padding: 2px;
+    }
+
+    .simple-calendar .calendar-title {
+      font-size: 1.5rem;
+    }
+  }
+</style>

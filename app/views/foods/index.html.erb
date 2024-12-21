@@ -1,20 +1,19 @@
+<!-- foods/index.html.erb -->
 <div class="foods-page">
-
-  <div class="flex justify-between items-start">
+  <div class="flex flex-col md:flex-row justify-between items-start">
     <!-- 左側：献立の画像や情報 -->
-    <div class="w-2/5 p-4 bg-gray-100 rounded-lg shadow-md">
+    <div class="w-full md:w-2/5 p-4 bg-gray-100 rounded-lg shadow-md mb-4 md:mb-0">
       <h2 class="text-lg font-semibold">今日の献立</h2>
       <div class="menu-info">
         <p>献立画像</p>
       </div>
-      <div class="w-2/5 p-4 bg-gray-100 rounded-lg shadow-md">
+      <div class="mt-4">
         <%= link_to '献立を作成', new_recipe_path, class: 'mt-4 inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded' %>
       </div>
     </div>
 
-
     <!-- 右側：カレンダー部分 -->
-    <div class="w-3/5 p-4 bg-white border border-gray-300 rounded-lg shadow-md">
+    <div class="w-full md:w-3/5 p-4 bg-white border border-gray-300 rounded-lg shadow-md">
       <%= month_calendar do |date| %>
       <div class="text-center">
         <%= date.day %>

@@ -16,3 +16,27 @@
 .whitespace-normal {
   white-space: normal; /* テキストを通常の折り返しに */
 }
+
+.form-section {
+  @apply bg-white shadow-md rounded-lg p-6 mb-6;
+}
+
+.button-primary {
+  @apply bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition duration-200;
+}
+
+.button-secondary {
+  @apply bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded hover:bg-gray-400 transition duration-200;
+}
+
+.flash {
+  @apply p-4 rounded-md mb-4 text-white;
+}
+
+.flash-success {
+  @apply bg-green-500;
+}
+
+.flash-error {
+  @apply bg-red-500;
+}
