@@ -7,13 +7,13 @@
 
     <nav class="flex space-x-4">
       <%= link_to calendar.url_for_previous_view, class: 'p-2 bg-gray-100 rounded hover:bg-gray-200' do %>
-      <span class="material-icons">arrow_back</span>
+      <span>前月</span>
       <% end %>
       <%= link_to calendar.url_for_today_view, class: 'p-2 bg-gray-100 rounded hover:bg-gray-200' do %>
-      <span class="material-icons">home</span>
+      <span>今月</span>
       <% end %>
       <%= link_to calendar.url_for_next_view, class: 'p-2 bg-gray-100 rounded hover:bg-gray-200' do %>
-      <span class="material-icons">arrow_forward</span>
+      <span>次月</span>
       <% end %>
     </nav>
   </div>
@@ -32,41 +32,42 @@
       <% date_range.each_slice(7) do |week| %>
       <tr>
         <% week.each do |day| %>
+        <% if day.month == start_date.month %>
         <td class="p-4 border border-gray-300 align-top bg-white hover:bg-gray-50">
           <div class="text-center font-bold text-lg mb-2 <%= day == Date.today ? 'text-blue-500' : '' %>">
             <%= day.day %>
           </div>
 
           <% plans_for_day = @calendar_plans&.select { |plan| plan.date == day } || [] %>
-
           <% { "朝" => "morning", "昼" => "afternoon", "夜" => "evening" }.each do |label, meal_time| %>
           <% plan = plans_for_day.find { |p| p.meal_time == meal_time } %>
-          <% if plan&.recipe&.name.present? %>
-          <% names = plan.recipe.name.split(",") %>
-          <% main = names[1] %>
-          <% side = names[2] %>
-          <div class="mb-2 p-2 bg-gray-50 rounded border border-gray-200 max-w-[200px] mx-auto">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center">
-                <%= check_box_tag "selected_dates[#{day.strftime('%Y-%m-%d')}][]", meal_time, false, class: "mr-2" %>
-                <span><%= label %></span>
-              </div>
-              <% if plan && plan.user_id == current_user.id %>
-              <%= link_to '🗑', calendar_plan_path(plan.id), method: :delete, data: { confirm: "本当に削除しますか？" }, class: "text-red-500" %>
-              <% end %>
-            </div>
+
+          <div class="mb-2 p-2 bg-gray-50 rounded border border-gray-200">
+            <label class="flex items-center">
+              <%= check_box_tag "selected_dates[#{day.strftime('%Y-%m-%d')}][]", meal_time, false, class: "mr-2" %>
+              <span><%= label %></span>
+            </label>
+
+            <% if plan&.recipe&.name.present? %>
+            <% names = plan.recipe.name.split(",") %>
             <div class="mt-2 text-sm">
-              <% if main %>
-              <span class="text-gray-700">主菜: <%= main.strip %></span>
+              <% if names[0].present? %>
+              <p><span class="text-blue-500 font-bold">主食:</span> <%= names[0].strip %></p>
               <% end %>
-              <% if side %>
-              <span class="text-gray-600 ml-2">副菜: <%= side.strip %></span>
+              <% if names[1].present? %>
+              <p><span class="text-green-500 font-bold">主菜:</span> <%= names[1].strip %></p>
+              <% end %>
+              <% if names[2].present? %>
+              <p><span class="text-yellow-500 font-bold">副菜:</span> <%= names[2].strip %></p>
               <% end %>
             </div>
+            <% end %>
           </div>
           <% end %>
-          <% end %>
         </td>
+        <% else %>
+        <td class="p-4 border border-gray-300 bg-gray-100"></td>
+        <% end %>
         <% end %>
       </tr>
       <% end %>
