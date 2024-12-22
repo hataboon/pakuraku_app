@@ -63,7 +63,7 @@
             </div>
             <% end %>
             <!-- ゴミ箱マークの追加 -->
-            <% if plan&.user_id == current_user.id %>
+            <% if current_user.present? && plan&.user_id == current_user.id %>
             <div class="mt-2 text-right">
               <%= link_to '🗑', calendar_plan_path(plan.id), method: :delete, data: { confirm: "本当に削除しますか？" }, class: "text-red-500 hover:text-red-700" %>
             </div>
