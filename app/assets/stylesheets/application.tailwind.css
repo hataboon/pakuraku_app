@@ -1,7 +1,6 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
-@import 'toast-ui/toastui-calendar.min.css';
 @import '@toast-ui/calendar/dist/toastui-calendar.min.css';
 
 /* テーブルのスタイル調整（必要なら追加） */

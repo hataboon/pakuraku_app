@@ -16,14 +16,14 @@
   <link rel="apple-touch-icon" href="/icon.png">
   <%= stylesheet_link_tag 'application', media: 'all', 'data-turbo-track': 'reload' %>
   <%= javascript_include_tag 'application', 'data-turbo-track': 'reload' %>
-  <script src="/toastui-calendar.js"></script>
-  <link rel="stylesheet" href="/toastui-calendar.min.css" />
+  <script src="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.js"></script>
+  <link rel="stylesheet" href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css" />
 </head>
 
 <body>
   <div class="flash-messages">
     <% flash.each do |key, message| %>
-    <div class="flash <%= key %>">
+    <div class="flash <%= key == 'notice' ? 'flash-success' : 'flash-error' %>">
       <%= message %>
     </div>
     <% end %>
