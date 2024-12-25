@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: myapp_development
     volumes:
-    - postgresql_data:/var/lib/postgresql/data
+      - postgresql_data:/var/lib/postgresql/data
     ports:
       - 5432:5432
     healthcheck:
@@ -15,6 +15,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
   web:
     build:
       context: .
@@ -26,16 +27,18 @@ services:
       - .:/myapp
     environment:
       TZ: Asia/Tokyo
-      RAILS_ENV: development
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: myapp_development
-      DB_HOST: db
+      RAILS_ENV: development  # 本番環境に切り替える場合は 'production' に変更
+      POSTGRES_USER: <%= ENV.fetch("POSTGRES_USER", "postgres") %>
+      POSTGRES_PASSWORD: <%= ENV.fetch("POSTGRES_PASSWORD", "password") %>
+      POSTGRES_DB: <%= ENV.fetch("POSTGRES_DB", "myapp_development") %>
+      DB_HOST: <%= ENV.fetch("DB_HOST", "db") %>  # Render を使う場合は 'db' を適切なホスト名に変更
+      DATABASE_URL: ${DATABASE_URL} # .env の値を参照
     ports:
       - "3000:3000"
     user: "1000:1000"
     depends_on:
       db:
         condition: service_healthy
+
 volumes:
   postgresql_data:
