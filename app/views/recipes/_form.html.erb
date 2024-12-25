@@ -5,8 +5,8 @@
   <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
     <% ["ミネラル", "たんぱく質", "炭水化物", "ビタミン", "脂質"].each do |nutrient| %>
     <div class="form-check flex items-center">
-      <%= check_box_tag "nutrients[]", nutrient, false, class: "form-check-input w-6 h-6" %>
-      <%= label_tag "nutrients_#{nutrient}", nutrient, class: "ml-2 text-lg" %>
+      <%= check_box_tag "nutrients[]", nutrient, false, id: "nutrient_#{nutrient}", class: "form-check-input w-6 h-6" %>
+      <%= label_tag "nutrient_#{nutrient}", nutrient, class: "ml-2 text-lg" %>
     </div>
     <% end %>
   </div>
