@@ -4,14 +4,15 @@ services:
     restart: always
     environment:
       TZ: Asia/Tokyo
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: myapp_development
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - ${DB_PORT:-5432}:5432
     volumes:
       - postgresql_data:/var/lib/postgresql/data
-    ports:
-      - 5432:5432
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d myapp_development -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -20,25 +21,17 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    command: bash -c "bundle install && bundle exec rails db:prepare && rm -f tmp/pids/server.pid && ./bin/dev"
-    tty: true
-    stdin_open: true
-    volumes:
-      - .:/myapp
     environment:
-      TZ: Asia/Tokyo
-      RAILS_ENV: development  # 本番環境に切り替える場合は 'production' に変更
-      POSTGRES_USER: <%= ENV.fetch("POSTGRES_USER", "postgres") %>
-      POSTGRES_PASSWORD: <%= ENV.fetch("POSTGRES_PASSWORD", "password") %>
-      POSTGRES_DB: <%= ENV.fetch("POSTGRES_DB", "myapp_development") %>
-      DB_HOST: <%= ENV.fetch("DB_HOST", "db") %>  # Render を使う場合は 'db' を適切なホスト名に変更
-      DATABASE_URL: ${DATABASE_URL} # .env の値を参照
+      RAILS_ENV: ${RAILS_ENV:-development}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_HOST}:${DB_PORT}/${POSTGRES_DB}
+    env_file:
+      - .env
     ports:
       - "3000:3000"
-    user: "1000:1000"
     depends_on:
       db:
         condition: service_healthy
+    command: bash -c "bundle install && rails db:prepare && rails server -b 0.0.0.0"
 
 volumes:
   postgresql_data:
