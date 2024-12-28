@@ -27,11 +27,20 @@ Rails.application.configure do
   # Compress CSS using a preprocessor.
   # config.assets.css_compressor = :sass
 
-  # Do not fall back to assets pipeline if a precompiled asset is missed.
-  config.assets.compile = false
-  config.assets.digest = true
+  # アセットのコンパイル設定を変更
+  config.assets.compile = true  # false から true に変更
+  config.assets.digest = true   # これは正しい
+  config.assets.css_compressor = nil  # CSS圧縮を無効化（追加）
+  
+  # アセットのパスとプリコンパイル設定
   config.assets.paths << Rails.root.join("app", "assets", "builds")
-  config.assets.precompile += %w[application.css]
+  config.assets.precompile += %w[
+    application.css
+    tailwindcss/base
+    tailwindcss/components
+    tailwindcss/utilities
+    @toast-ui/calendar/dist/toastui-calendar.min.css
+  ]
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   config.asset_host = "https://pakuraku-app.onrender.com"
