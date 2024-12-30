@@ -1,6 +1,7 @@
 services:
+  # データベースサービス
   db:
-    image: postgres
+    image: postgres:14
     restart: always
     environment:
       TZ: Asia/Tokyo
@@ -11,28 +12,38 @@ services:
       - ${DB_PORT:-5432}:5432
     volumes:
       - postgresql_data:/var/lib/postgresql/data
+    # データベースの健全性チェック
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
 
+  # Webアプリケーションサービス
   web:
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     environment:
-      SECRET_KEY_BASE: c2b46b282d6cc59b09085a38e7b399af3193b7c6efec878ec7f831dc0b6380685188a3372c4822351a8f631f1e4b1758b576448d8b64fbf7e9d5e731216d63d7
+      # 基本設定
       RAILS_ENV: ${RAILS_ENV:-development}
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_HOST}:${DB_PORT}/${POSTGRES_DB}
-    env_file:
-      - .env
+      TZ: Asia/Tokyo
+      # Active Storage設定
+      ACTIVE_STORAGE_SERVICE: ${ACTIVE_STORAGE_SERVICE:-local}
+      # ログ設定
+      LOG_LEVEL: ${LOG_LEVEL:-debug}
     ports:
       - "3000:3000"
+    volumes:
+      - .:/myapp
+      - bundle_data:/usr/local/bundle
     depends_on:
       db:
         condition: service_healthy
-    command: bash -c "bundle install && rails db:prepare && rails server -b 0.0.0.0"
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
 
+# データの永続化のための設定
 volumes:
   postgresql_data:
+  bundle_data:
