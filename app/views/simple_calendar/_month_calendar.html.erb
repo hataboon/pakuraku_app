@@ -34,16 +34,15 @@
         <% week.each do |day| %>
         <% if day.month == start_date.month %>
         <td class="p-4 border border-gray-300 align-top bg-white hover:bg-gray-50">
-          <div class="text-center font-bold text-lg mb-2 <%= day == Date.today ? 'text-blue-500' : '' %>">
+          <div class="<%= "text-center font-bold text-lg mb-2 #{day == Date.today ? 'text-blue-500' : ''}" %>">
             <%= day.day %>
           </div>
 
           <% plans_for_day = @calendar_plans&.select { |plan| plan.date == day } || [] %>
           <% { "朝" => "morning", "昼" => "afternoon", "夜" => "evening" }.each do |label, meal_time| %>
           <% plan = plans_for_day.find { |p| p.meal_time == meal_time } %>
-
           <div class="mb-2 p-2 bg-gray-50 rounded border border-gray-200">
-            <label class="flex items-center" for="<%= "selected_dates_#{day.strftime('%Y-%m-%d')}_#{meal_time}" %>">
+            <label class="flex items-center">
               <%= check_box_tag "selected_dates[#{day.strftime('%Y-%m-%d')}][]", meal_time, false, id: "selected_dates_#{day.strftime('%Y-%m-%d')}_#{meal_time}", class: "mr-2" %>
               <span><%= label %></span>
             </label>
@@ -65,20 +64,24 @@
 
             <% if current_user.present? && plan&.user_id == current_user.id %>
             <div class="mt-2 text-right">
-              <%= link_to '🗑', calendar_plan_path(plan.id), method: :delete, data: { confirm: "本当に削除しますか？" }, class: "text-red-500 hover:text-red-700" %>
+              <%= form_with url: calendar_plan_path(plan.id), method: :delete, local: true do |f| %>
+              <%= f.submit "🗑", class: "text-red-500 hover:text-red-700", data: { confirm: "本当に削除しますか？" } %>
+              <% end %>
             </div>
             <% end %>
           </div>
           <% end %>
-
-
+          <!-- meal_time.each 終了 -->
         </td>
         <% else %>
         <td class="p-4 border border-gray-300 bg-gray-100"></td>
         <% end %>
+        <!-- if day.month 終了 -->
         <% end %>
+        <!-- week.each 終了 -->
       </tr>
       <% end %>
+      <!-- date_range.each_slice 終了 -->
     </tbody>
   </table>
 </div>
