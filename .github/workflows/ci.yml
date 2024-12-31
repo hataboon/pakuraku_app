@@ -13,16 +13,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configure bundler
-        run: |
-          bundle config --local deployment false
-          bundle config --local frozen false
-
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: .ruby-version
-          bundler-cache: true
+          bundler-cache: false
+
+      - name: Configure bundler
+        run: |
+          bundle config --local deployment false
+          bundle config --local frozen false
+          bundle install
 
       - name: Scan for common Rails security vulnerabilities using static analysis
         run: bin/brakeman --no-pager
@@ -33,16 +34,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configure bundler
-        run: |
-          bundle config --local deployment false
-          bundle config --local frozen false
-
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: .ruby-version
-          bundler-cache: true
+          bundler-cache: false
+
+      - name: Configure bundler
+        run: |
+          bundle config --local deployment false
+          bundle config --local frozen false
+          bundle install
 
       - name: Lint code for consistent style
         run: bundle exec rubocop -f github
@@ -73,16 +75,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configure bundler
-        run: |
-          bundle config --local deployment false
-          bundle config --local frozen false
-
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: .ruby-version
-          bundler-cache: true
+          bundler-cache: false
+
+      - name: Configure bundler
+        run: |
+          bundle config --local deployment false
+          bundle config --local frozen false
+          bundle install
 
       - name: Run tests
         env:
