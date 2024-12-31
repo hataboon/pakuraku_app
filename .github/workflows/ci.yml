@@ -13,6 +13,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Configure bundler
+        run: |
+          bundle config --local deployment false
+          bundle config --local frozen false
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -27,6 +32,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Configure bundler
+        run: |
+          bundle config --local deployment false
+          bundle config --local frozen false
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -62,6 +72,11 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Configure bundler
+        run: |
+          bundle config --local deployment false
+          bundle config --local frozen false
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
