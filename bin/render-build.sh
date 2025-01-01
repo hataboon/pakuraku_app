@@ -4,6 +4,11 @@
 # エラーが発生したら即座に停止
 set -o errexit
 
+# bundlerの設定を追加
+echo "Configuring bundler..."
+bundle config set --local deployment false
+bundle config set --local frozen false
+
 # 1. 必要なパッケージのインストール
 echo "Installing dependencies..."
 bundle install
