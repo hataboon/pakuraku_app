@@ -31,7 +31,7 @@ Rails.application.configure do
   config.assets.compile = true  # false から true に変更
   config.assets.digest = true   # これは正しい
   config.assets.css_compressor = nil  # CSS圧縮を無効化（追加）
-  
+
   # アセットのパスとプリコンパイル設定
   config.assets.paths << Rails.root.join("app", "assets", "builds")
   config.assets.precompile += %w[

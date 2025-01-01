@@ -26,13 +26,14 @@ services:
       dockerfile: Dockerfile
     environment:
       # 基本設定
-      RAILS_ENV: ${RAILS_ENV:-development}
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_HOST}:${DB_PORT}/${POSTGRES_DB}
+      RAILS_ENV: production
+      DATABASE_URL: postgresql://hatabo:9XK5wxuGWQ0thm55MOweHRJdfFRZUsgE@dpg-cs18np23esus739c38k0-a/pakuraku_db
       TZ: Asia/Tokyo
       # Active Storage設定
       ACTIVE_STORAGE_SERVICE: ${ACTIVE_STORAGE_SERVICE:-local}
       # ログ設定
       LOG_LEVEL: ${LOG_LEVEL:-debug}
+      SECRET_KEY_BASE: c2b46b282d6cc59b09085a38e7b399af3193b7c6efec878ec7f831dc0b6380685188a3372c4822351a8f631f1e4b1758b576448d8b64fbf7e9d5e731216d63d7
     ports:
       - "3000:3000"
     volumes:
