@@ -82,5 +82,5 @@ Rails.application.configure do
   config.force_ssl = false
 
   # 開発環境でのホスト制限を解除
-  config.ssl_options = { redirect: { exclude: -> request { true } } }
+  config.ssl_options = { redirect: { exclude: ->(request) { true } } }
 end
