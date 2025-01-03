@@ -26,8 +26,8 @@ services:
       dockerfile: Dockerfile
     environment:
       # 基本設定
-      RAILS_ENV: production
-      DATABASE_URL: postgresql://hatabo:9XK5wxuGWQ0thm55MOweHRJdfFRZUsgE@dpg-cs18np23esus739c38k0-a/pakuraku_db
+      RAILS_ENV: development    # ここを変更
+      DATABASE_URL: postgresql://postgres:password@db:5432/myapp_development
       TZ: Asia/Tokyo
       # Active Storage設定
       ACTIVE_STORAGE_SERVICE: ${ACTIVE_STORAGE_SERVICE:-local}
@@ -44,7 +44,6 @@ services:
         condition: service_healthy
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
 
-# データの永続化のための設定
 volumes:
   postgresql_data:
   bundle_data:
