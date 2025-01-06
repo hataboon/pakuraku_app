@@ -1,5 +1,46 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
-@import 'toast-ui/toastui-calendar.min.css';
-@import '@toast-ui/calendar/dist/toastui-calendar.min.css';
+/* app/assets/stylesheets/application.tailwind.css */
+
+/* Tailwindの基本スタイル */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* カスタムコンポーネント層 */
+@layer components {
+  .form-section {
+    @apply bg-white shadow-md rounded-lg p-6 mb-6;
+  }
+
+  .button-primary {
+    @apply bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition duration-200;
+  }
+
+  .button-secondary {
+    @apply bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded hover:bg-gray-400 transition duration-200;
+  }
+
+  .flash {
+    @apply p-4 rounded-md mb-4 text-white;
+  }
+
+  .flash-success {
+    @apply bg-green-500;
+  }
+
+  .flash-error {
+    @apply bg-red-500;
+  }
+}
+
+/* 通常のCSSスタイル */
+.table-fixed {
+  table-layout: fixed;
+}
+
+.break-words {
+  word-wrap: break-word;
+}
+
+.whitespace-normal {
+  white-space: normal;
+}

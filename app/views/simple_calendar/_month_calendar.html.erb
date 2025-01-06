@@ -1,21 +1,28 @@
-<div class="simple-calendar">
+<!-- views/simple_calendar/_month_calendar.html.erb -->
+<div class="simple-calendar bg-white shadow rounded-lg p-6">
   <div class="calendar-heading flex justify-between items-center mb-4">
-    <span class="calendar-title text-xl font-bold">
+    <span class="calendar-title text-2xl font-bold text-gray-800">
       <%= "#{start_date.year}年 #{t('date.month_names')[start_date.month]}" %>
     </span>
 
     <nav class="flex space-x-4">
-      <%= link_to '前月', calendar.url_for_previous_view, class: 'text-blue-500 hover:underline' %>
-      <%= link_to '今月', calendar.url_for_today_view, class: 'text-blue-500 hover:underline' %>
-      <%= link_to '次月', calendar.url_for_next_view, class: 'text-blue-500 hover:underline' %>
+      <%= link_to calendar.url_for_previous_view, class: 'p-2 bg-gray-100 rounded hover:bg-gray-200' do %>
+      <span>前月</span>
+      <% end %>
+      <%= link_to calendar.url_for_today_view, class: 'p-2 bg-gray-100 rounded hover:bg-gray-200' do %>
+      <span>今月</span>
+      <% end %>
+      <%= link_to calendar.url_for_next_view, class: 'p-2 bg-gray-100 rounded hover:bg-gray-200' do %>
+      <span>次月</span>
+      <% end %>
     </nav>
   </div>
 
-  <table class="table-auto w-full border-collapse">
+  <table class="table-fixed w-full border-collapse">
     <thead>
       <tr>
         <% date_range.slice(0, 7).each do |day| %>
-        <th class="border border-gray-300 p-2 bg-gray-100 text-center">
+        <th class="p-2 bg-gray-200 text-center font-semibold text-gray-700">
           <%= t('date.abbr_day_names')[day.wday] %>
         </th>
         <% end %>
@@ -25,24 +32,73 @@
       <% date_range.each_slice(7) do |week| %>
       <tr>
         <% week.each do |day| %>
-        <td class="p-4 border border-gray-200 align-top <%= day == Date.today ? 'bg-blue-100' : '' %>">
-          <div class="text-center font-bold text-lg mb-2"><%= day.day %></div>
+        <% if day.month == start_date.month %>
+        <td class="p-4 border border-gray-300 align-top bg-white hover:bg-gray-50">
+          <div class="<%= "text-center font-bold text-lg mb-2 #{day == Date.today ? 'text-blue-500' : ''}" %>">
+            <%= day.day %>
+          </div>
 
           <% plans_for_day = @calendar_plans&.select { |plan| plan.date == day } || [] %>
-
-          <%# チェックボックスと時間帯ラベル、献立名を縦に並べる %>
           <% { "朝" => "morning", "昼" => "afternoon", "夜" => "evening" }.each do |label, meal_time| %>
           <% plan = plans_for_day.find { |p| p.meal_time == meal_time } %>
-          <div class="mb-1 flex items-center">
-            <%= check_box_tag "selected_dates[#{day.strftime('%Y-%m-%d')}][]", meal_time %>
-            <span class="ml-1 font-bold"><%= label %></span>
-            <span class="ml-2"><%= plan&.recipe&.name || "" %></span>
+          <div class="mb-2 p-2 bg-gray-50 rounded border border-gray-200">
+            <label class="flex items-center">
+              <%= check_box_tag "selected_dates[#{day.strftime('%Y-%m-%d')}][]", meal_time, false, id: "selected_dates_#{day.strftime('%Y-%m-%d')}_#{meal_time}", class: "mr-2" %>
+              <span><%= label %></span>
+            </label>
+
+            <% if plan&.recipe&.name.present? %>
+            <% names = plan.recipe.name.split(",") %>
+            <div class="mt-2 text-sm">
+              <% if names[0].present? %>
+              <p><span class="text-blue-500 font-bold">主食:</span> <%= names[0].strip %></p>
+              <% end %>
+              <% if names[1].present? %>
+              <p><span class="text-green-500 font-bold">主菜:</span> <%= names[1].strip %></p>
+              <% end %>
+              <% if names[2].present? %>
+              <p><span class="text-yellow-500 font-bold">副菜:</span> <%= names[2].strip %></p>
+              <% end %>
+            </div>
+            <% end %>
+
+            <% if current_user.present? && plan&.user_id == current_user.id %>
+            <div class="mt-2 text-right">
+              <%= form_with url: calendar_plan_path(plan.id), method: :delete, local: true do |f| %>
+              <%= f.submit "🗑", class: "text-red-500 hover:text-red-700", data: { confirm: "本当に削除しますか？" } %>
+              <% end %>
+            </div>
+            <% end %>
           </div>
           <% end %>
+          <!-- meal_time.each 終了 -->
         </td>
+        <% else %>
+        <td class="p-4 border border-gray-300 bg-gray-100"></td>
         <% end %>
+        <!-- if day.month 終了 -->
+        <% end %>
+        <!-- week.each 終了 -->
       </tr>
       <% end %>
+      <!-- date_range.each_slice 終了 -->
     </tbody>
   </table>
 </div>
+
+<style>
+  /* スマートフォン用レイアウト調整 */
+  @media (max-width: 768px) {
+    .simple-calendar table {
+      font-size: 0.9rem;
+    }
+
+    .simple-calendar td {
+      padding: 2px;
+    }
+
+    .simple-calendar .calendar-title {
+      font-size: 1.5rem;
+    }
+  }
+</style>

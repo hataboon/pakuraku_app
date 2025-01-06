@@ -1,35 +1,49 @@
 services:
+  # データベースサービス
   db:
-    image: postgres
+    image: postgres:14
     restart: always
     environment:
       TZ: Asia/Tokyo
-      POSTGRES_PASSWORD: password
-    volumes:
-      - postgresql_data:/var/lib/postgresql
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - 5432:5432
+      - ${DB_PORT:-5432}:5432
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data
+    # データベースの健全性チェック
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d myapp_development -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
+
+  # Webアプリケーションサービス
   web:
     build:
       context: .
-      dockerfile: Dockerfile.dev
-    command: bash -c "bundle install && bundle exec rails db:prepare && rm -f tmp/pids/server.pid && ./bin/dev"
-    tty: true
-    stdin_open: true
-    volumes:
-      - .:/myapp
+      dockerfile: Dockerfile
     environment:
+      # 基本設定
+      RAILS_ENV: development    # ここを変更
+      DATABASE_URL: postgresql://postgres:password@db:5432/myapp_development
       TZ: Asia/Tokyo
+      # Active Storage設定
+      ACTIVE_STORAGE_SERVICE: ${ACTIVE_STORAGE_SERVICE:-local}
+      # ログ設定
+      LOG_LEVEL: ${LOG_LEVEL:-debug}
+      SECRET_KEY_BASE: c2b46b282d6cc59b09085a38e7b399af3193b7c6efec878ec7f831dc0b6380685188a3372c4822351a8f631f1e4b1758b576448d8b64fbf7e9d5e731216d63d7
     ports:
       - "3000:3000"
-    user: "1000:1000"
+    volumes:
+      - .:/myapp
+      - bundle_data:/usr/local/bundle
     depends_on:
       db:
         condition: service_healthy
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+
 volumes:
   postgresql_data:
+  bundle_data:
