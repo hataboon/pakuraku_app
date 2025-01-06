@@ -1,36 +1,36 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title><%= content_for(:title) || "パクラク（献立提案アプリ）" %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache">
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
 
-    <%= yield :head %>
+<head>
+  <title><%= content_for(:title) || "パクラク（献立提案アプリ）" %></title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="turbo-cache-control" content="no-cache">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
 
-    <link rel="manifest" href="/manifest.json">
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
-    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbo-track': 'reload' %>
+  <%= yield :head %>
 
-    <!-- CSSを読み込む（必要に応じて追加） -->
-    <link rel="stylesheet" href="/toastui-calendar.min.css" />
-  </head>
-  <body>
-    <div class="flash-messages">
-      <% flash.each do |key, message| %>
-        <div class="flash <%= key %>">
-          <%= message %>
-        </div>
-      <% end %>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icon.png" type="image/png">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icon.png">
+  <%# 正しい方法でTailwindCSSを読み込む %>
+  <%= stylesheet_link_tag "application.tailwind", "data-turbo-track": "reload" %>
+  <script src="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.js"></script>
+  <link rel="stylesheet" href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css" />
+</head>
+
+<body>
+  <div class="flash-messages">
+    <% flash.each do |key, message| %>
+    <div class="flash <%= key == 'notice' ? 'flash-success' : 'flash-error' %>">
+      <%= message %>
     </div>
-    <%= render 'shared/header' %>
-    <%= yield %>
-    <div id="calendar"></div>
-    <!-- toastui-calendar.js を読み込む -->
-    <script src="/toastui-calendar.js"></script>
-    <%= yield :additional_js %>
-  </body>
+    <% end %>
+  </div>
+  <%= render 'shared/header' %>
+  <%= yield %>
+  <%= yield :additional_js %>
+</body>
+
 </html>

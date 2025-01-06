@@ -1,224 +1,216 @@
-# app/controllers/recipes_controller.rb
-require "openai"
-require "httpclient"
-
 class RecipesController < ApplicationController
+  include NutritionsHelper
+  before_action :authenticate_user!, only: [ :new, :create ]
+
   def new
-    @recipe = Recipe.new
+    @calendar_plans = CalendarPlan.where(user: current_user).includes(:recipe)
+    @nutrients = %w[ミネラル たんぱく質 炭水化物 ビタミン 脂質]
   end
 
   def create
-    # レシピデータを取得・作成
-    if params[:ingredients].present?
-      query = params[:ingredients].join(", ")
-      selected_dates = params[:selected_dates].present? ? JSON.parse(params[:selected_dates]) : {}
-      days_needed = selected_dates.keys.flat_map do |date|
-        selected_dates[date].keys.select { |time| selected_dates[date][time] }
-      end.uniq.length
+    selected_dates = params[:selected_dates] || {}
+    selected_nutrients = params[:nutrients] || []
+    normalized_selected_nutrients = selected_nutrients.map { |n| n.tr("ァ-ン", "ぁ-ん").downcase }
+    plans = []
 
-      # レシピを保存
-      @recipe = Recipe.new(name: query)  # 必要に応じて他のデータも追加
-      if @recipe.save
-        @meal_plans = fetch_rakuten_recipes(query, days_needed)
-
-        # 取得した献立ごとに処理
-        @meal_plans.each do |meal_plan|
-          # 各献立に関連する食材を保存
-          meal_plan[:ingredients].each do |ingredients_name|
-            food = @recipe.foods.create(
-              name: ingredients_name,  # 食材リスト
-              unit: "個",  # 単位だけが必要な場合、適切なデフォルト値を設定
-              image_url: meal_plan[:image]  # レシピの画像URL
-              )
-            # 各食材に関連する栄養情報を保存
-            nutrition_info = analyze_nutrition_with_openai([ingredients_name])
-            if nutrition_info.present?
-              nutrition_info.each do |ingredient, nutrients|
-                food.nutritions.create(
-                  mineral: nutrients["ミネラル"],
-                  protein: nutrients["タンパク質"],
-                  fat: nutrients["脂質"],
-                  carbohydrates: nutrients["炭水化物"],
-                  vitamins: nutrients["ビタミン"]
-                )
-              end
-            end
-          end
-        end
-        redirect_to recipe_path(@recipe)
-      else
-        flash.now[:alert] = "レシピの保存に失敗しました。"
-        render :new
+    selected_dates.each do |date, meal_times|
+      meal_times.each do |meal_time|
+        CalendarPlan.where(user: current_user, date: date, meal_time: meal_time).destroy_all
       end
+    end
+
+    selected_dates.each do |date, meal_times|
+      meal_times.each do |meal_time|
+        generated_meal_plan = generate_meal_plan_with_randomness(normalized_selected_nutrients, meal_time)
+        meal_plan = generated_meal_plan || create_default_meal_plan
+        calendar_plan = save_meal_plan(meal_plan, date, meal_time)
+        plans << calendar_plan if calendar_plan
+      end
+    end
+
+    if plans.present?
+      redirect_to recipe_path(id: plans.first.date), notice: "献立を作成しました。"
     else
-      flash.now[:alert] = "食材を入力してください。"
-      render :new
+      redirect_to new_recipe_path, alert: "献立の作成に失敗しました。"
     end
   end
 
   def show
-    @recipe = Recipe.find(params[:id])
-    @total_nutrition = {
-    protein: 0,
-    fat: 0,
-    carbohydrates: 0,
-    vitamins: [],
-    minerals: []
-    }
+    @calendar_plans = CalendarPlan.where(user: current_user, date: params[:id])
 
-    @recipe.foods.each do |food|
-      food.nutritions.each do |nutrition|
-        @total_nutrition[:protein] += nutrition.protein
-        @total_nutrition[:fat] += nutrition.fat
-        @total_nutrition[:carbohydrates] += nutrition.carbohydrates
-        @total_nutrition[:vitamins] << nutrition.vitamins
-        @total_nutrition[:minerals] << nutrition.mineral
-      end
+    if @calendar_plans.blank?
+      flash[:alert] = "該当する献立が見つかりませんでした。"
+      redirect_to new_recipe_path and return
     end
 
-    @meal_plans = @recipe.foods.map do |food|
-      {
-        id: @recipe.id,
-        title: @recipe.name,
-        image: food.image_url,
-        ingredients: @recipe.foods.pluck(:name),
-        nutrients: food.nutritions.map { |nutrition| nutrition.attributes.except("id", "created_at", "updated_at", "food_id") }
-      }
+    @parsed_meal_plans = @calendar_plans.map do |plan|
+      begin
+        JSON.parse(plan.meal_plan, symbolize_names: true)
+      rescue JSON::ParserError => e
+        Rails.logger.error("JSON Parse Error: #{e.message}")
+        nil
+      end
+    end.compact
+
+    Rails.logger.debug("Parsed Meal Plans: #{@parsed_meal_plans.inspect}")
+
+    if @parsed_meal_plans.blank?
+      flash[:alert] = "献立データが正しく読み込めませんでした。"
+      redirect_to new_recipe_path
     end
   end
 
   private
 
-  # 楽天レシピAPIからレシピ情報を取得するメソッド
-  def fetch_rakuten_recipes(query, days_needed)
-    client = HTTPClient.new
-    application_id = ENV["RAKUTEN_APP_ID"]
+  DEFAULT_NUTRIENTS = {
+    protein: "0g",
+    fat: "0g",
+    carbohydrates: "0g",
+    vitamins: "データなし",
+    mineral: "データなし"
+  }.freeze
 
-    # 楽天カテゴリ一覧APIを使ってカテゴリを取得
-    category_response = client.get("https://app.rakuten.co.jp/services/api/Recipe/CategoryList/20170426", {
-      query: {
-        "applicationId" => application_id,
-        "format" => "json"
-      }
-    })
+  NORMALIZED_INGREDIENTS = {
+    "ご" => "ご飯",
+    "ほうれん" => "ほうれん草",
+    "だし" => "だし汁",
+    "みそ" => "味噌",
+    "ごま" => "ごま油",
+    "わかめ" => "乾燥わかめ"
+  }.freeze
 
-    category_data = JSON.parse(category_response.body)
-    Rails.logger.info("楽天レシピカテゴリAPIのレスポンス: #{category_data.inspect}")
-
-    # キーワードを含むカテゴリを検索（部分一致を許可）
-    matching_category = category_data["result"]["large"].find { |category| category["categoryName"].include?(query) }
-    matching_category ||= category_data["result"]["medium"].find { |category| category["categoryName"].include?(query) }
-    matching_category ||= category_data["result"]["small"].find { |category| category["categoryName"].include?(query) }
-
-    # 該当するカテゴリが見つからない場合はnilを返す
-    unless matching_category
-      Rails.logger.info("キーワードに該当するカテゴリが見つかりませんでした")
-      flash[:alert] = "該当するカテゴリが見つかりませんでした。異なるキーワードをお試しください。"
-      return []
-    end
-
-    # 親カテゴリIDと結合してカテゴリIDを作成
-    category_id = if matching_category["parentCategoryId"]
-                    "#{matching_category["parentCategoryId"]}-#{matching_category["categoryId"]}"
-                  else
-                    matching_category["categoryId"]
-                  end
-
-    # 該当カテゴリIDでレシピを取得
-    recipe_response = client.get("https://app.rakuten.co.jp/services/api/Recipe/CategoryRanking/20170426", {
-      query: {
-        "applicationId" => application_id,
-        "categoryId" => category_id,
-        "format" => "json"
-      }
-    })
-
-    recipe_data = JSON.parse(recipe_response.body)
-
-    # レシピが存在するかを確認
-    if recipe_data["result"].present?
-      Rails.logger.info("楽天APIからのレシピデータ: #{recipe_data["result"].inspect}")
-      recipes = recipe_data["result"].map do |recipe|
-        {
-          title: recipe["recipeTitle"],
-          url: recipe["recipeUrl"],
-          image: recipe["foodImageUrl"],
-          ingredients: recipe["recipeMaterial"]
-        }
-      end
-
-      shuffled_recipes = recipes.shuffle
-    Rails.logger.info("シャッフルされたレシピデータ: #{shuffled_recipes.inspect}")
-    return shuffled_recipes.first(days_needed)
-  else
-    flash[:alert] = "該当するカテゴリにレシピが見つかりませんでした。"
-    return []
-  end
+  def complete_nutrients(nutrients)
+    DEFAULT_NUTRIENTS.merge(nutrients || {})
   end
 
-  # OpenAIを使用して食材の栄養情報を取得するメソッド
-  def analyze_nutrition_with_openai(ingredients)
-    client = OpenAI::Client.new(access_token: ENV["OPENAI_API_KEY"])
-  
-    # プロンプトの修正部分を保持
+  def normalize_ingredients(ingredients)
+    (ingredients || []).map { |ingredient| NORMALIZED_INGREDIENTS[ingredient] || ingredient.strip }.reject(&:empty?).uniq
+  end
+
+  def fetch_meal_plan_from_api(selected_nutrients, meal_time)
     prompt = <<~PROMPT
-      以下の食材について、それぞれの五大栄養素（炭水化物、脂質、タンパク質、ビタミン、ミネラル）をできる限り数値またはパーセンテージで示してください。ビタミンやミネラルは種類ごとにmgまたはµgの単位で示してください。
-      食材名: <食材名>
-    - 炭水化物: <数値><単位>
-    - 脂質: <数値><単位>
-    - タンパク質: <数値><単位>
-    - ビタミン: ビタミンC <数値><単位>, ビタミンA <数値><単位>（ビタミンがない場合は「なし」と記載）
-    - ミネラル: カリウム <数値><単位>, カルシウム <数値><単位>（ミネラルがない場合は「なし」と記載）
-      食材リスト: #{ingredients.join(', ')}
+    以下の条件を満たす日本の家庭料理の献立を提案してください:
+    - 主食、主菜、副菜を必ず含む
+    - 主菜が主食と役割を重複させないこと（例: カレーライスが主食の場合、主菜に唐揚げを含めない）
+    - 献立全体のバランスを考慮し、次のようなルールを守ること:
+    - 料理は毎回異なるものにすること。
+    - 以下は参考例です。必ずしもこれに限定する必要はありません:
+      * 主食の参考例: ご飯、パン、うどん、焼きそば、おにぎり、そば、そうめん、ピラフ、リゾット、タコライス
+      * 主菜の参考例: 鯖の味噌煮、肉じゃが、豚の生姜焼き、照り焼きチキン、豆腐ステーキ、チキン南蛮、エビフライ、鮭のムニエル、麻婆豆腐
+      * 副菜の参考例: ひじきの煮物、きゅうりの浅漬け、もやしのナムル、ほうれん草のおひたし、マカロニサラダ、切り干し大根、野菜の煮物、ポテトサラダ
+    - 参考例以外の料理も自由に提案してください。
+    - 使用する食材例: #{[ "しょうが", "にんにく", "みそ", "ごま油", "青ねぎ", "たまご", "鶏肉", "豆腐" ].sample(3).join("、")}
+    - #{meal_time}用の献立として適切な内容にする
+    - 各栄養素の表記は具体的な数値（例: 10g）で表記すること。
+    - 使用した食材リストには調味料を除き、主な材料のみを含めてください。
+    - 不適切な料理名や曖昧な表現を避け、具体的な料理名を使用してください。
+    - 以下のフォーマットで、整ったJSONデータとして出力してください:
+
+    {
+      "main": "[主食の名前]",
+      "side": "[主菜の名前]",
+      "salad": "[副菜の名前]",
+      "nutrients": {
+        "protein": "[タンパク質の量]",
+        "fat": "[脂質の量]",
+        "carbohydrates": "[炭水化物の量]",
+        "vitamins": "[ビタミンの詳細]",
+        "minerals": "[ミネラルの詳細]"
+      },
+      "ingredients": ["[食材1]", "[食材2]", "..."]
+    }
     PROMPT
-  
-    response = client.chat(
-      parameters: {
-        model: "gpt-3.5-turbo",
-        messages: [ { role: "user", content: prompt } ]
-      }
-    )
-    Rails.logger.info("OpenAI APIのレスポンス: #{response.inspect}")
-  
-    # OpenAIからの応答をテキストとして取得
-    nutrition_text = response["choices"].first["message"]["content"].strip
-    Rails.logger.info("OpenAIからの栄養素データ: #{nutrition_text}")
-  
-    # 解析した栄養情報の初期化
-    nutrition_info = {}
-    current_ingredient = nil
-  
-    begin
-      # 1行ずつOpenAIのレスポンスを解析する
-      nutrition_text.lines.each do |line|
-        Rails.logger.info("解析中の行: #{line.strip}")
-        line.strip!
-  
-        # 食材名を検出するための正規表現を使用して条件を明確化
-        if line.match?(/^食材名: /)
-          current_ingredient = line.split(/：|:/, 2).last.strip  # 食材名を取得
-          nutrition_info[current_ingredient] = {}
-          Rails.logger.info("新しい食材を追加: #{current_ingredient}")
-        elsif current_ingredient && line.start_with?("- ")
-          # 栄養情報の行をパースし、栄養素の内容がある場合に追加する
-          key, value = line.sub("- ", "").split(/：|:/, 2)
-          if key && value
-            nutrition_info[current_ingredient][key.strip] = value.strip
-            Rails.logger.info("栄養情報を追加 - 食材: #{current_ingredient}, 栄養素: #{key.strip}, 値: #{value.strip}")
-          else
-            Rails.logger.warn("パースできなかった行: #{line.strip}")
-          end
-        end
-      end
-    rescue StandardError => e
-      Rails.logger.error("栄養情報の解析に失敗しました: #{e.message}")
-      Rails.logger.error("解析に失敗したテキスト: #{nutrition_text}")
-      Rails.logger.error("解析途中のデータ: #{nutrition_info.inspect}")
-      nutrition_info = {} # エラー発生時は空の構造にする
+
+
+    Rails.logger.debug("送信するプロンプト: #{prompt}")
+
+      client = OpenAI::Client.new(access_token: ENV["OPENAI_API_KEY"])
+      response = client.chat(
+        parameters: {
+          model: "gpt-3.5-turbo",
+          messages: [ { role: "user", content: prompt } ],
+          temperature: 1.0,
+          max_tokens: 600
+        }
+      )
+
+      Rails.logger.debug("APIレスポンス全文: #{response.inspect}")
+      JSON.parse(response["choices"].first["message"]["content"], symbolize_names: true)
+    rescue JSON::ParserError => e
+      Rails.logger.error("JSON Parse Error: #{e.message}")
+      nil
+    rescue => e
+      Rails.logger.error("OpenAI APIリクエストエラー: #{e.message}")
+      nil
     end
-  
-    # デバッグ用ログで解析結果を出力
-    Rails.logger.info("解析後の栄養情報: #{nutrition_info.inspect}")
-    nutrition_info
+
+    def generate_meal_plan_with_randomness(selected_nutrients, meal_time)
+      attempts = 0
+      max_attempts = 5
+
+      loop do
+        Rails.logger.debug("選択された栄養素: #{selected_nutrients}, 時間帯: #{meal_time}, 試行回数: #{attempts + 1}")
+        meal_plan = fetch_meal_plan_from_api(selected_nutrients, meal_time)
+        Rails.logger.debug("取得された献立: #{meal_plan.inspect}")
+
+        # バリデーション: 献立が被らない場合のみ採用
+        if meal_plan && !meal_plan_already_exists?(meal_plan)
+          Rails.logger.debug("新しい献立が生成されました。")
+          return meal_plan
+        end
+
+        attempts += 1
+        break if attempts >= max_attempts
+      end
+
+      Rails.logger.error("新しい献立の生成に失敗しました。デフォルト献立を利用します。")
+      create_default_meal_plan
+    end
+
+  def meal_plan_already_exists?(meal_plan)
+    CalendarPlan.where(user: current_user).each do |plan|
+      begin
+        existing_plan = JSON.parse(plan.meal_plan, symbolize_names: true)
+        return true if existing_plan[:main] == meal_plan[:main] &&
+                       existing_plan[:side] == meal_plan[:side] &&
+                       existing_plan[:salad] == meal_plan[:salad]
+      rescue JSON::ParserError => e
+        Rails.logger.error("JSON パースエラー: #{e.message}")
+        next
+      end
+    end
+    false
+  end
+
+  def create_default_meal_plan
+    {
+      main: "白ご飯",
+      side: "焼き魚",
+      salad: "おひたし",
+      nutrients: {
+        protein: "20g",
+        fat: "5g",
+        carbohydrates: "50g",
+        vitamin: "ビタミンA, ビタミンC",
+        mineral: "カルシウム, 鉄分"
+      },
+      ingredients: [ "米", "魚", "ほうれん草", "醤油" ],
+      raw_response: nil
+    }
+  end
+
+  def save_meal_plan(meal_plan, date, meal_time)
+    recipe = Recipe.create!(
+      name: "#{meal_plan[:main]}, #{meal_plan[:side]}, #{meal_plan[:salad]}",
+      description: meal_plan.to_json
+    )
+
+    CalendarPlan.create!(
+      user: current_user,
+      recipe: recipe,
+      date: Date.parse(date),
+      meal_time: meal_time,
+      meal_plan: meal_plan.to_json
+    )
   end
 end

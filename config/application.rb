@@ -12,8 +12,8 @@ module Myapp
     config.i18n.default_locale = :ja
 
     # assetsパスにJavaScriptフォルダを追加
-    config.assets.paths << Rails.root.join("app", "assets", "javascripts")
-
+    config.assets.paths << Rails.root.join("app/assets/builds")
+    config.assets.paths << Rails.root.join("app/assets/javascripts")
     # タイムゾーン設定（例：日本時間）
     config.time_zone = "Tokyo"
 
@@ -21,5 +21,6 @@ module Myapp
     config.autoload_paths << Rails.root.join("lib")
 
     # その他の設定は必要に応じて追加
+    config.active_support.to_time_preserves_timezone = :zone
   end
 end

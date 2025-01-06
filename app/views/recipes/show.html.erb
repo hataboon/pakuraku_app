@@ -1,89 +1,78 @@
 <!-- app/views/recipes/show.html.erb -->
+<div class="container mx-auto my-12 px-4">
+  <!-- ページタイトル -->
+  <h1 class="text-3xl font-bold text-center mb-6">選択された献立</h1>
 
-<h1 class="text-3xl font-bold text-center mb-6">生成された献立</h1>
-<% if @meal_plans.present? %>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-  <% @meal_plans.each do |meal_plan| %>
-  <div class="bg-white rounded-lg shadow-md p-6">
-    <%= image_tag(meal_plan[:image], alt: meal_plan[:title], class: "w-full h-48 object-cover rounded-md mb-4") if meal_plan[:image].present? %>
+  <!-- ボタンエリア -->
+  <div class="flex justify-center space-x-4 mb-8">
+    <!-- 戻るボタン -->
+    <a href="<%= new_recipe_path %>" class="bg-gray-300 text-gray-800 py-2 px-4 rounded-lg shadow hover:bg-gray-400">
+      戻る
+    </a>
 
-    <!-- レシピタイトル -->
-    <h2 class="text-2xl font-semibold mb-4"><%= meal_plan[:title] %></h2>
+    <!-- もう一度献立作成ボタン -->
+    <%= button_to "もう一度献立作成", recipes_path, method: :post, params: {
+      selected_dates: { params[:id] => @calendar_plans.pluck(:meal_time) }, # 現在表示中の時間帯のみ使用
+      nutrients: [], # 必要なら現在の選択状態を渡す
+    }, class: "bg-blue-500 text-white py-2 px-4 rounded-lg shadow hover:bg-blue-600" %>
 
-    <!-- 食材 -->
-    <h3 class="text-xl font-semibold mb-2">食材</h3>
-    <ul class="list-disc list-inside mb-6 text-gray-700">
-      <% if meal_plan[:ingredients].present? %>
-      <% meal_plan[:ingredients].each do |ingredient| %>
-      <li><%= ingredient %></li>
-      <% end %>
-      <% else %>
-      <li>材料が取得できませんでした。</li>
-      <% end %>
-    </ul>
+    <!-- 投稿ボタン -->
+    <button class="bg-green-500 text-white py-2 px-4 rounded-lg shadow hover:bg-green-600">
+      Xへ投稿
+    </button>
+  </div>
 
-    <!-- 栄養情報 -->
-    <div class="bg-white rounded-lg shadow-md p-6 mb-6 max-w-4xl mx-auto">
-      <h2 class="text-2xl font-semibold mb-4">献立全体の栄養情報</h2>
-      <ul class="list-disc list-inside mb-6 text-gray-700">
-        <li>タンパク質: <%= @total_nutrition[:protein] %>g</li>
-        <li>脂質: <%= @total_nutrition[:fat] %>g</li>
-        <li>炭水化物: <%= @total_nutrition[:carbohydrates] %>g</li>
-        <li>ビタミン: <%= @total_nutrition[:vitamins].join(", ") %></li>
-        <li>ミネラル: <%= @total_nutrition[:minerals].join(", ") %></li>
+  <% if @calendar_plans.present? %>
+  <% time_mapping = { "morning" => "朝", "afternoon" => "昼", "evening" => "夜" } %>
+
+  <% @calendar_plans.each do |calendar_plan| %>
+  <% meal_plan = JSON.parse(calendar_plan.meal_plan, symbolize_names: true) rescue nil %>
+  <% next unless meal_plan %>
+
+  <div class="mb-12 border border-gray-300 p-4 rounded-lg bg-white shadow-md">
+    <!-- 日付と時間帯の表示 -->
+    <h2 class="text-2xl font-bold mb-4">
+      日付: <%= calendar_plan.date.strftime('%Y年%m月%d日') %> / 時間帯: <%= time_mapping[calendar_plan.meal_time.downcase] || "不明" %>
+    </h2>
+
+    <!-- 献立内容 -->
+    <div class="mb-6">
+      <h3 class="text-xl font-bold mb-2">献立の内容</h3>
+      <ul class="list-disc list-inside">
+        <li>主食: <%= meal_plan[:main] || "データなし" %></li>
+        <li>主菜: <%= meal_plan[:side] || "データなし" %></li>
+        <li>副菜: <%= meal_plan[:salad] || "データなし" %></li>
       </ul>
     </div>
-    <h3 class="text-xl font-semibold mb-2">栄養情報</h3>
-    <% if meal_plan[:nutrients].present? %>
-    <button onclick="document.getElementById('nutrients-<%= meal_plan[:title].parameterize %>').classList.toggle('hidden')" class="text-blue-500 underline">もっと見る</button>
-    <ul id="nutrients-<%= meal_plan[:title].parameterize %>" class="list-disc list-inside mb-6 text-gray-700 hidden">
-      <% meal_plan[:nutrients].each do |nutrient| %>
-      <li>
-        <ul class="list-disc list-inside ml-4">
-          <% nutrient.each do |key, value| %>
-          <% next if key == "ingredient" %>
-          <li>
-            <% case key %>
-            <% when "mineral" %>
-            ミネラル: <%= value %>
-            <% when "protein" %>
-            タンパク質: <%= value %>g
-            <% when "fat" %>
-            脂質: <%= value %>g
-            <% when "carbohydrates" %>
-            炭水化物: <%= value %>g
-            <% when "vitamins" %>
-            ビタミン: <%= value %>
-            <% else %>
-            <%= key %>: <%= value %>
-            <% end %>
-          </li>
-          <% end %>
-        </ul>
-      </li>
-      <% end %>
-    </ul>
-    <% else %>
-    <p>栄養情報が取得できませんでした。</p>
-    <% end %>
 
-    <div class="flex justify-center mt-4">
-      <%= link_to 'この献立を再作成', recipe_path(meal_plan[:id]), method: :post, class: 'btn btn-primary' %>
+    <!-- 栄養素情報 -->
+    <div class="mb-6 bg-blue-50 p-4 rounded-lg">
+      <h3 class="text-xl font-bold text-blue-700 mb-2">栄養素情報</h3>
+      <ul class="list-disc list-inside">
+        <li>タンパク質: <%= meal_plan.dig(:nutrients, :protein) || "データなし" %></li>
+        <li>脂質: <%= meal_plan.dig(:nutrients, :fat) || "データなし" %></li>
+        <li>炭水化物: <%= meal_plan.dig(:nutrients, :carbohydrates) || "データなし" %></li>
+        <li>ビタミン: <%= meal_plan.dig(:nutrients, :vitamins) || "データなし" %></li>
+        <li>ミネラル: <%= meal_plan.dig(:nutrients, :minerals) || "データなし" %></li>
+      </ul>
     </div>
-    <% if meal_plan[:url].present? %>
-    <p>
-      <%= link_to '楽天レシピの詳細を見る', meal_plan[:url], target: "_blank", rel: "noopener" %>
-    </p>
-    <% end %>
+
+    <!-- 使用した食材 -->
+    <div>
+      <h3 class="text-xl font-bold mb-2">使用した食材</h3>
+      <% if meal_plan[:ingredients].present? %>
+      <ul class="list-disc list-inside">
+        <% meal_plan[:ingredients].each do |ingredient| %>
+        <li><%= ingredient %></li>
+        <% end %>
+      </ul>
+      <% else %>
+      <p class="text-gray-500">食材情報がありません。</p>
+      <% end %>
+    </div>
   </div>
   <% end %>
+  <% else %>
+  <p class="text-gray-500 text-center">献立データがありません。</p>
+  <% end %>
 </div>
-
-<div class="flex justify-between mt-10 max-w-4xl mx-auto">
-  <%= link_to '作成', new_recipe_path, class: 'btn btn-primary' %>
-  <%= link_to 'Xへ投稿', '#', class: 'btn btn-primary' %>
-  <%= link_to '閉じる', recipes_path, class: 'btn btn-primary' %>
-</div>
-<% else %>
-<p>献立が取得できませんでした。</p>
-<% end %>

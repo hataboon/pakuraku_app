@@ -1,6 +1,7 @@
 // Entry point for the build script in your package.json
 import "@hotwired/turbo-rails";
+import Rails from "@rails/ujs";
 import "./controllers";
-import { Turbo } from "@hotwired/turbo-rails";
 import "./packs/calendar";
-Turbo.session.drive = false;  // Turboを無効化
+
+Rails.start();
