@@ -1,6 +1,10 @@
 {
   "name": "app",
   "private": true,
+  "engines": {
+    "node": ">=20.18.1",
+    "yarn": ">=1.22.0"
+  },
   "devDependencies": {
     "daisyui": "^4.12.12",
     "esbuild": "^0.24.0"
