@@ -1,11 +1,8 @@
-# PostgreSQLの設定
-# このファイルは開発環境と本番環境でのデータベース接続を管理します
 default: &default
   adapter: postgresql
   encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
-# 開発環境の設定
 development:
   <<: *default
   database: myapp_development
@@ -13,12 +10,7 @@ development:
   password: password
   host: db
   port: 5432
-  cable:
-    database: myapp_development
-  queue:
-    database: myapp_development
 
-# テスト環境の設定
 test:
   <<: *default
   database: myapp_test
@@ -26,20 +18,7 @@ test:
   password: password
   host: db
   port: 5432
-  cable:
-    database: myapp_test
-  queue:
-    database: myapp_test
 
-# 本番環境の設定
 production:
-  primary: &primary
-    <<: *default
-    url: <%= ENV['DATABASE_URL'] %>
-    pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 10 } %>
-  
-  cable:
-    <<: *primary
-
-  queue:
-    <<: *primary
+  <<: *default
+  url: <%= ENV['DATABASE_URL'] %>
