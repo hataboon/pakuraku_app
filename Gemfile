@@ -19,10 +19,10 @@ gem "cssbundling-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
-gem 'devise'
-gem 'devise-i18n'
+gem "devise"
+gem "devise-i18n"
 
-gem 'simple_calendar'
+gem "simple_calendar"
 gem "importmap-rails"
 gem "dotenv-rails"
 gem "ruby-openai"
