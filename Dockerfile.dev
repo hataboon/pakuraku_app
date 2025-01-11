@@ -1,4 +1,4 @@
-FROM ruby:3.2.5
+FROM ruby:3.3.6
 ARG UID=1000
 ENV LANG C.UTF-8
 ENV TZ Asia/Tokyo
