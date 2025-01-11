@@ -17,13 +17,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: .ruby-version
-          bundler-cache: false
-
-      - name: Configure bundler
-        run: |
-          bundle config --local deployment false
-          bundle config --local frozen false
-          bundle install
+          bundler-cache: true
 
       - name: Scan for common Rails security vulnerabilities using static analysis
         run: bin/brakeman --no-pager
@@ -38,16 +32,10 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: .ruby-version
-          bundler-cache: false
-
-      - name: Configure bundler
-        run: |
-          bundle config --local deployment false
-          bundle config --local frozen false
-          bundle install
+          bundler-cache: true
 
       - name: Lint code for consistent style
-        run: bundle exec rubocop -f github
+        run: bin/rubocop -f github
 
   test:
     runs-on: ubuntu-latest
@@ -70,7 +58,7 @@ jobs:
 
     steps:
       - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y google-chrome-stable curl libjemalloc2 libvips postgresql-client
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y build-essential git libpq-dev node-gyp pkg-config python-is-python3 google-chrome-stable
 
       - name: Checkout code
         uses: actions/checkout@v4
@@ -79,13 +67,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: .ruby-version
-          bundler-cache: false
-
-      - name: Configure bundler
-        run: |
-          bundle config --local deployment false
-          bundle config --local frozen false
-          bundle install
+          bundler-cache: true
 
       - name: Run tests
         env:
