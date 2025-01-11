@@ -3,11 +3,9 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  # データベースの同時接続数を設定
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
 # 開発環境の設定
-# ローカルでの開発時に使用されます
 development:
   <<: *default
   database: myapp_development
@@ -15,9 +13,10 @@ development:
   password: password
   host: db
   port: 5432
+  cable:
+    database: myapp_development
 
 # テスト環境の設定
-# テストを実行する時に使用されます
 test:
   <<: *default
   database: myapp_test
@@ -25,10 +24,15 @@ test:
   password: password
   host: db
   port: 5432
+  cable:
+    database: myapp_test
 
 # 本番環境の設定
-# Renderにデプロイされた時に使用されます
 production:
-  <<: *default
-  url: <%= ENV['DATABASE_URL'] %>
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 10 } %>
+  primary: &primary
+    <<: *default
+    url: <%= ENV['DATABASE_URL'] %>
+    pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 10 } %>
+
+  cable:
+    <<: *primary
