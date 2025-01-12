@@ -1,38 +1,34 @@
 // app/javascript/application.js
-
-// 基本的なインポート
-import "@hotwired/turbo-rails"
+import { Turbo } from "@hotwired/turbo-rails"
 import { Application } from "@hotwired/stimulus"
+import "./controllers"
+import "./packs/calendar"
+
+// Turboの初期化
+window.Turbo = Turbo
 
 // Stimulusの初期化
 const application = Application.start()
 
-// 必要なコントローラーのインポート
-import "./controllers"
-import "./packs/calendar"
-
-// DOMContentLoadedとTurbo関連のイベントリスナー
+// CSRFトークンの設定
 document.addEventListener("turbo:load", () => {
-  console.log("Turbo load completed");
-});
+  const token = document.querySelector('meta[name="csrf-token"]')?.content
+  if (token) {
+    window.csrfToken = token
+  }
+})
 
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("DOM読み込み完了");
+// DELETEリクエストの処理
+document.addEventListener("turbo:before-fetch-request", (event) => {
+  if (event.detail.fetchOptions.method.toLowerCase() === 'delete') {
+    // CSRFトークンを追加
+    event.detail.fetchOptions.headers = {
+      ...event.detail.fetchOptions.headers,
+      'X-CSRF-Token': window.csrfToken
+    }
+  }
+})
 
-  // データ属性を使用したリンクの処理
-  document.querySelectorAll('a[data-turbo-method]').forEach(link => {
-    console.log("Turboリンク発見:", link);
-    link.removeEventListener("click", handleClick);
-    link.addEventListener("click", handleClick);
-  });
-});
-
-function handleClick(e) {
-  console.log("リンクがクリックされました", e.target);
-  // 必要に応じてイベントの処理を追加
-}
-
-// Turboのデバッグモード（開発時のみ）
-if (process.env.NODE_ENV === 'development') {
-  console.log("Development mode: Turbo debugging enabled");
-}
+// 従来のイベントリスナーは削除
+// document.addEventListener("DOMContentLoaded", () => { ... });
+// function handleClick(e) { ... }
