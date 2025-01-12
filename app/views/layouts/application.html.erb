@@ -8,27 +8,50 @@
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
 
+  <%# yield :headを上部に移動して、必要なmetaタグを先に読み込めるようにする %>
   <%= yield :head %>
 
-  <link rel="manifest" href="/manifest.json">
+  <%# アイコン関連をグループ化 %>
   <link rel="icon" href="/icon.png" type="image/png">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/icon.png">
-  <%= stylesheet_link_tag "application.tailwind", "data-turbo-track": "reload", rel: "preload", as: "style", onload: "this.onload=null;this.rel='stylesheet'" %>
-  <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+  <link rel="manifest" href="/manifest.json">
+
+  <%# CSSの読み込みを最適化 %>
+  <%= stylesheet_link_tag "application.tailwind", 
+    "data-turbo-track": "reload",
+    rel: "stylesheet",
+    media: "print",
+    onload: "this.media='all'" %>
+
+  <%# JavaScriptの読み込みを最適化 %>
+  <%= javascript_include_tag "application", 
+      "data-turbo-track": "reload", 
+      defer: true %>
+
+  <%# importmapは必要な場合のみ含める %>
+  <% if content_for?(:import_map) %>
   <%= javascript_importmap_tags %>
+  <% end %>
 </head>
 
 <body>
+  <%# フラッシュメッセージをヘッダーの下に移動することを検討 %>
+  <%= render 'shared/header' %>
+
   <div class="flash-messages">
     <% flash.each do |key, message| %>
-    <div class="flash <%= key == 'notice' ? 'flash-success' : 'flash-error' %>">
+    <div class="flash <%= key == 'notice' ? 'flash-success' : 'flash-error' %> 
+                      <%= key %>" role="alert">
       <%= message %>
     </div>
     <% end %>
   </div>
-  <%= render 'shared/header' %>
-  <%= yield %>
+
+  <main>
+    <%= yield %>
+  </main>
+
   <%= yield :additional_js %>
 </body>
 
