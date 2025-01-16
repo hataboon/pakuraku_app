@@ -29,10 +29,7 @@
       "data-turbo-track": "reload", 
       defer: true %>
 
-  <%# importmapは必要な場合のみ含める %>
-  <% if content_for?(:import_map) %>
   <%= javascript_importmap_tags %>
-  <% end %>
 </head>
 
 <body>

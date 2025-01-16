@@ -64,29 +64,24 @@
 
             <% if current_user.present? && plan&.user_id == current_user.id %>
             <div class="mt-2 text-right">
-              <%= form_with url: calendar_plan_path(plan.id), method: :delete, local: true do |f| %>
-              <%= f.submit "🗑", 
-      class: "text-red-500 hover:text-red-700", 
-      data: { 
-        turbo_confirm: "本当に削除しますか？"  # data-confirmからdata-turbo-confirmに変更
-      } 
-  %>
-              <% end %>
+              <%= link_to "🗑",
+                          calendar_plan_path(plan),
+                          data: {
+                            turbo_method: :delete,
+                            turbo_confirm: "本当に削除しますか？"
+                          },
+                          class: "text-red-500 hover:text-red-700" %>
             </div>
             <% end %>
           </div>
           <% end %>
-          <!-- meal_time.each 終了 -->
         </td>
         <% else %>
         <td class="p-4 border border-gray-300 bg-gray-100"></td>
         <% end %>
-        <!-- if day.month 終了 -->
         <% end %>
-        <!-- week.each 終了 -->
       </tr>
       <% end %>
-      <!-- date_range.each_slice 終了 -->
     </tbody>
   </table>
 </div>

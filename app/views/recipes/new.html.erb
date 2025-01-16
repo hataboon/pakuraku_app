@@ -11,5 +11,10 @@
   <!-- フォーム部分 -->
   <h2 class="text-lg font-bold mb-4">献立作成</h2>
   <%= render 'recipes/form', form: form %>
+
+  <!-- 送信ボタンをここに移動 -->
+  <div class="text-center mt-6">
+    <%= form.submit '献立作成', class: 'btn btn-primary text-lg px-6 py-3 rounded bg-blue-500 text-white hover:bg-blue-700 transition duration-200' %>
+  </div>
 </div>
 <% end %>

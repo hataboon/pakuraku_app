@@ -38,26 +38,26 @@ class RecipesController < ApplicationController
   def show
     @calendar_plans = CalendarPlan.where(user: current_user, date: params[:id])
 
-    if @calendar_plans.blank?
-      flash[:alert] = "該当する献立が見つかりませんでした。"
-      redirect_to new_recipe_path and return
-    end
-
     @parsed_meal_plans = @calendar_plans.map do |plan|
       begin
-        JSON.parse(plan.meal_plan, symbolize_names: true)
+        meal_plan = JSON.parse(plan.meal_plan, symbolize_names: true)
+        nutrients = meal_plan[:nutrients]
+
+        # より柔軟な計算ロジック
+        chart_data = {
+          protein: nutrients[:protein].to_s.scan(/\d+/).first.to_i,
+          carbohydrates: nutrients[:carbohydrates].to_s.scan(/\d+/).first.to_i,
+          fat: nutrients[:fat].to_s.scan(/\d+/).first.to_i,
+          vitamins: calculate_nutrient_score(nutrients[:vitamins]),
+          minerals: calculate_nutrient_score(nutrients[:minerals])
+        }
+
+        meal_plan[:chart_data] = ERB::Util.json_escape(chart_data.to_json)
+        meal_plan
       rescue JSON::ParserError => e
-        Rails.logger.error("JSON Parse Error: #{e.message}")
         nil
       end
     end.compact
-
-    Rails.logger.debug("Parsed Meal Plans: #{@parsed_meal_plans.inspect}")
-
-    if @parsed_meal_plans.blank?
-      flash[:alert] = "献立データが正しく読み込めませんでした。"
-      redirect_to new_recipe_path
-    end
   end
 
   private
@@ -212,5 +212,13 @@ class RecipesController < ApplicationController
       meal_time: meal_time,
       meal_plan: meal_plan.to_json
     )
+  end
+
+  # モデルまたはヘルパーに追加
+  def calculate_nutrient_score(nutrient_str)
+    return 0 if nutrient_str.blank?
+    count = nutrient_str.split(",").size
+    # 3種類を最大として、1種類あたり33点で計算
+    [ count * 33, 100 ].min
   end
 end
