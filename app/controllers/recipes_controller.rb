@@ -52,7 +52,7 @@ class RecipesController < ApplicationController
           minerals: calculate_nutrient_score(nutrients[:minerals])
         }
 
-        meal_plan[:chart_data] = chart_data
+        meal_plan[:chart_data] = ERB::Util.json_escape(chart_data.to_json)
         meal_plan
       rescue JSON::ParserError => e
         nil

@@ -47,7 +47,7 @@
       <h3 class="text-xl font-bold text-blue-700 mb-2">栄養素情報</h3>
       <% if @parsed_meal_plans.present? %>
       <div style="width: 400px; height: 400px;" class="mx-auto">
-        <canvas data-controller="nutrition-chart" data-nutrition-chart-data='<%= JSON.generate(@parsed_meal_plans.first[:chart_data]).html_safe %>'></canvas>
+        <canvas data-controller="nutrition-chart" data-nutrition-chart-data="<%= @parsed_meal_plans.first[:chart_data] %>"></canvas>
       </div>
       <ul class="list-disc list-inside mt-4">
         <li>タンパク質: <%= meal_plan.dig(:nutrients, :protein) || "データなし" %></li>
