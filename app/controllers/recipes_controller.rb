@@ -37,12 +37,12 @@ class RecipesController < ApplicationController
 
   def show
     @calendar_plans = CalendarPlan.where(user: current_user, date: params[:id])
-    
+
     @parsed_meal_plans = @calendar_plans.map do |plan|
       begin
         meal_plan = JSON.parse(plan.meal_plan, symbolize_names: true)
         nutrients = meal_plan[:nutrients]
-        
+
         # より柔軟な計算ロジック
         chart_data = {
           protein: nutrients[:protein].to_s.scan(/\d+/).first.to_i,
@@ -51,7 +51,7 @@ class RecipesController < ApplicationController
           vitamins: calculate_nutrient_score(nutrients[:vitamins]),
           minerals: calculate_nutrient_score(nutrients[:minerals])
         }
-        
+
         meal_plan[:chart_data] = chart_data
         meal_plan
       rescue JSON::ParserError => e
@@ -217,8 +217,8 @@ class RecipesController < ApplicationController
   # モデルまたはヘルパーに追加
   def calculate_nutrient_score(nutrient_str)
     return 0 if nutrient_str.blank?
-    count = nutrient_str.split(',').size
+    count = nutrient_str.split(",").size
     # 3種類を最大として、1種類あたり33点で計算
-    [count * 33, 100].min
+    [ count * 33, 100 ].min
   end
 end
