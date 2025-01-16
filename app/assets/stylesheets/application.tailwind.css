@@ -44,3 +44,11 @@
 .whitespace-normal {
   white-space: normal;
 }
+
+@layer components {
+  .chart-container {
+    position: relative;
+    height: 400px;
+    width: 100%;
+  }
+}

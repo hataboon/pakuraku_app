@@ -5,18 +5,16 @@
 
   <!-- ボタンエリア -->
   <div class="flex justify-center space-x-4 mb-8">
-    <!-- 戻るボタン -->
-    <a href="<%= new_recipe_path %>" class="bg-gray-300 text-gray-800 py-2 px-4 rounded-lg shadow hover:bg-gray-400">
-      戻る
-    </a>
+    <%= link_to "戻る", new_recipe_path, class: "bg-gray-300 text-gray-800 py-2 px-4 rounded-lg shadow hover:bg-gray-400" %>
 
-    <!-- もう一度献立作成ボタン -->
-    <%= button_to "もう一度献立作成", recipes_path, method: :post, params: {
-      selected_dates: { params[:id] => @calendar_plans.pluck(:meal_time) }, # 現在表示中の時間帯のみ使用
-      nutrients: [], # 必要なら現在の選択状態を渡す
-    }, class: "bg-blue-500 text-white py-2 px-4 rounded-lg shadow hover:bg-blue-600" %>
+    <%= button_to "もう一度献立作成", recipes_path, 
+        method: :post, 
+        params: {
+          selected_dates: { params[:id] => @calendar_plans.pluck(:meal_time) },
+          nutrients: []
+        }, 
+        class: "bg-blue-500 text-white py-2 px-4 rounded-lg shadow hover:bg-blue-600" %>
 
-    <!-- 投稿ボタン -->
     <button class="bg-green-500 text-white py-2 px-4 rounded-lg shadow hover:bg-green-600">
       Xへ投稿
     </button>
@@ -26,13 +24,12 @@
   <% time_mapping = { "morning" => "朝", "afternoon" => "昼", "evening" => "夜" } %>
 
   <% @calendar_plans.each do |calendar_plan| %>
-  <% meal_plan = JSON.parse(calendar_plan.meal_plan, symbolize_names: true) rescue nil %>
-  <% next unless meal_plan %>
-
+  <% if meal_plan = JSON.parse(calendar_plan.meal_plan, symbolize_names: true) rescue nil %>
   <div class="mb-12 border border-gray-300 p-4 rounded-lg bg-white shadow-md">
     <!-- 日付と時間帯の表示 -->
     <h2 class="text-2xl font-bold mb-4">
-      日付: <%= calendar_plan.date.strftime('%Y年%m月%d日') %> / 時間帯: <%= time_mapping[calendar_plan.meal_time.downcase] || "不明" %>
+      日付: <%= calendar_plan.date.strftime('%Y年%m月%d日') %> /
+      時間帯: <%= time_mapping[calendar_plan.meal_time.downcase] || "不明" %>
     </h2>
 
     <!-- 献立内容 -->
@@ -48,13 +45,18 @@
     <!-- 栄養素情報 -->
     <div class="mb-6 bg-blue-50 p-4 rounded-lg">
       <h3 class="text-xl font-bold text-blue-700 mb-2">栄養素情報</h3>
-      <ul class="list-disc list-inside">
+      <% if @parsed_meal_plans.present? %>
+      <div style="width: 400px; height: 400px;" class="mx-auto">
+        <canvas data-controller="nutrition-chart" data-nutrition-chart-data='<%= JSON.generate(@parsed_meal_plans.first[:chart_data]).html_safe %>'></canvas>
+      </div>
+      <ul class="list-disc list-inside mt-4">
         <li>タンパク質: <%= meal_plan.dig(:nutrients, :protein) || "データなし" %></li>
         <li>脂質: <%= meal_plan.dig(:nutrients, :fat) || "データなし" %></li>
         <li>炭水化物: <%= meal_plan.dig(:nutrients, :carbohydrates) || "データなし" %></li>
         <li>ビタミン: <%= meal_plan.dig(:nutrients, :vitamins) || "データなし" %></li>
         <li>ミネラル: <%= meal_plan.dig(:nutrients, :minerals) || "データなし" %></li>
       </ul>
+      <% end %>
     </div>
 
     <!-- 使用した食材 -->
@@ -71,6 +73,7 @@
       <% end %>
     </div>
   </div>
+  <% end %>
   <% end %>
   <% else %>
   <p class="text-gray-500 text-center">献立データがありません。</p>
