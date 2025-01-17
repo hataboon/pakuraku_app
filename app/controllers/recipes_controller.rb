@@ -43,21 +43,24 @@ class RecipesController < ApplicationController
         meal_plan = JSON.parse(plan.meal_plan, symbolize_names: true)
         nutrients = meal_plan[:nutrients]
 
-        # より柔軟な計算ロジック
+        # より明示的な数値変換とデータ構造の作成
         chart_data = {
-          protein: nutrients[:protein].to_s.scan(/\d+/).first.to_i,
-          carbohydrates: nutrients[:carbohydrates].to_s.scan(/\d+/).first.to_i,
-          fat: nutrients[:fat].to_s.scan(/\d+/).first.to_i,
+          protein: nutrients[:protein].to_s.scan(/\d+/).first&.to_i || 0,
+          carbohydrates: nutrients[:carbohydrates].to_s.scan(/\d+/).first&.to_i || 0,
+          fat: nutrients[:fat].to_s.scan(/\d+/).first&.to_i || 0,
           vitamins: calculate_nutrient_score(nutrients[:vitamins]),
           minerals: calculate_nutrient_score(nutrients[:minerals])
         }
 
-        meal_plan[:chart_data] = ERB::Util.json_escape(chart_data.to_json)
-        meal_plan
+        meal_plan.merge(chart_data: chart_data)
       rescue JSON::ParserError => e
+        Rails.logger.error "JSON parse error: #{e.message}"
         nil
       end
     end.compact
+
+    # デバッグ用のログ出力
+    Rails.logger.debug "Parsed meal plans: #{@parsed_meal_plans.inspect}"
   end
 
   private

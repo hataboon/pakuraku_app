@@ -8,5 +8,5 @@ Rails.application.routes.draw do
   resources :foods, only: [ :index, :new, :create, :edit, :update, :destroy ]
   resources :recipes, only: [ :index, :new, :create, :show, :edit, :update ]
   resources :calendar_plans, only: [ :destroy ]
-  resource :nutritions, only: [ :show ]
+  resource :nutrition, only: [ :show ]
 end
