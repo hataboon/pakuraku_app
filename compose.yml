@@ -18,7 +18,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    command: bash -c "bundle install && bundle exec rails db:prepare && ./bin/dev"
+    command: /bin/bash -c "bundle install && bundle exec rails db:prepare && rm -f /myapp/tmp/pids/server.pid && ./bin/dev"  # 修正
     tty: true
     stdin_open: true
     volumes:

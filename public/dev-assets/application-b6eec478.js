@@ -21151,77 +21151,46 @@ var auto_default = Chart;
 
 // app/javascript/controllers/nutrition_chart_controller.js
 var nutrition_chart_controller_default = class extends Controller {
-  static targets = ["canvas"];
   connect() {
-    if (this.hasChartInstance) return;
-    this.initializeChart();
-  }
-  initializeChart() {
-    if (!this.element) return;
-    try {
-      const data = JSON.parse(this.element.dataset.nutritionChartData);
-      const ctx = this.element.getContext("2d");
-      this.element.style.width = "400px";
-      this.element.style.height = "400px";
-      this.element.width = 400;
-      this.element.height = 400;
-      const config = {
-        type: "radar",
-        data: {
-          labels: ["\u30BF\u30F3\u30D1\u30AF\u8CEA", "\u70AD\u6C34\u5316\u7269", "\u8102\u8CEA", "\u30D3\u30BF\u30DF\u30F3", "\u30DF\u30CD\u30E9\u30EB"],
-          datasets: [{
-            label: "\u6804\u990A\u30D0\u30E9\u30F3\u30B9",
-            data: [
-              data.protein,
-              data.carbohydrates,
-              data.fat,
-              data.vitamins,
-              data.minerals
-            ],
-            backgroundColor: "rgba(54, 162, 235, 0.2)",
-            borderColor: "rgb(54, 162, 235)",
-            pointBackgroundColor: "rgb(54, 162, 235)"
-          }]
-        },
-        options: {
-          responsive: false,
-          maintainAspectRatio: false,
-          scales: {
-            r: {
-              beginAtZero: true,
-              max: 100,
-              ticks: {
-                stepSize: 20,
-                font: {
-                  size: 12
-                }
-              }
-            }
-          },
-          plugins: {
-            legend: {
-              display: true,
-              position: "top",
-              labels: {
-                font: {
-                  size: 12
-                }
-              }
+    const ctx = this.element.getContext("2d");
+    const data = JSON.parse(this.element.dataset.nutritionChartData);
+    this.chart = new auto_default(ctx, {
+      type: "radar",
+      data: {
+        labels: ["\u30BF\u30F3\u30D1\u30AF\u8CEA", "\u70AD\u6C34\u5316\u7269", "\u8102\u8CEA", "\u30D3\u30BF\u30DF\u30F3", "\u30DF\u30CD\u30E9\u30EB"],
+        datasets: [{
+          label: "\u6804\u990A\u30D0\u30E9\u30F3\u30B9",
+          data: [
+            data.protein,
+            data.carbohydrates,
+            data.fat,
+            data.vitamins,
+            data.minerals
+          ],
+          backgroundColor: "rgba(54, 162, 235, 0.2)",
+          borderColor: "rgb(54, 162, 235)",
+          pointBackgroundColor: "rgb(54, 162, 235)"
+        }]
+      },
+      options: {
+        responsive: false,
+        maintainAspectRatio: false,
+        scales: {
+          r: {
+            beginAtZero: true,
+            max: 100,
+            // ここを100に固定
+            ticks: {
+              stepSize: 20
             }
           }
         }
-      };
-      this.chart = new auto_default(ctx, config);
-      this.hasChartInstance = true;
-    } catch (error2) {
-      console.error("\u30B0\u30E9\u30D5\u306E\u521D\u671F\u5316\u30A8\u30E9\u30FC:", error2);
-    }
+      }
+    });
   }
   disconnect() {
     if (this.chart) {
       this.chart.destroy();
-      this.chart = null;
-      this.hasChartInstance = false;
     }
   }
 };

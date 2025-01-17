@@ -6,19 +6,10 @@ export default class extends Controller {
   connect() {
     const ctx = this.element.getContext('2d')
     const rawData = this.element.dataset.nutritionChartData
-    
+    console.log('Chart data:', rawData)  // デバッグ用
+
     try {
       const data = JSON.parse(rawData)
-      
-      // データを100以下に正規化する処理を追加
-      const normalizedData = {
-        protein: Math.min(data.protein, 100),
-        carbohydrates: Math.min(data.carbohydrates, 100),
-        fat: Math.min(data.fat, 100),
-        vitamins: Math.min(data.vitamins, 100),
-        minerals: Math.min(data.minerals, 100)
-      }
-
       this.chart = new Chart(ctx, {
         type: 'radar',
         data: {
@@ -26,11 +17,11 @@ export default class extends Controller {
           datasets: [{
             label: '栄養バランス',
             data: [
-              normalizedData.protein,
-              normalizedData.carbohydrates,
-              normalizedData.fat,
-              normalizedData.vitamins,
-              normalizedData.minerals
+              data.protein,
+              data.carbohydrates,
+              data.fat,
+              data.vitamins,
+              data.minerals
             ],
             backgroundColor: 'rgba(54, 162, 235, 0.2)',
             borderColor: 'rgb(54, 162, 235)',
@@ -43,7 +34,7 @@ export default class extends Controller {
           scales: {
             r: {
               beginAtZero: true,
-              max: 100,  // 最大値を100に固定
+              max: 100,
               ticks: { stepSize: 20 }
             }
           }

@@ -2,22 +2,27 @@
 <div class="container mx-auto px-4 py-8">
   <h1 class="text-2xl font-bold mb-6">栄養バランス</h1>
 
-  <!-- 期間選択ボタン -->
-  <div class="flex gap-4 mb-6">
-    <button class="<%= @period == 'daily' ? 'bg-blue-500' : 'bg-gray-300' %> px-4 py-2 rounded text-white" data-action="click->nutrition-chart#updatePeriod" data-period="daily">
-      日単位
-    </button>
-    <button class="<%= @period == 'weekly' ? 'bg-blue-500' : 'bg-gray-300' %> px-4 py-2 rounded text-white" data-action="click->nutrition-chart#updatePeriod" data-period="weekly">
-      週単位
-    </button>
-    <button class="<%= @period == 'monthly' ? 'bg-blue-500' : 'bg-gray-300' %> px-4 py-2 rounded text-white" data-action="click->nutrition-chart#updatePeriod" data-period="monthly">
-      月単位
-    </button>
-  </div>
+  <!-- 日付選択部分 -->
+  <div class="mb-6 bg-white rounded-lg shadow-lg p-6">
+    <%= form_with url: nutrition_path, method: :get, local: true, class: "flex flex-wrap items-center gap-4" do |f| %>
+    <div class="flex items-center gap-2">
+      <%= f.label :start_date, "開始日:", class: "text-gray-700" %>
+      <%= f.date_field :start_date, value: @start_date, class: "rounded border-gray-300" %>
+    </div>
 
-  <div class="bg-white rounded-lg shadow-lg p-6">
-    <div class="w-[400px] h-[400px] mx-auto">
-      <canvas data-controller="nutrition-chart"></canvas>
+    <div class="flex items-center gap-2">
+      <%= f.label :end_date, "終了日:", class: "text-gray-700" %>
+      <%= f.date_field :end_date, value: @end_date, class: "rounded border-gray-300" %>
+    </div>
+
+    <%= f.submit "表示", class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" %>
+    <% end %>
+
+    <!-- グラフ部分 -->
+    <div class="mb-6 bg-blue-50 p-4 rounded-lg">
+      <div style="width: 400px; height: 400px;" class="mx-auto">
+        <canvas data-controller="nutrition-chart" data-nutrition-chart-data='<%= @nutrition_data.to_json %>' width="400" height="400">
+        </canvas>
+      </div>
     </div>
   </div>
-</div>
