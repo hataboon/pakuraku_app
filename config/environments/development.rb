@@ -39,7 +39,7 @@ Rails.application.configure do
   config.assets.js_compressor = nil
 
   # アセットのプリコンパイルを無効化（開発環境では必要ない）
-  config.assets.prefix = "/dev-assets"
+  # config.assets.prefix = "/dev-assets"
 
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false

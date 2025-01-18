@@ -18,11 +18,10 @@
   <link rel="manifest" href="/manifest.json">
 
   <%# CSSの読み込みを最適化 %>
+  <link rel="preload" href="<%= asset_path('application.tailwind.css') %>" as="style">
   <%= stylesheet_link_tag "application.tailwind", 
-    "data-turbo-track": "reload",
-    rel: "stylesheet",
-    media: "print",
-    onload: "this.media='all'" %>
+  "data-turbo-track": "reload",
+  rel: "stylesheet" %>
 
   <%# JavaScriptの読み込みを最適化 %>
   <%= javascript_include_tag "application", 
