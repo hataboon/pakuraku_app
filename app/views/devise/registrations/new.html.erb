@@ -16,6 +16,16 @@
         </div>
       </div>
 
+      <div class="relative mt-3">
+        <%= f.text_field :nickname, placeholder: "ニックネーム（表示名）", class: "appearance-none border pl-12 border-gray-100 shadow-sm focus:shadow-md transition rounded-md w-full py-3 text-gray-600 leading-tight focus:outline-none focus:ring-gray-600 focus:shadow-outline" %>
+        <div class="absolute left-0 inset-y-0 flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 ml-3 text-gray-400 p-1" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+          </svg>
+        </div>
+      </div>
+
+
       <!-- メールアドレス -->
       <div class="relative mt-3">
         <%= f.email_field :email, placeholder: "メールアドレス", id: "user_email", class: "appearance-none border pl-12 border-gray-100 shadow-sm focus:shadow-md transition rounded-md w-full py-3 text-gray-600 leading-tight focus:outline-none focus:ring-gray-600 focus:shadow-outline" %>
@@ -43,6 +53,16 @@
         <div class="absolute left-0 inset-y-0 flex items-center">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 ml-3 text-gray-400 p-1" viewBox="0 0 20 20" fill="currentColor">
             <path d="M10 2a5 5 0 00-5 5v2a2 2 0 00-2 2v5a2 2 0 002 2h10a2 2 0 002-2v-5a2 2 0 00-2-2H7V7a3 3 0 015.905-.75 1 1 0 001.937-.5A5.002 5.002 0 0010 2z" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="relative mt-3">
+        <%= f.label :avatar, "プロフィール画像", class: "block text-sm text-gray-600 mb-2" %>
+        <%= f.file_field :avatar, class: "appearance-none border pl-12 border-gray-100 shadow-sm focus:shadow-md transition rounded-md w-full py-3 text-gray-600 leading-tight focus:outline-none focus:ring-gray-600 focus:shadow-outline" %>
+        <div class="absolute left-0 inset-y-0 flex items-center pt-6">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 ml-3 text-gray-400 p-1" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
           </svg>
         </div>
       </div>
