@@ -38,6 +38,11 @@ class RecipesController < ApplicationController
   def show
     @calendar_plans = CalendarPlan.where(user: current_user, date: params[:id])
 
+    if @calendar_plans.present?
+      @share_text = generate_share_text
+      @share_url = request.base_url + recipe_path(params[:id])
+    end
+
     @parsed_meal_plans = @calendar_plans.map do |plan|
       begin
         meal_plan = JSON.parse(plan.meal_plan, symbolize_names: true)
@@ -64,6 +69,25 @@ class RecipesController < ApplicationController
   end
 
   private
+
+  def generate_share_text
+    plan = JSON.parse(@calendar_plans.first.meal_plan)
+    time_mapping = {
+      "morning" => "朝食",
+      "afternoon" => "昼食",
+      "evening" => "夕食"
+    }
+
+    meal_time = time_mapping[@calendar_plans.first.meal_time.downcase] || "食事"
+
+    text = "【#{meal_time}の献立】\n"
+    text += "主食：#{plan['main']}\n"
+    text += "主菜：#{plan['side']}\n"
+    text += "副菜：#{plan['salad']}\n"
+    text += "\n#パクラク #献立 #料理"
+
+    ERB::Util.url_encode(text)
+  end
 
   DEFAULT_NUTRIENTS = {
     protein: "0g",
