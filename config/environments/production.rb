@@ -25,7 +25,7 @@ Rails.application.configure do
   config.active_storage.service = :local
   config.active_storage.variant_processor = :mini_magick
   config.hosts << "pakuraku-app.onrender.com"
-  config.asset_host = ENV['RENDER_EXTERNAL_URL'] || 'https://pakuraku-app.onrender.com'
+  config.asset_host = ENV["RENDER_EXTERNAL_URL"] || "https://pakuraku-app.onrender.com"
   config.public_file_server.enabled = true
   config.public_file_server.headers = {
     "Cache-Control" => "public, max-age=#{30.days.to_i}",
@@ -33,9 +33,9 @@ Rails.application.configure do
   }
 
   # メール設定のホストを修正
-  config.action_mailer.default_url_options = { 
+  config.action_mailer.default_url_options = {
     host: "pakuraku-app.onrender.com",
-    protocol: 'https'
+    protocol: "https"
   }
 
   # Active Storageのルーティング設定
