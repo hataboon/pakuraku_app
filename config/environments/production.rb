@@ -59,22 +59,26 @@ Rails.application.configure do
   # Set host to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: "example.com" }
 
- # Specify outgoing SMTP server. Remember to add smtp/* credentials via rails credentials:edit.
- # config.action_mailer.smtp_settings = {
- #   user_name: Rails.application.credentials.dig(:smtp, :user_name),
- #   password: Rails.application.credentials.dig(:smtp, :password),
- #   address: "smtp.example.com",
- #   port: 587,
- #   authentication: :plain
- # }
- # ホストの設定を追加
- config.hosts << "pakuraku-app.onrender.com"
+  # Specify outgoing SMTP server. Remember to add smtp/* credentials via rails credentials:edit.
+  # config.action_mailer.smtp_settings = {
+  #   user_name: Rails.application.credentials.dig(:smtp, :user_name),
+  #   password: Rails.application.credentials.dig(:smtp, :password),
+  #   address: "smtp.example.com",
+  #   port: 587,
+  #   authentication: :plain
+  # }
+  # ホストの設定を追加
+  config.hosts << "pakuraku-app.onrender.com"
 
- # アセットのホスト設定を追加
- config.asset_host = "https://pakuraku-app.onrender.com"
+  # アセットのホスト設定を追加
+  config.asset_host = "https://pakuraku-app.onrender.com"
 
- # Content Security Policyの設定を追加
- config.content_security_policy_report_only = true
+  config.public_file_server.enabled = true
+  config.public_file_server.headers = {
+    "Cache-Control" => "public, max-age=#{30.days.to_i}"
+  }
+  # Content Security Policyの設定を追加
+  config.content_security_policy_report_only = true
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
   config.i18n.fallbacks = true
