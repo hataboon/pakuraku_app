@@ -17,11 +17,8 @@
   <link rel="apple-touch-icon" href="/icon.png">
   <link rel="manifest" href="/manifest.json">
 
-  <%# CSSの読み込みを最適化 %>
-  <link rel="preload" href="<%= asset_path('application.tailwind.css') %>" as="style">
-  <%= stylesheet_link_tag "application.tailwind", 
-  "data-turbo-track": "reload",
-  rel: "stylesheet" %>
+  <%# CSSの読み込み %>
+  <%= stylesheet_link_tag "application.tailwind", "data-turbo-track": "reload" %>
 
   <%# JavaScriptの読み込みを最適化 %>
   <%= javascript_include_tag "application", 

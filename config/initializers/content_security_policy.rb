@@ -1,33 +1,23 @@
 # config/initializers/content_security_policy.rb
+Rails.application.config.content_security_policy do |policy|
+  # 基本設定
+  policy.default_src :self, :https
+  policy.font_src    :self, :https, :data
+  policy.img_src     :self, :https, :data
+  policy.script_src  :self, :https, "'unsafe-inline'"
+  policy.style_src   :self, :https, "'unsafe-inline'"
 
-Rails.application.configure do
-  config.content_security_policy do |policy|
-    policy.default_src :self, :https
-    policy.font_src    :self, :https, :data
-    policy.img_src     :self, :https, :data
-    policy.object_src  :none
+  # Twitter連携用
+  policy.connect_src :self, :https, "https://twitter.com"
+  policy.frame_src   :self, :https, "https://twitter.com"
 
-    # インラインスクリプトとスタイルを許可
-    policy.script_src  :self, :https, :unsafe_inline, :unsafe_eval
-    policy.style_src   :self, :https, :unsafe_inline
-
-    # Active Storageのための設定
-    policy.img_src     :self, :https, :data, :blob
-
-    # Xとの連携のための設定
-    policy.connect_src :self, :https, "https://twitter.com"
-    policy.frame_src   :self, :https, "https://twitter.com"
-
-    # Active Storageのための追加設定
-    if Rails.env.production?
-      # Renderのドメインを許可
-      host = "pakuraku-app.onrender.com"
-      policy.connect_src :self, :https, "https://#{host}", "wss://#{host}"
-      policy.img_src     :self, :https, :data, :blob, "https://#{host}"
-    end
+  # Render用（本番環境のみ）
+  if Rails.env.production?
+    host = "pakuraku-app.onrender.com"
+    policy.connect_src :self, :https, "https://#{host}"
+    policy.img_src     :self, :https, :data, "https://#{host}"
   end
-
-  # 既存の設定はそのまま残す
-  config.content_security_policy_nonce_generator = ->(request) { request.session.id.to_s }
-  config.content_security_policy_nonce_directives = %w[script-src style-src]
 end
+
+# 開発環境でのみレポートモードを有効化
+Rails.application.config.content_security_policy_report_only = Rails.env.development?
