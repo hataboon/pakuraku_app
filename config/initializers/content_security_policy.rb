@@ -7,11 +7,11 @@ Rails.application.config.content_security_policy do |policy|
   policy.img_src     :self, :https, :data, :blob
   policy.script_src  :self, :https, "'unsafe-inline'"
   policy.style_src   :self, :https, "'unsafe-inline'"
-  
+
   # Twitter連携用
   policy.connect_src :self, :https, "https://twitter.com"
   policy.frame_src   :self, :https, "https://twitter.com"
-  
+
   # Render用（本番環境のみ）
   if Rails.env.production?
     # hostからhttps://を削除

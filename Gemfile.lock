@@ -132,6 +132,7 @@ GEM
       net-http (>= 0.5.0)
     globalid (1.2.1)
       activesupport (>= 6.1)
+    high_voltage (4.0.0)
     i18n (1.14.6)
       concurrent-ruby (~> 1.0)
     importmap-rails (2.1.0)
@@ -383,6 +384,7 @@ DEPENDENCIES
   devise
   devise-i18n
   dotenv-rails
+  high_voltage
   importmap-rails
   jbuilder
   jsbundling-rails
