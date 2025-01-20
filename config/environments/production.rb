@@ -23,7 +23,23 @@ Rails.application.configure do
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
+  config.active_storage.variant_processor = :mini_magick
+  config.hosts << "pakuraku-app.onrender.com"
+  config.asset_host = ENV['RENDER_EXTERNAL_URL'] || 'https://pakuraku-app.onrender.com'
+  config.public_file_server.enabled = true
+  config.public_file_server.headers = {
+    "Cache-Control" => "public, max-age=#{30.days.to_i}",
+    "X-Content-Type-Options" => "nosniff"
+  }
 
+  # メール設定のホストを修正
+  config.action_mailer.default_url_options = { 
+    host: "pakuraku-app.onrender.com",
+    protocol: 'https'
+  }
+
+  # Active Storageのルーティング設定
+  config.active_storage.resolve_model_to_route = :rails_storage_proxy
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   config.assume_ssl = true
 
@@ -67,18 +83,7 @@ Rails.application.configure do
   #   port: 587,
   #   authentication: :plain
   # }
-  # ホストの設定を追加
-  config.hosts << "pakuraku-app.onrender.com"
 
-  # アセットのホスト設定を追加
-  config.asset_host = "https://pakuraku-app.onrender.com"
-
-  config.public_file_server.enabled = true
-  config.public_file_server.headers = {
-    "Cache-Control" => "public, max-age=#{30.days.to_i}"
-  }
-  # Content Security Policyの設定を追加
-  config.content_security_policy_report_only = true
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
   config.i18n.fallbacks = true
