@@ -61,20 +61,37 @@
 </header>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
+  // グローバルスコープで関数を定義
+  function toggleDropdown(e) {
+    e.stopPropagation();
+    const dropdownAvatar = document.getElementById('dropdownAvatar');
+    dropdownAvatar.classList.toggle('hidden');
+  }
+
+  function handleClickOutside(event) {
+    const userMenuButton = document.getElementById('user-menu-button');
+    const dropdownAvatar = document.getElementById('dropdownAvatar');
+    if (!userMenuButton.contains(event.target) && !dropdownAvatar.contains(event.target)) {
+      dropdownAvatar.classList.add('hidden');
+    }
+  }
+
+  function initializeDropdown() {
     const userMenuButton = document.getElementById('user-menu-button');
     const dropdownAvatar = document.getElementById('dropdownAvatar');
 
-    // Toggle the dropdown menu when the button is clicked
-    userMenuButton.addEventListener('click', function() {
-      dropdownAvatar.classList.toggle('hidden');
-    });
+    if (userMenuButton && dropdownAvatar) {
+      // 既存のイベントリスナーを削除
+      userMenuButton.removeEventListener('click', toggleDropdown);
+      document.removeEventListener('click', handleClickOutside);
 
-    // Close the dropdown if clicked outside
-    document.addEventListener('click', function(event) {
-      if (!userMenuButton.contains(event.target) && !dropdownAvatar.contains(event.target)) {
-        dropdownAvatar.classList.add('hidden');
-      }
-    });
-  });
+      // 新しいイベントリスナーを追加
+      userMenuButton.addEventListener('click', toggleDropdown);
+      document.addEventListener('click', handleClickOutside);
+    }
+  }
+
+  // イベントリスナーの設定
+  document.addEventListener("turbo:load", initializeDropdown);
+  document.addEventListener("turbo:render", initializeDropdown);
 </script>
