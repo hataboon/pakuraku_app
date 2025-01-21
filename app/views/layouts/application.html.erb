@@ -1,15 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 
 <head>
-  <title><%= content_for(:title) || "パクラク（献立提案アプリ）" %></title>
+  <%= yield :head %>
+  <%= show_meta_tags %>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="turbo-cache-control" content="no-cache">
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
-
-  <%# yield :headを上部に移動して、必要なmetaタグを先に読み込めるようにする %>
-  <%= yield :head %>
 
   <%# アイコン関連をグループ化 %>
   <link rel="icon" href="/icon.png" type="image/png">
@@ -17,25 +15,17 @@
   <link rel="apple-touch-icon" href="/icon.png">
   <link rel="manifest" href="/manifest.json">
 
-  <%# CSSの読み込み %>
   <%= stylesheet_link_tag "application.tailwind", "data-turbo-track": "reload" %>
-
-  <%# JavaScriptの読み込みを最適化 %>
-  <%= javascript_include_tag "application", 
-      "data-turbo-track": "reload", 
-      defer: true %>
-
+  <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
   <%= javascript_importmap_tags %>
 </head>
 
 <body>
-  <%# フラッシュメッセージをヘッダーの下に移動することを検討 %>
   <%= render 'shared/header' %>
 
   <div class="flash-messages">
     <% flash.each do |key, message| %>
-    <div class="flash <%= key == 'notice' ? 'flash-success' : 'flash-error' %> 
-                      <%= key %>" role="alert">
+    <div class="flash <%= key == 'notice' ? 'flash-success' : 'flash-error' %> <%= key %>" role="alert">
       <%= message %>
     </div>
     <% end %>
