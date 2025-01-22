@@ -26,6 +26,9 @@ Rails.application.configure do
   config.active_storage.variant_processor = :mini_magick
   config.hosts << "pakuraku-app.onrender.com"
   config.asset_host = ENV["RENDER_EXTERNAL_URL"] || "https://pakuraku-app.onrender.com"
+  config.assets.compile = true  # 動的コンパイルを有効化
+  config.assets.version = "1.0" # アセットバージョンを設定
+  config.assets.initialize_on_precompile = false  # ← この行を追加
   config.public_file_server.enabled = true
   config.public_file_server.headers = {
     "Cache-Control" => "public, max-age=86400"
@@ -36,7 +39,6 @@ Rails.application.configure do
     host: "pakuraku-app.onrender.com",
     protocol: "https"
   }
-
   # Active Storageのルーティング設定
   config.active_storage.resolve_model_to_route = :rails_storage_proxy
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
@@ -72,7 +74,6 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "example.com" }
 
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via rails credentials:edit.
   # config.action_mailer.smtp_settings = {
