@@ -28,8 +28,7 @@ Rails.application.configure do
   config.asset_host = ENV["RENDER_EXTERNAL_URL"] || "https://pakuraku-app.onrender.com"
   config.public_file_server.enabled = true
   config.public_file_server.headers = {
-    "Cache-Control" => "public, max-age=#{30.days.to_i}",
-    "X-Content-Type-Options" => "nosniff"
+    "Cache-Control" => "public, max-age=86400"
   }
 
   # メール設定のホストを修正
