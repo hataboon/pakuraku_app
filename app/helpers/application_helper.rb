@@ -2,18 +2,18 @@
 module ApplicationHelper
   def default_meta_tags
     {
-      site: "Eye-meshI（アイめし）",
-      title: "Eye-meshI（アイめし） - 栄養を可視化するAI献立提案アプリ",
-      description: "栄養バランスを可視化しながら、AIがあなたの毎日の献立を提案",
+      site: 'Eye-meshI（アイめし）',
+      title: 'Eye-meshI（アイめし） - 栄養を可視化するAI献立提案アプリ',
+      description: '栄養バランスを可視化しながら、AIがあなたの毎日の献立を提案',
       canonical: request.original_url,
       og: {
-        site_name: "Eye-meshI（アイめし）",
-        type: "website",
-        image: "#{ENV['RENDER_EXTERNAL_URL'] || 'https://pakuraku-app.onrender.com'}#{asset_path('ogp.png')}"
+        site_name: 'Eye-meshI（アイめし）',
+        type: 'website',
+        image: "#{request.base_url}/ogp.png",
       },
       twitter: {
-        card: "summary_large_image",
-        image: "#{ENV['RENDER_EXTERNAL_URL'] || 'https://pakuraku-app.onrender.com'}#{asset_path('ogp.png')}"
+        card: 'summary_large_image',
+        image: "#{request.base_url}/ogp.png"
       }
     }
   end
@@ -34,11 +34,11 @@ module ApplicationHelper
       og: {
         title: "Eye-meshIで作成した献立",
         description: menu_text,
-        image: "#{ENV['RENDER_EXTERNAL_URL'] || 'https://pakuraku-app.onrender.com'}#{asset_path('ogp.png')}"
+        image: "#{request.base_url}/ogp.png",
       },
       twitter: {
-        card: "summary_large_image",
-        image: "#{ENV['RENDER_EXTERNAL_URL'] || 'https://pakuraku-app.onrender.com'}#{asset_path('ogp.png')}"
+        card: 'summary_large_image',
+        image: "#{request.base_url}/ogp.png"
       }
     }
   end
