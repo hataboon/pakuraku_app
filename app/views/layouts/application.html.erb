@@ -4,6 +4,7 @@
 <head>
   <%= yield :head %>
   <%= show_meta_tags %>
+
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="turbo-cache-control" content="no-cache">
   <%= csrf_meta_tags %>
@@ -11,9 +12,7 @@
 
   <%# アイコン関連をグループ化 %>
   <link rel="icon" href="/icon.png" type="image/png">
-  <link rel="icon" href="/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/icon.png">
-  <link rel="manifest" href="/manifest.json">
 
   <%= stylesheet_link_tag "application.tailwind", "data-turbo-track": "reload" %>
   <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
