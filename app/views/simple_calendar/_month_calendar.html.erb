@@ -50,9 +50,6 @@
             <% if plan&.recipe&.name.present? %>
             <% names = plan.recipe.name.split(",") %>
             <div class="mt-2 text-sm">
-              <% if names[0].present? %>
-              <p><span class="text-blue-500 font-bold">主食:</span> <%= names[0].strip %></p>
-              <% end %>
               <% if names[1].present? %>
               <p><span class="text-green-500 font-bold">主菜:</span> <%= names[1].strip %></p>
               <% end %>
