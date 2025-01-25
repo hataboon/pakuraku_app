@@ -81,7 +81,6 @@ class RecipesController < ApplicationController
     meal_time = time_mapping[@calendar_plans.first.meal_time.downcase] || "食事"
 
     text = "【#{meal_time}の献立】\n"
-    text += "主食：#{plan['main']}\n"
     text += "主菜：#{plan['side']}\n"
     text += "副菜：#{plan['salad']}\n"
     text += "\n#パクラク #献立 #料理"
@@ -117,24 +116,14 @@ class RecipesController < ApplicationController
   def fetch_meal_plan_from_api(selected_nutrients, meal_time)
     prompt = <<~PROMPT
     以下の条件を満たす日本の家庭料理の献立を提案してください:
-    - 主食、主菜、副菜を必ず含む
-    - 主菜が主食と役割を重複させないこと（例: カレーライスが主食の場合、主菜に唐揚げを含めない）
-    - 献立全体のバランスを考慮し、次のようなルールを守ること:
-    - 料理は毎回異なるものにすること。
-    - 以下は参考例です。必ずしもこれに限定する必要はありません:
-      * 主食の参考例: ご飯、パン、うどん、焼きそば、おにぎり、そば、そうめん、ピラフ、リゾット、タコライス
-      * 主菜の参考例: 鯖の味噌煮、肉じゃが、豚の生姜焼き、照り焼きチキン、豆腐ステーキ、チキン南蛮、エビフライ、鮭のムニエル、麻婆豆腐
-      * 副菜の参考例: ひじきの煮物、きゅうりの浅漬け、もやしのナムル、ほうれん草のおひたし、マカロニサラダ、切り干し大根、野菜の煮物、ポテトサラダ
-    - 参考例以外の料理も自由に提案してください。
-    - 使用する食材例: #{[ "しょうが", "にんにく", "みそ", "ごま油", "青ねぎ", "たまご", "鶏肉", "豆腐" ].sample(3).join("、")}
+    - 主菜と副菜のみを提案
+    - 料理は毎回異なるものにすること
+    - 主菜の参考例: 鯖の味噌煮、肉じゃが、豚の生姜焼き、照り焼きチキン、豆腐ステーキ、チキン南蛮、エビフライ、鮭のムニエル、麻婆豆腐
+    - 副菜の参考例: ひじきの煮物、きゅうりの浅漬け、もやしのナムル、ほうれん草のおひたし、マカロニサラダ、切り干し大根、野菜の煮物、ポテトサラダ
     - #{meal_time}用の献立として適切な内容にする
-    - 各栄養素の表記は具体的な数値（例: 10g）で表記すること。
-    - 使用した食材リストには調味料を除き、主な材料のみを含めてください。
-    - 不適切な料理名や曖昧な表現を避け、具体的な料理名を使用してください。
     - 以下のフォーマットで、整ったJSONデータとして出力してください:
 
     {
-      "main": "[主食の名前]",
       "side": "[主菜の名前]",
       "salad": "[副菜の名前]",
       "nutrients": {
@@ -211,24 +200,23 @@ class RecipesController < ApplicationController
 
   def create_default_meal_plan
     {
-      main: "白ご飯",
       side: "焼き魚",
       salad: "おひたし",
       nutrients: {
         protein: "20g",
         fat: "5g",
-        carbohydrates: "50g",
-        vitamin: "ビタミンA, ビタミンC",
-        mineral: "カルシウム, 鉄分"
+        carbohydrates: "0g",
+        vitamins: "ビタミンA, ビタミンC",
+        minerals: "カルシウム, 鉄分"
       },
-      ingredients: [ "米", "魚", "ほうれん草", "醤油" ],
+      ingredients: [ "魚", "ほうれん草", "醤油" ],
       raw_response: nil
     }
   end
 
   def save_meal_plan(meal_plan, date, meal_time)
     recipe = Recipe.create!(
-      name: "#{meal_plan[:main]}, #{meal_plan[:side]}, #{meal_plan[:salad]}",
+      name: "#{meal_plan[:side]}, #{meal_plan[:salad]}",
       description: meal_plan.to_json
     )
 
