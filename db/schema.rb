@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_18_054640) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_26_122518) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -61,6 +61,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_18_054640) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "image_url"
+    t.float "amount"
+    t.string "category"
+    t.boolean "editable", default: true
+    t.json "custom_nutrition"
     t.index ["recipe_id"], name: "index_foods_on_recipe_id"
   end
 
@@ -73,17 +77,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_18_054640) do
     t.float "protein"
     t.float "fat"
     t.float "carbohydrates"
-    t.float "vitamins"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.float "mineral"
-    t.float "protein_value"
-    t.float "fat_value"
-    t.float "carbohydrates_value"
-    t.float "vitamins_value"
-    t.float "mineral_value"
-    t.bigint "food_id"
-    t.index ["food_id"], name: "index_nutritions_on_food_id"
+    t.json "vitamins"
+    t.json "minerals"
+    t.bigint "recipe_id", null: false
+    t.float "energy"
+    t.float "fiber"
+    t.float "vitamin_a"
+    t.float "vitamin_b1"
+    t.float "vitamin_b2"
+    t.float "vitamin_c"
+    t.float "vitamin_d"
+    t.float "vitamin_e"
+    t.float "calcium"
+    t.float "iron"
+    t.float "zinc"
+    t.float "magnesium"
+    t.index ["recipe_id"], name: "index_nutritions_on_recipe_id"
   end
 
   create_table "recipes", force: :cascade do |t|
@@ -103,6 +114,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_18_054640) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "nickname"
+    t.integer "age"
+    t.string "gender"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
@@ -112,5 +125,5 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_18_054640) do
   add_foreign_key "calendar_plans", "recipes"
   add_foreign_key "calendar_plans", "users"
   add_foreign_key "foods", "recipes"
-  add_foreign_key "nutritions", "foods"
+  add_foreign_key "nutritions", "recipes"
 end
