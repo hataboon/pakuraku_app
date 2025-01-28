@@ -7,6 +7,9 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
   validates :name, presence: true, length: { maximum: 50 }
   validates :nickname, length: { maximum: 30 }
+  validates :age, numericality: { only_integer: true, greater_than: 0, less_than: 120 }, allow_nil: true
+  validates :gender, inclusion: { in: [ "male", "female" ] }, allow_nil: true
+
   def avatar_thumbnail
     if avatar.attached?
       avatar
