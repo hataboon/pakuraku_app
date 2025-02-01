@@ -15,6 +15,7 @@ class NutritionCalculationService
         vitamins: required_vitamins,
         minerals: required_minerals
       }
+
     when "female"
       {
         protein: 50,

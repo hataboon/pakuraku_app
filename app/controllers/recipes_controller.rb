@@ -79,46 +79,91 @@ end
     ERB::Util.url_encode(text)
   end
 
-  # 献立データを解析して表示用のデータを作成するメソッド
   def parse_meal_plans(calendar_plans)
+    nutrition_service = NutritionCalculationService.new  # デフォルト値を使用
+
+    # 1食あたりの推奨量を計算（1日の推奨量の1/3）
+    daily_requirements = nutrition_service.calculate_daily_requirements
+    per_meal_requirements = {
+      protein: daily_requirements[:protein] / 3,
+      fat: daily_requirements[:fat] / 3,
+      carbohydrates: daily_requirements[:carbohydrates] / 3
+    }
+
     calendar_plans.map do |plan|
       begin
-        # 献立データをJSONとして解析
         meal_plan = JSON.parse(plan.meal_plan, symbolize_names: true)
         nutrients = meal_plan[:nutrients]
 
-        # 栄養データをグラフ表示用に変換
+        # 数値の抽出（単位"g"を除去）
+        protein = nutrients[:protein].to_s.gsub(/[^\d.]/, "").to_f
+        fat = nutrients[:fat].to_s.gsub(/[^\d.]/, "").to_f
+        carbs = nutrients[:carbohydrates].to_s.gsub(/[^\d.]/, "").to_f
+
+        # ビタミンとミネラルのスコア計算
+        vitamins_score = calculate_vitamins_score(nutrients[:vitamins])
+        minerals_score = calculate_minerals_score(nutrients[:minerals])
+
+        # パーセンテージの計算（1食あたりの推奨量に対する割合）
         chart_data = {
-          protein: nutrients[:protein].to_s.scan(/\d+/).first&.to_i || 0,
-          carbohydrates: nutrients[:carbohydrates].to_s.scan(/\d+/).first&.to_i || 0,
-          fat: nutrients[:fat].to_s.scan(/\d+/).first&.to_i || 0,
-          vitamins: calculate_nutrient_score(nutrients[:vitamins]),
-          minerals: calculate_nutrient_score(nutrients[:minerals])
+          values: {
+            protein: protein,
+            carbohydrates: carbs,
+            fat: fat
+          },
+          percentages: {
+            protein: ((protein / per_meal_requirements[:protein]) * 100).round(1),
+            carbohydrates: ((carbs / per_meal_requirements[:carbohydrates]) * 100).round(1),
+            fat: ((fat / per_meal_requirements[:fat]) * 100).round(1),
+            vitamins: vitamins_score,
+            minerals: minerals_score
+          }
         }
 
-        # 元のデータにグラフ用データを追加
         meal_plan.merge(chart_data: chart_data)
-      rescue JSON::ParserError => e
-        # JSONの解析に失敗した場合はログを残す
-        Rails.logger.error "JSON parse error: #{e.message}"
+      rescue => e
+        Rails.logger.error "データ処理エラー: #{e.message}"
         nil
       end
-    end.compact  # nilを除外して返す
+    end.compact
   end
 
-  # 栄養素のスコアを計算するメソッド
-  def calculate_nutrient_score(nutrient_data)
-    return 0 if nutrient_data.blank?
+  def calculate_vitamins_score(vitamins)
+    return 0 unless vitamins.is_a?(Array)
 
-    case nutrient_data
-    when Array
-      # 配列の場合は要素数からスコアを計算
-      [ nutrient_data.size * 33, 100 ].min
-    when String
-      # カンマ区切りの文字列の場合は分割してカウント
-      [ nutrient_data.split(",").size * 33, 100 ].min
-    else
-      0
+    weights = {
+      "ビタミンA" => 25,
+      "ビタミンD" => 20,
+      "ビタミンB1" => 15,
+      "ビタミンB2" => 15,
+      "ビタミンC" => 25
+    }
+
+    total_score = 0
+    vitamins.each do |vitamin|
+      weight = weights.find { |k, _| vitamin.include?(k) }&.last || 10
+      total_score += weight
     end
+
+    [ total_score, 100 ].min
+  end
+
+  def calculate_minerals_score(minerals)
+    return 0 unless minerals.is_a?(Array)
+
+    weights = {
+      "鉄" => 30,
+      "カルシウム" => 30,
+      "マグネシウム" => 20,
+      "亜鉛" => 20
+    }
+
+    total_score = 0
+    minerals.each do |mineral|
+      weight = weights.find { |k, _| mineral.include?(k) }&.last || 10
+      total_score += weight
+    end
+
+    [ total_score, 100 ].min
   end
 end

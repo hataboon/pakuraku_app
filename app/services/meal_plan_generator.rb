@@ -87,13 +87,10 @@ class MealPlanGenerator
           "vitamins": ["ビタミンA", "ビタミンD"],
           "minerals": ["カルシウム", "鉄分"]
         },
-        "cooking_time": "15以内の数値",
         "ingredients": ["食材1", "食材2", "食材3"],
         "difficulty": "2"
       }
     PROMPT
-
-    # ... 残りのコードは同じ ...
   end
 
   def create_prompt(nutrients, meal_time, recent_meals)
@@ -134,7 +131,6 @@ class MealPlanGenerator
           "vitamins": ["ビタミンA", "ビタミンD"],
           "minerals": ["カルシウム", "鉄分"]
         },
-        "cooking_time": "15以内の数値",
         "ingredients": ["食材1", "食材2", "食材3"],
         "difficulty": "2"
       }
@@ -146,18 +142,26 @@ class MealPlanGenerator
   def valid_meal_plan?(plan)
     return false unless plan.is_a?(Hash)
 
-    # 必須項目のチェック
-    required_fields = [ :main, :side, :nutrients, :cooking_time, :ingredients ]
-    unless required_fields.all? { |field| plan[field].present? }
-      Rails.logger.warn "必須フィールドが不足しています: #{required_fields - plan.keys}"
-      return false
+    required_fields = {
+      main: String,
+      side: String,
+      cuisine_type: String,
+      nutrients: Hash,
+      ingredients: Array,
+      difficulty: String
+    }
+
+    # コメント: 各フィールドの型チェックを追加
+    required_fields.each do |field, type|
+      return false unless plan[field].present? && plan[field].is_a?(type)
     end
 
-    # 調理時間のチェック
-    if plan[:cooking_time].to_i > 15
-      Rails.logger.warn "調理時間が長すぎます: #{plan[:cooking_time]}分"
-      return false
-    end
+    # コメント: 栄養情報の妥当性チェックを強化
+    nutrients = plan[:nutrients]
+    return false unless nutrients.is_a?(Hash) &&
+                       nutrients[:protein].to_s.match?(/\d+g/) &&
+                       nutrients[:fat].to_s.match?(/\d+g/) &&
+                       nutrients[:carbohydrates].to_s.match?(/\d+g/)
 
     true
   end
