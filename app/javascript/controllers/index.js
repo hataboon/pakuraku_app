@@ -1,7 +1,11 @@
 // app/javascript/controllers/index.js
-import { application } from "./application"
-import HelloController from "./hello_controller"
+import { Application } from "@hotwired/stimulus"
 import NutritionChartController from "./nutrition_chart_controller"
 
-application.register("hello", HelloController)
+// アプリケーションのインスタンスを作成
+const application = Application.start()
+
+// コントローラーを登録
 application.register("nutrition-chart", NutritionChartController)
+
+export { application }

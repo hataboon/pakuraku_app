@@ -1,62 +1,60 @@
 // app/javascript/controllers/nutrition_chart_controller.js
 import { Controller } from "@hotwired/stimulus"
-import Chart from "chart.js/auto"
+import { Chart, RadarController, RadialLinearScale, PointElement, LineElement } from 'chart.js'
+
+// 必要なコンポーネントを登録
+Chart.register(RadarController, RadialLinearScale, PointElement, LineElement)
 
 export default class extends Controller {
   connect() {
-    const ctx = this.element.getContext('2d')
-    const rawData = this.element.dataset.nutritionChartData
-    
+    console.log("Controller connected")  // デバッグ用
+
     try {
-      const data = JSON.parse(rawData)
-      
-      // データを100以下に正規化する処理を追加
-      const normalizedData = {
-        protein: Math.min(data.protein, 100),
-        carbohydrates: Math.min(data.carbohydrates, 100),
-        fat: Math.min(data.fat, 100),
-        vitamins: Math.min(data.vitamins, 100),
-        minerals: Math.min(data.minerals, 100)
+      const chartData = JSON.parse(this.element.dataset.nutritionChartData)
+      console.log("Parsed chart data:", chartData)  // デバッグ用
+
+      // データの構造を整形
+      const data = {
+        labels: ['タンパク質', '炭水化物', '脂質', 'ビタミン', 'ミネラル'],
+        datasets: [{
+          label: '栄養バランス',
+          data: [
+            parseFloat(chartData.values.protein) || 0,
+            parseFloat(chartData.values.carbohydrates) || 0,
+            parseFloat(chartData.values.fat) || 0,
+            chartData.percentages.vitamins || 0,
+            chartData.percentages.minerals || 0
+          ],
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+          borderColor: 'rgb(54, 162, 235)',
+          borderWidth: 1
+        }]
       }
 
-      this.chart = new Chart(ctx, {
+      // グラフの初期化
+      new Chart(this.element.getContext('2d'), {
         type: 'radar',
-        data: {
-          labels: ['タンパク質', '炭水化物', '脂質', 'ビタミン', 'ミネラル'],
-          datasets: [{
-            label: '栄養バランス',
-            data: [
-              normalizedData.protein,
-              normalizedData.carbohydrates,
-              normalizedData.fat,
-              normalizedData.vitamins,
-              normalizedData.minerals
-            ],
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            borderColor: 'rgb(54, 162, 235)',
-            pointBackgroundColor: 'rgb(54, 162, 235)'
-          }]
-        },
+        data: data,
         options: {
-          responsive: false,
-          maintainAspectRatio: false,
           scales: {
             r: {
               beginAtZero: true,
-              max: 100,  // 最大値を100に固定
-              ticks: { stepSize: 20 }
+              min: 0,
+              max: 100,
+              ticks: {
+                stepSize: 20
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: true
             }
           }
         }
       })
     } catch (error) {
-      console.error('Chart initialization error:', error)
-    }
-  }
-
-  disconnect() {
-    if (this.chart) {
-      this.chart.destroy()
+      console.error("Error initializing chart:", error)
     }
   }
 }

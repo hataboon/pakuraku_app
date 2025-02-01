@@ -52,43 +52,43 @@
       </ul>
     </div>
 
-    <!-- 栄養素情報 -->
+    <!-- 栄養素情報セクション内 -->
     <div class="mb-6 bg-blue-50 p-4 rounded-lg">
       <h3 class="text-xl font-bold text-blue-700 mb-2">栄養素情報</h3>
-      <% if @parsed_meal_plans.present? %>
-      <div class="mb-6 bg-blue-50 p-4 rounded-lg">
+      <% if @parsed_meal_plans.present? && @parsed_meal_plans.first[:chart_data].present? %>
+      <div class="mb-6">
         <div style="width: 400px; height: 400px;" class="mx-auto">
-          <canvas data-controller="nutrition-chart" data-nutrition-chart-data='<%= @parsed_meal_plans.first[:chart_data].to_json %>' width="400" height="400">
+          <canvas data-controller="nutrition-chart" data-nutrition-chart-data="<%= @parsed_meal_plans.first[:chart_data].to_json %>" width="400" height="400">
           </canvas>
         </div>
-      </div>
-      <ul class="list-disc list-inside mt-4">
-        <li>タンパク質: <%= meal_plan.dig(:nutrients, :protein) || "データなし" %></li>
-        <li>脂質: <%= meal_plan.dig(:nutrients, :fat) || "データなし" %></li>
-        <li>炭水化物: <%= meal_plan.dig(:nutrients, :carbohydrates) || "データなし" %></li>
-        <li>ビタミン: <%= meal_plan.dig(:nutrients, :vitamins) || "データなし" %></li>
-        <li>ミネラル: <%= meal_plan.dig(:nutrients, :minerals) || "データなし" %></li>
-      </ul>
-      <% end %>
-    </div>
 
-    <!-- 使用した食材 -->
-    <div>
-      <h3 class="text-xl font-bold mb-2">使用した食材</h3>
-      <% if meal_plan[:ingredients].present? %>
-      <ul class="list-disc list-inside">
-        <% meal_plan[:ingredients].each do |ingredient| %>
-        <li><%= ingredient %></li>
+        <ul class="list-disc list-inside mt-4">
+          <li>タンパク質: <%= @parsed_meal_plans.first.dig(:nutrients, :protein) || "データなし" %></li>
+          <li>脂質: <%= @parsed_meal_plans.first.dig(:nutrients, :fat) || "データなし" %></li>
+          <li>炭水化物: <%= @parsed_meal_plans.first.dig(:nutrients, :carbohydrates) || "データなし" %></li>
+          <li>ビタミン: <%= @parsed_meal_plans.first.dig(:nutrients, :vitamins)&.join(", ") || "データなし" %></li>
+          <li>ミネラル: <%= @parsed_meal_plans.first.dig(:nutrients, :minerals)&.join(", ") || "データなし" %></li>
+        </ul>
         <% end %>
-      </ul>
-      <% else %>
-      <p class="text-gray-500">食材情報がありません。</p>
-      <% end %>
+      </div>
+
+      <!-- 使用した食材 -->
+      <div>
+        <h3 class="text-xl font-bold mb-2">使用した食材</h3>
+        <% if meal_plan[:ingredients].present? %>
+        <ul class="list-disc list-inside">
+          <% meal_plan[:ingredients].each do |ingredient| %>
+          <li><%= ingredient %></li>
+          <% end %>
+        </ul>
+        <% else %>
+        <p class="text-gray-500">食材情報がありません。</p>
+        <% end %>
+      </div>
     </div>
+    <% end %>
+    <% end %>
+    <% else %>
+    <p class="text-gray-500 text-center">献立データがありません。</p>
+    <% end %>
   </div>
-  <% end %>
-  <% end %>
-  <% else %>
-  <p class="text-gray-500 text-center">献立データがありません。</p>
-  <% end %>
-</div>
