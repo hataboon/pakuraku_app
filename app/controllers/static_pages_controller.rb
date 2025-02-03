@@ -12,7 +12,7 @@ class StaticPagesController < ApplicationController
         .order(date: :asc, meal_time: :asc)
     else
       CalendarPlan.includes(:recipe)
-        .where(public: true)
+        .publicly_visible  # スコープを使用
         .where(date: @start_date..@end_date)
         .order(date: :asc, meal_time: :asc)
     end
