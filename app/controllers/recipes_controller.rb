@@ -1,57 +1,71 @@
-# app/controllers/recipes_controller.rb
 class RecipesController < ApplicationController
   include NutritionsHelper
-  before_action :authenticate_user!, only: [ :new, :create ]
+  include ApplicationHelper
+
+  before_action :authenticate_user!, except: [ :show ]
+  before_action :set_date_range, only: [ :new, :show ]
 
   def new
     @calendar_plans = CalendarPlan.where(user: current_user).includes(:recipe)
     @nutrients = %w[ミネラル たんぱく質 炭水化物 ビタミン 脂質]
   end
 
-def create
-  selected_dates = params[:selected_dates] || {}
-  selected_nutrients = params[:nutrients] || []
+  def create
+    selected_dates = params[:selected_dates] || {}
+    selected_nutrients = params[:nutrients] || []
 
-  # パラメータのバリデーション
-  if selected_dates.empty?
-    redirect_to new_recipe_path, alert: "日付を選択してください" and return
-  end
-
-  normalized_nutrients = selected_nutrients.map do |n|
-    n.to_s.strip.tr("ァ-ン", "ぁ-ん").downcase
-  end.reject(&:blank?)
-
-  recipe_service = RecipeService.new(current_user)
-
-  begin
-    calendar_plans = recipe_service.create_meal_plans(selected_dates, normalized_nutrients)
-
-    if calendar_plans.present?
-      redirect_to recipe_path(id: calendar_plans.first.date),
-                  notice: "献立を作成しました。"
-    else
-      redirect_to new_recipe_path,
-                  alert: "献立の生成に失敗しました。時間をおいて再度お試しください。"
+    # パラメータのバリデーション
+    if selected_dates.empty?
+      redirect_to new_recipe_path, alert: "日付を選択してください" and return
     end
-  rescue StandardError => e
-    Rails.logger.error("献立作成エラー: #{e.class} - #{e.message}")
-    redirect_to new_recipe_path,
-                alert: "献立の作成中にエラーが発生しました。時間をおいて再度お試しください。"
+
+    normalized_nutrients = selected_nutrients.map do |n|
+      n.to_s.strip.tr("ァ-ン", "ぁ-ん").downcase
+    end.reject(&:blank?)
+
+    recipe_service = RecipeService.new(current_user)
+
+    begin
+      calendar_plans = recipe_service.create_meal_plans(selected_dates, normalized_nutrients)
+
+      if calendar_plans.present?
+        redirect_to recipe_path(id: calendar_plans.first.date),
+                    notice: "献立を作成しました。"
+      else
+        redirect_to new_recipe_path,
+                    alert: "献立の生成に失敗しました。時間をおいて再度お試しください。"
+      end
+    rescue StandardError => e
+      Rails.logger.error("献立作成エラー: #{e.class} - #{e.message}")
+      redirect_to new_recipe_path,
+                  alert: "献立の作成中にエラーが発生しました。時間をおいて再度お試しください。"
+    end
   end
-end
+
   def show
     @calendar_plans = CalendarPlan.where(user: current_user, date: params[:id])
 
+    # 「作成せずに戻る」からのリクエストの場合
+    if params[:cancel].present?
+      # 最新の献立を削除
+      @calendar_plans&.last&.destroy
+      redirect_to new_recipe_path, notice: "献立作成をキャンセルしました" and return
+    end
+
     if @calendar_plans.present?
-      # シェアテキストを生成
       @share_text = generate_share_text(@calendar_plans.first)
       @share_url = request.base_url + recipe_path(params[:id])
-      # 献立データを解析
       @parsed_meal_plans = parse_meal_plans(@calendar_plans)
     end
   end
 
   private
+
+  def set_date_range
+    @date = params[:date].present? ? Date.parse(params[:date]) : Date.today
+    @start_date = @date.beginning_of_month
+    @end_date = @date.end_of_month
+  end
 
   # 献立のシェアテキストを生成するメソッド
   def generate_share_text(calendar_plan)

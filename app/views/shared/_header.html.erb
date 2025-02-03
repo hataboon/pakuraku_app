@@ -1,97 +1,57 @@
 <!--shared/_header.html.erb -->
-<header class="bg-gray-800">
-  <div class="justify-between mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-    <div class="relative flex h-16 items-center justify-between">
-      <div class="flex flex-1 items-center justify-start sm:items-stretch">
-        <div class="flex flex-shrink-0 items-center">
-          <%= link_to root_path do %>
-          <img class="h-8 w-auto" src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company">
+<header class="bg-white shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      <div class="flex items-center space-x-3">
+        <%= link_to root_path, class: "flex items-center space-x-2" do %>
+        <svg class="w-8 h-8 text-orange-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" />
+        </svg>
+        <span class="text-xl font-bold text-gray-900">アイめし
           <% end %>
-        </div>
       </div>
+
       <div class="flex items-center space-x-4">
-        <!-- Navigation Links -->
-        <%= link_to "栄養グラフ", nutrition_path, class: "rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white" %>
-        <%= link_to "献立作成", new_recipe_path, class: "rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white" %>
-        <!-- Register and Login Buttons -->
+        <%= link_to "栄養グラフ", nutrition_path, class: "px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors" %>
+
         <% if user_signed_in? %>
-        <!-- ログアウトリンク（ログイン中のみ表示） -->
-        <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete }, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %> <% else %>
-        <!-- ログイン・新規登録リンク（未ログイン時のみ表示） -->
-        <%= link_to "ログイン", new_user_session_path, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
-        <%= link_to "新規登録", new_user_registration_path, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
-        <% end %>
-        <!-- Profile Icon for Dropdown -->
-        <div class="relative ml-3">
-          <!-- Profile Icon -->
-          <button type="button" class="flex items-center gap-2 rounded-md text-sm text-gray-300 hover:bg-gray-700 hover:text-white focus:outline-none" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
-            <% if user_signed_in? %>
+        <div class="relative" data-controller="dropdown">
+          <button class="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none" data-action="click->dropdown#toggle click@window->dropdown#closeIfClickedOutside">
             <% if current_user.avatar.attached? %>
-            <%= image_tag current_user.avatar, class: "h-8 w-8 rounded-full object-cover" %>
+            <%= image_tag current_user.avatar, class: "w-8 h-8 rounded-full object-cover" %>
             <% else %>
-            <img class="h-8 w-8 rounded-full" src="https://www.gravatar.com/avatar/?d=mp&s=200" alt="default avatar">
+            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white font-medium">
+              <%= current_user.nickname.first.upcase %>
+            </div>
             <% end %>
-            <span class="whitespace-nowrap"><%= current_user.nickname %></span>
-            <% else %>
-            <img class="h-8 w-8 rounded-full" src="https://www.gravatar.com/avatar/?d=mp&s=200" alt="guest user">
-            <% end %>
+            <span class="hidden sm:block"><%= current_user.nickname %></span>
+            <svg class="w-4 h-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
           </button>
 
-          <!-- Dropdown menu -->
-          <div id="dropdownAvatar" class="hidden absolute right-0 z-10 mt-2 w-44 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
-            <% if user_signed_in? %>
-            <!-- ユーザー名 -->
-            <div class="px-4 py-2 text-sm font-bold text-gray-800">
-              <%= current_user.nickname %>
-            </div>
-            <!-- 区切り線 -->
-            <div class="border-t border-gray-300"></div>
-            <!-- メニューアイテム -->
-            <%= link_to "プロフィール", "#", class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100", role: "menuitem", tabindex: "-1" %>
-            <%= link_to "プロフィール編集", edit_user_registration_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100", role: "menuitem", tabindex: "-1" %>
-            <% else %>
-            <div class="px-4 py-2 text-sm font-bold text-gray-800">ゲスト</div>
-            <% end %>
+          <div class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-50" data-dropdown-target="menu">
+            <%= link_to "プロフィール", "#", class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" %>
+            <%= link_to "設定", edit_user_registration_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" %>
+            <div class="border-t border-gray-100 my-1"></div>
+            <%= link_to "ログアウト", destroy_user_session_path, 
+                  data: { turbo_method: :delete }, 
+                  class: "block px-4 py-2 text-sm text-red-600 hover:bg-red-50" %>
           </div>
         </div>
+        <% else %>
+        <%= link_to "ログイン", new_user_session_path, class: "px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900" %>
+        <%= link_to "新規登録", new_user_registration_path, 
+              class: "px-4 py-2 text-sm font-semibold text-white bg-orange-600 rounded-lg hover:bg-orange-700 transition-colors" %>
+        <% end %>
+
+        <%= link_to new_recipe_path, class: "inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-orange-600 rounded-lg hover:bg-orange-700 transition-colors" do %>
+        <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+        献立作成
+        <% end %>
       </div>
     </div>
   </div>
-  </div>
 </header>
-
-<script>
-  // グローバルスコープで関数を定義
-  function toggleDropdown(e) {
-    e.stopPropagation();
-    const dropdownAvatar = document.getElementById('dropdownAvatar');
-    dropdownAvatar.classList.toggle('hidden');
-  }
-
-  function handleClickOutside(event) {
-    const userMenuButton = document.getElementById('user-menu-button');
-    const dropdownAvatar = document.getElementById('dropdownAvatar');
-    if (!userMenuButton.contains(event.target) && !dropdownAvatar.contains(event.target)) {
-      dropdownAvatar.classList.add('hidden');
-    }
-  }
-
-  function initializeDropdown() {
-    const userMenuButton = document.getElementById('user-menu-button');
-    const dropdownAvatar = document.getElementById('dropdownAvatar');
-
-    if (userMenuButton && dropdownAvatar) {
-      // 既存のイベントリスナーを削除
-      userMenuButton.removeEventListener('click', toggleDropdown);
-      document.removeEventListener('click', handleClickOutside);
-
-      // 新しいイベントリスナーを追加
-      userMenuButton.addEventListener('click', toggleDropdown);
-      document.addEventListener('click', handleClickOutside);
-    }
-  }
-
-  // イベントリスナーの設定
-  document.addEventListener("turbo:load", initializeDropdown);
-  document.addEventListener("turbo:render", initializeDropdown);
-</script>

@@ -1,11 +1,17 @@
 <!-- app/views/recipes/_form.html.erb -->
-<div class="mb-6">
-  <p class="text-lg font-semibold mb-2">栄養素を選択 (最大5つ)</p>
-  <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+<div class="mb-4 sm:mb-6">
+  <p class="text-base sm:text-lg font-semibold mb-2">栄養素を選択 (最大5つ)</p>
+  <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4">
     <% ["ミネラル", "たんぱく質", "炭水化物", "ビタミン", "脂質"].each do |nutrient| %>
-    <div class="form-check flex items-center">
-      <%= check_box_tag "nutrients[]", nutrient, false, id: "nutrient_#{nutrient}", class: "form-check-input w-6 h-6" %>
-      <%= label_tag "nutrient_#{nutrient}", nutrient, class: "ml-2 text-lg" %>
+    <div class="form-check flex items-center bg-white p-2 sm:p-3 rounded-lg border border-gray-200 hover:border-blue-300 transition-colors">
+      <%= check_box_tag "nutrients[]", 
+            nutrient, 
+            false, 
+            id: "nutrient_#{nutrient}", 
+            class: "form-check-input w-4 h-4 sm:w-5 sm:h-5" %>
+      <%= label_tag "nutrient_#{nutrient}", 
+            nutrient, 
+            class: "ml-2 text-sm sm:text-base cursor-pointer flex-grow" %>
     </div>
     <% end %>
   </div>
