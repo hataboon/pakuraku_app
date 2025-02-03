@@ -1,20 +1,165 @@
 <!-- app/views/recipes/new.html.erb -->
-<%= form_with url: recipes_path, method: :post, local: true do |form| %>
-<div class="bg-white shadow-md rounded-lg p-6 mb-6">
-  <!-- カレンダー部分 -->
-  <%= month_calendar do |date_range, start_date| %>
-  <%= render partial: 'simple_calendar/month_calendar', locals: { calendar_form: form, start_date: start_date, date_range: date_range } %>
-  <% end %>
-</div>
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8"> <%# max-wを1440pxから1600pxに拡大 %>
+    <%= form_with url: recipes_path, method: :post, local: true, class: "space-y-8" do |form| %>
+    <%# カレンダーセクション %>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div class="p-4 sm:p-6 border-b border-gray-200">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-bold text-gray-900">献立カレンダー</h2>
+            <p class="mt-1 text-sm text-gray-500">日付と時間帯を選択してください</p>
+          </div>
 
-<div class="bg-white shadow-md rounded-lg p-6">
-  <!-- フォーム部分 -->
-  <h2 class="text-lg font-bold mb-4">献立作成</h2>
-  <%= render 'recipes/form', form: form %>
+          <%# 月切り替えナビゲーション %>
+          <div class="flex items-center space-x-2 bg-gray-50 rounded-lg p-1">
+            <%= link_to new_recipe_path(date: @date.prev_month), 
+                      class: "p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors" do %>
+            <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m15 18-6-6 6-6" />
+            </svg>
+            <% end %>
 
-  <!-- 送信ボタンをここに移動 -->
-  <div class="text-center mt-6">
-    <%= form.submit '献立作成', class: 'btn btn-primary text-lg px-6 py-3 rounded bg-blue-500 text-white hover:bg-blue-700 transition duration-200' %>
+            <span class="px-3 py-1 text-sm font-medium text-gray-700">
+              <%= l @date, format: :month_year %>
+            </span>
+
+            <%= link_to new_recipe_path(date: @date.next_month),
+                      class: "p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors" do %>
+            <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m9 18 6-6-6-6" />
+            </svg>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-2 sm:p-6">
+        <div class="calendar-grid">
+          <%# 曜日ヘッダー %>
+          <div class="grid grid-cols-7 mb-2 sm:mb-4">
+            <% t('date.abbr_day_names').each_with_index do |day_name, index| %>
+            <div class="text-center py-2 sm:py-3 text-sm sm:text-base font-medium
+                                <%= index == 0 ? 'text-red-500' : 
+                                    index == 6 ? 'text-blue-500' : 
+                                    'text-gray-600' %>">
+              <%= day_name %>
+            </div>
+            <% end %>
+          </div>
+
+          <%# カレンダー日付 %>
+          <div class="grid grid-cols-7 gap-1 sm:gap-3"> <%# ギャップを広げる %>
+            <% (@start_date..@end_date).each do |date| %>
+            <div class="relative min-h-[130px] sm:min-h-[180px] bg-white p-2 sm:p-4 rounded-lg border <%= date == Date.today ? 'border-orange-300 ring-2 ring-orange-200' : 'border-gray-200' %> hover:border-gray-300 transition-colors">
+              <%# 日付表示 %>
+              <div class="mb-2 sm:mb-3">
+                <span class="text-sm sm:text-base <%= date.sunday? ? 'text-red-500' : 
+                                        date.saturday? ? 'text-blue-500' : 
+                                        'text-gray-900' %> 
+                                      <%= date == Date.today ? 'font-bold' : 'font-medium' %>">
+                  <%= date.day %>
+                </span>
+              </div>
+
+              <%# 食事時間帯の選択 %>
+              <div class="space-y-2 sm:space-y-3">
+                <% ["朝", "昼", "夜"].each do |time| %>
+                <% meal_time = case time
+                                       when "朝" then "morning"
+                                       when "昼" then "afternoon"
+                                       when "夜" then "evening"
+                                       end %>
+                <% plan = @calendar_plans.find { |p| p.date == date && p.meal_time == meal_time } %>
+
+                <div class="group/meal relative flex items-start gap-2 text-sm border-b border-gray-50 last:border-b-0 pb-1 sm:pb-2 last:pb-0">
+                  <%# 時間帯アイコンとチェックボックス %>
+                  <div class="flex items-center gap-2 flex-shrink-0">
+                    <span class="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 rounded-full <%= 
+                                    case meal_time
+                                    when 'morning'
+                                      'bg-orange-100 text-orange-600'
+                                    when 'afternoon'
+                                      'bg-blue-100 text-blue-600'
+                                    when 'evening'
+                                      'bg-indigo-100 text-indigo-600'
+                                    end
+                                  %> flex items-center justify-center text-xs font-medium">
+                      <%= time %>
+                    </span>
+                    <%= check_box_tag "selected_dates[#{date.strftime('%Y-%m-%d')}][]",
+                                      meal_time,
+                                      false,
+                                      class: "h-4 w-4 sm:h-5 sm:w-5 text-orange-500 rounded border-gray-300 focus:ring-orange-500",
+                                      title: plan ? "この献立を再生成する" : "新しい献立を作成" %>
+                  </div>
+
+                  <%# 献立内容 %>
+                  <% if plan&.meal_plan.present? %>
+                  <% meal_data = JSON.parse(plan.meal_plan) rescue nil %>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex flex-col gap-1">
+                      <div class="flex items-center gap-1 w-full">
+                        <span class="flex-shrink-0 px-1.5 text-xs font-medium bg-green-100 text-green-700 rounded">主菜</span>
+                        <span class="text-xs sm:text-sm text-gray-600 truncate"><%= meal_data&.dig("main") %></span>
+                      </div>
+                      <div class="flex items-center gap-1 w-full">
+                        <span class="flex-shrink-0 px-1.5 text-xs font-medium bg-yellow-100 text-yellow-700 rounded">副菜</span>
+                        <span class="text-xs sm:text-sm text-gray-600 truncate"><%= meal_data&.dig("side") %></span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <%# 削除ボタン %>
+                  <% if current_user.present? && plan.user_id == current_user.id %>
+                  <%= link_to calendar_plan_path(plan),
+                                data: {
+                                  turbo_method: :delete,
+                                  turbo_confirm: "この献立を削除してもよろしいですか？"
+                                },
+                                class: "opacity-0 group-hover/meal:opacity-100 p-1 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-all flex-shrink-0" do %>
+                  <svg class="w-4 h-4 sm:w-5 sm:h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                  <% end %>
+                  <% end %>
+                  <% end %>
+                </div>
+                <% end %>
+              </div>
+            </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%# 栄養素選択セクション - 変更なし %>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div class="p-4 sm:p-6">
+        <h2 class="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">栄養素を選択 (最大5つ)</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3">
+          <% ["ミネラル", "たんぱく質", "炭水化物", "ビタミン", "脂質"].each do |nutrient| %>
+          <div class="form-check flex items-center bg-white p-2 sm:p-3 rounded-lg border border-gray-200 hover:border-blue-300 transition-colors">
+            <%= check_box_tag "nutrients[]", 
+                          nutrient, 
+                          false, 
+                          id: "nutrient_#{nutrient}", 
+                          class: "form-check-input w-4 h-4 sm:w-5 sm:h-5" %>
+            <%= label_tag "nutrient_#{nutrient}", 
+                          nutrient, 
+                          class: "ml-2 text-xs sm:text-sm cursor-pointer flex-grow" %>
+          </div>
+          <% end %>
+        </div>
+
+        <%# 送信ボタン %>
+        <div class="mt-6 sm:mt-8 flex justify-center">
+          <%= form.submit '献立を生成する', 
+                    class: 'w-full sm:w-auto inline-flex items-center justify-center px-4 sm:px-6 py-2 sm:py-3 border border-transparent text-sm sm:text-base font-medium rounded-lg shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors duration-150' %>
+        </div>
+      </div>
+    </div>
+    <% end %>
   </div>
 </div>
-<% end %>

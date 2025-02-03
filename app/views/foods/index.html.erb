@@ -1,31 +1,131 @@
 <!-- foods/index.html.erb -->
-<div class="foods-page">
-  <div class="flex flex-col md:flex-row justify-between items-start">
-    <!-- 左側：献立の画像や情報 -->
-    <div class="w-full md:w-2/5 p-4 bg-gray-100 rounded-lg shadow-md mb-4 md:mb-0">
-      <h2 class="text-lg font-semibold">今日の献立</h2>
-      <div class="menu-info">
-        <p>献立画像</p>
-      </div>
-      <div class="mt-4">
-        <%= link_to '献立を作成', new_recipe_path, class: 'mt-4 inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded' %>
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="flex flex-col lg:flex-row gap-8">
+    <!-- 左サイド：今日の献立 -->
+    <div class="w-full lg:w-1/3 space-y-6">
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="relative h-40">
+          <div class="absolute inset-0 bg-gradient-to-br from-orange-500 to-red-600"></div>
+          <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1580822184713-fc5400e7fe10?ixlib=rb-4.0.3&auto=format&fit=crop&w=2400&q=80')] bg-cover bg-center mix-blend-overlay"></div>
+          <div class="absolute inset-x-0 bottom-0 p-6">
+            <h2 class="text-2xl font-bold text-white">今日の献立</h2>
+            <p class="text-white/90 text-sm mt-1"><%= l Date.today, format: :long %></p>
+          </div>
+        </div>
+
+        <div class="p-6 space-y-6">
+          <% ["朝食", "昼食", "夕食"].each do |meal| %>
+          <% meal_time = case meal
+                         when "朝食" then "morning"
+                         when "昼食" then "afternoon"
+                         when "夕食" then "evening"
+                         end %>
+          <% todays_plan = @todays_plans&.find { |plan| plan.meal_time == meal_time } %>
+
+          <div class="meal-card group">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-sm font-medium text-gray-500"><%= meal %></span>
+              <% if todays_plan&.recipe %>
+              <span class="px-2 py-1 text-xs font-medium text-orange-700 bg-orange-50 rounded-full">
+                和食
+              </span>
+              <% end %>
+            </div>
+
+            <% if todays_plan&.recipe %>
+            <div class="relative overflow-hidden rounded-xl bg-gray-50 p-4 transition-all hover:bg-gray-100">
+              <div class="flex items-start space-x-4">
+                <div class="w-20 h-20 rounded-lg bg-gray-100 flex-shrink-0 overflow-hidden">
+                  <img src="https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&h=200&q=80" alt="主菜" class="w-full h-full object-cover">
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between">
+                    <% if todays_plan.recipe.name %>
+                    <% names = todays_plan.recipe.name.split(",") %>
+                    <p class="font-medium text-gray-900 truncate"><%= names[1]&.strip %></p>
+                    <% end %>
+                    <% if current_user.present? && todays_plan.user_id == current_user.id %>
+                    <%= link_to calendar_plan_path(todays_plan),
+                              data: {
+                                turbo_method: :delete,
+                                turbo_confirm: "この献立を削除してもよろしいですか？"
+                              },
+                              class: "opacity-0 group-hover:opacity-100 p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-all" do %>
+                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    <% end %>
+                    <% end %>
+                  </div>
+                  <% if todays_plan.meal_plan.present? %>
+                  <% meal_data = JSON.parse(todays_plan.meal_plan) rescue nil %>
+                  <% if meal_data&.dig("nutrients")&.present? %>
+                  <div class="mt-1 flex flex-wrap gap-1">
+                    <% nutrients = meal_data["nutrients"] %>
+                    <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700">
+                      タンパク質: <%= nutrients["protein"] %>
+                    </span>
+                    <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700">
+                      脂質: <%= nutrients["fat"] %>
+                    </span>
+                    <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700">
+                      炭水化物: <%= nutrients["carbohydrates"] %>
+                    </span>
+                    <% if nutrients["vitamins"].present? %>
+                    <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700">
+                      ビタミン: <%= Array(nutrients["vitamins"]).join(", ") %>
+                    </span>
+                    <% end %>
+                    <% if nutrients["minerals"].present? %>
+                    <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700">
+                      ミネラル: <%= Array(nutrients["minerals"]).join(", ") %>
+                    </span>
+                    <% end %>
+                  </div>
+                  <% end %>
+                  <% end %>
+                  <div class="mt-2 text-sm text-gray-500">
+                    <% if names[1].present? %>
+                    <p class="truncate">主菜：<%= names[1].strip %></p>
+                    <% end %>
+                    <% if names[2].present? %>
+                    <p class="truncate">副菜：<%= names[2].strip %></p>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <% else %>
+            <div class="relative overflow-hidden rounded-xl bg-gray-50 p-4">
+              <div class="flex items-center justify-center h-12 text-gray-400">
+                献立なし
+              </div>
+            </div>
+            <% end %>
+          </div>
+          <% end %>
+
+          <div class="flex justify-center">
+            <%= link_to new_recipe_path, class: "inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-orange-600 rounded-lg hover:bg-orange-700 transition-colors" do %>
+            <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+            献立を作成
+            <% end %>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- 右側：カレンダー部分 -->
-    <div class="w-full md:w-3/5 p-4 bg-white border border-gray-300 rounded-lg shadow-md">
-      <%= month_calendar do |date| %>
-      <div class="text-center">
-        <%= date.day %>
+    <!-- 右サイド：カレンダー -->
+    <div class="w-full lg:w-2/3">
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <%= render partial: 'simple_calendar/month_calendar', locals: { 
+          calendar_plans: @calendar_plans,
+          start_date: @start_date,
+          date_range: (@start_date..@end_date).to_a
+        } %>
       </div>
-
-      <% plans_for_day = @calendar_plans.select { |plan| plan.date == date } %>
-      <% plans_for_day.each do |plan| %>
-      <div class="text-sm text-gray-500">
-        <%= plan.meal_time %>: <%= plan.recipe.name %>
-      </div>
-      <% end %>
-      <% end %>
     </div>
   </div>
-</div>
+</main>

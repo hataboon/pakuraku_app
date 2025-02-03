@@ -1,11 +1,92 @@
 <!--static_pages.html.erb /top.html.erb -->
-<div class="relative flex flex-col items-center justify-center min-h-screen bg-gray-100" style="background-image: url('<%= asset_path('sample1.jpg') %>'); background-size: cover; background-position: center;">
-  <div class="bg-white/80 p-8 rounded-lg shadow-lg max-w-lg text-center">
-    <h1 class="text-4xl font-bold text-gray-800">パクラク（献立提案アプリ）</h1>
-    <p class="mt-4 text-lg text-gray-600">
-      家庭にある食材をもとに献立を提案し、栄養を考えた食事作りを支援します。
-    </p>
+<div class="relative min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+  <%# ヘッダーイメージ %>
+  <div class="relative h-[70vh] bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1495521821757-a1efb6729352?ixlib=rb-4.0.3&auto=format&fit=crop&w=2400&q=80')">
+    <div class="absolute inset-0 bg-gradient-to-b from-black/60 to-black/40"></div>
+    <div class="absolute inset-0 flex items-center justify-center">
+      <div class="text-center text-white p-6 max-w-3xl mx-auto">
+        <div class="mb-8 flex justify-center">
+          <svg class="w-16 h-16 text-orange-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" />
+          </svg>
+        </div>
+        <h1 class="text-5xl md:text-6xl font-bold mb-6 tracking-tight">
+          パクラク
+        </h1>
+        <p class="text-xl md:text-2xl font-medium opacity-90 leading-relaxed max-w-2xl mx-auto">
+          毎日の献立作りをもっと楽しく、もっと健康に。
+          <br class="hidden sm:block">
+          あなたの食卓に彩りと栄養を。
+        </p>
+        <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <% if user_signed_in? %>
+          <%= link_to new_recipe_path, class: "inline-flex items-center px-8 py-3 text-lg font-semibold text-white bg-orange-600 rounded-xl hover:bg-orange-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5" do %>
+          <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          献立を作成する
+          <% end %>
+          <% else %>
+          <%= link_to new_user_registration_path, class: "inline-flex items-center px-8 py-3 text-lg font-semibold text-white bg-orange-600 rounded-xl hover:bg-orange-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5" do %>
+          <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M19 8v6m3-3h-6" />
+          </svg>
+          今すぐ始める
+          <% end %>
+          <%= link_to new_user_session_path, class: "inline-flex items-center px-8 py-3 text-lg font-semibold text-orange-600 bg-white rounded-xl hover:bg-orange-50 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5" do %>
+          <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+            <polyline points="10 17 15 12 10 7" />
+            <line x1="15" y1="12" x2="3" y2="12" />
+          </svg>
+          ログイン
+          <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# 特徴セクション %>
+  <div class="relative z-10 -mt-20 mb-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        <% [
+          {
+            icon: '<path d="M12 8v13m0-13V6a2 2 0 1 1 4 0v2a2 2 0 1 1-4 0M5 8h14M5 8a2 2 0 1 1 0-4h14a2 2 0 1 1 0 4M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8"/>',
+            title: "簡単レシピ提案",
+            description: "あなたの好みや食材に合わせて、最適なレシピを提案します。"
+          },
+          {
+            icon: '<path d="M9 20l-5.447-2.724A1 1 0 0 1 3 16.382V5.618a1 1 0 0 1 .553-.894L9 2m0 18v-18m0 18l5.447-2.724A1 1 0 0 0 15 16.382V5.618a1 1 0 0 0-.553-.894L9 2"/>',
+            title: "栄養バランス管理",
+            description: "必要な栄養素をバランスよく摂取できるようサポートします。"
+          }
+        ].each do |feature| %>
+        <div class="bg-white rounded-2xl shadow-xl p-6 transform hover:-translate-y-1 transition-all">
+          <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-orange-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <%= feature[:icon].html_safe %>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">
+            <%= feature[:title] %>
+          </h3>
+          <p class="text-gray-600">
+            <%= feature[:description] %>
+          </p>
+        </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <%# メインコンテンツ %>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+    <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8">
+      <%= render template: 'foods/index' %>
+    </div>
   </div>
 </div>
-
-<%= render template: 'foods/index' %>

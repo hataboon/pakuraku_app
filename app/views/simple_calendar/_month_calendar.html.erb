@@ -1,101 +1,152 @@
 <!-- views/simple_calendar/_month_calendar.html.erb -->
-<div class="simple-calendar bg-white shadow rounded-lg p-6">
-  <div class="calendar-heading flex justify-between items-center mb-4">
-    <span class="calendar-title text-2xl font-bold text-gray-800">
-      <%= "#{start_date.year}年 #{t('date.month_names')[start_date.month]}" %>
-    </span>
+<div class="simple-calendar bg-white shadow-lg rounded-2xl overflow-hidden" data-controller="calendar">
+  <%# カレンダーヘッダー %>
+  <div class="bg-gradient-to-r from-orange-500 to-red-600 p-6">
+    <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+      <h2 class="text-2xl sm:text-3xl font-bold text-white" data-calendar-target="monthDisplay">
+        <%= "#{start_date.year}年 #{t('date.month_names')[start_date.month]}" %>
+      </h2>
 
-    <nav class="flex space-x-4">
-      <%= link_to calendar.url_for_previous_view, class: 'p-2 bg-gray-100 rounded hover:bg-gray-200' do %>
-      <span>前月</span>
-      <% end %>
-      <%= link_to calendar.url_for_today_view, class: 'p-2 bg-gray-100 rounded hover:bg-gray-200' do %>
-      <span>今月</span>
-      <% end %>
-      <%= link_to calendar.url_for_next_view, class: 'p-2 bg-gray-100 rounded hover:bg-gray-200' do %>
-      <span>次月</span>
-      <% end %>
-    </nav>
+      <nav class="flex items-center space-x-2">
+        <%= link_to foods_path(date: start_date - 1.month), 
+            class: 'group p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors',
+            data: { 
+              turbo_frame: "calendar",
+              action: "click->calendar#previousMonth"
+            } do %>
+        <svg class="w-5 h-5 transform group-hover:-translate-x-0.5 transition-transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="m15 18-6-6 6-6" />
+        </svg>
+        <% end %>
+
+        <%= link_to foods_path(date: Date.today), 
+            class: 'px-4 py-2 text-sm font-medium text-white/90 hover:text-white hover:bg-white/10 rounded-lg transition-colors',
+            data: {
+              turbo_frame: "calendar",
+              action: "click->calendar#currentMonth"
+            } do %>
+        今月
+        <% end %>
+
+        <%= link_to foods_path(date: start_date + 1.month), 
+            class: 'group p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors',
+            data: {
+              turbo_frame: "calendar",
+              action: "click->calendar#nextMonth"
+            } do %>
+        <svg class="w-5 h-5 transform group-hover:translate-x-0.5 transition-transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="m9 18 6-6-6-6" />
+        </svg>
+        <% end %>
+      </nav>
+    </div>
   </div>
 
-  <table class="table-fixed w-full border-collapse">
-    <thead>
-      <tr>
-        <% date_range.slice(0, 7).each do |day| %>
-        <th class="p-2 bg-gray-200 text-center font-semibold text-gray-700">
-          <%= t('date.abbr_day_names')[day.wday] %>
-        </th>
-        <% end %>
-      </tr>
-    </thead>
-    <tbody>
-      <% date_range.each_slice(7) do |week| %>
-      <tr>
-        <% week.each do |day| %>
-        <% if day.month == start_date.month %>
-        <td class="p-4 border border-gray-300 align-top bg-white hover:bg-gray-50">
-          <div class="<%= "text-center font-bold text-lg mb-2 #{day == Date.today ? 'text-blue-500' : ''}" %>">
+  <%# カレンダーグリッド %>
+  <div class="p-4 sm:p-6">
+    <div class="grid grid-cols-7 mb-2">
+      <% date_range.slice(0, 7).each_with_index do |day, index| %>
+      <div class="text-center py-2 text-sm font-medium
+                    <%= index == 0 ? 'text-red-500' : 
+                        index == 6 ? 'text-blue-500' : 
+                        'text-gray-600' %>">
+        <%= t('date.abbr_day_names')[day.wday] %>
+      </div>
+      <% end %>
+    </div>
+
+    <div class="grid grid-cols-7 gap-px bg-gray-200">
+      <% date_range.each do |day| %>
+      <div class="relative min-h-[120px] group
+                    <%= day.month == start_date.month ? 'bg-white' : 'bg-gray-50' %>
+                    <%= day == Date.today ? 'ring-2 ring-orange-500 ring-inset' : '' %>">
+        <%# 日付ヘッダー %>
+        <div class="flex items-center justify-between p-2 border-b border-gray-100">
+          <span class="<%= day.month == start_date.month ? 
+                            day.sunday? ? 'text-red-500' : 
+                            day.saturday? ? 'text-blue-500' : 
+                            'text-gray-900' : 
+                            'text-gray-400' %> 
+                         font-medium">
             <%= day.day %>
-          </div>
+          </span>
 
-          <% plans_for_day = @calendar_plans&.select { |plan| plan.date == day } || [] %>
-          <% { "朝" => "morning", "昼" => "afternoon", "夜" => "evening" }.each do |label, meal_time| %>
+          <% if day.month == start_date.month %>
+          <%= link_to new_recipe_path(date: day), 
+                  class: "opacity-0 group-hover:opacity-100 p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all",
+                  title: "献立を追加" do %>
+          <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          <% end %>
+          <% end %>
+        </div>
+
+        <%# 献立スロット %>
+        <% if day.month == start_date.month %>
+        <div class="p-1">
+          <% plans_for_day = calendar_plans&.select { |plan| plan.date == day } || [] %>
+          <% { 
+                "朝" => ["morning", "bg-orange-50 text-orange-700 ring-orange-200"], 
+                "昼" => ["afternoon", "bg-blue-50 text-blue-700 ring-blue-200"], 
+                "夜" => ["evening", "bg-indigo-50 text-indigo-700 ring-indigo-200"]
+              }.each do |label, (meal_time, colors)| %>
           <% plan = plans_for_day.find { |p| p.meal_time == meal_time } %>
-          <div class="mb-2 p-2 bg-gray-50 rounded border border-gray-200">
-            <label class="flex items-center">
-              <%= check_box_tag "selected_dates[#{day.strftime('%Y-%m-%d')}][]", meal_time, false, id: "selected_dates_#{day.strftime('%Y-%m-%d')}_#{meal_time}", class: "mr-2" %>
-              <span><%= label %></span>
-            </label>
+          <div class="meal-slot relative mb-1 group/slot">
+            <div class="flex items-center gap-1">
+              <span class="flex-none w-5 h-5 rounded-full <%= colors %> flex items-center justify-center text-[10px] font-medium ring-1 ring-inset">
+                <%= label %>
+              </span>
 
-            <% if plan&.recipe&.name.present? %>
-            <% names = plan.recipe.name.split(",") %>
-            <div class="mt-2 text-sm">
-              <% if names[1].present? %>
-              <p><span class="text-green-500 font-bold">主菜:</span> <%= names[1].strip %></p>
-              <% end %>
-              <% if names[2].present? %>
-              <p><span class="text-yellow-500 font-bold">副菜:</span> <%= names[2].strip %></p>
+              <% if plan&.recipe&.name.present? %>
+              <% names = plan.recipe.name.split(",") %>
+              <span class="text-xs text-gray-600 truncate"><%= names[1]&.strip %></span>
               <% end %>
             </div>
-            <% end %>
 
-            <% if current_user.present? && plan&.user_id == current_user.id %>
-            <div class="mt-2 text-right">
-              <%= link_to "🗑",
-                          calendar_plan_path(plan),
-                          data: {
-                            turbo_method: :delete,
-                            turbo_confirm: "本当に削除しますか？"
-                          },
-                          class: "text-red-500 hover:text-red-700" %>
+            <% if plan&.recipe&.name.present? %>
+            <div class="hidden group-hover/slot:block absolute left-6 top-0 z-10 w-48 p-2 bg-white rounded-lg shadow-lg border border-gray-200">
+              <% if names[1].present? %>
+              <p class="text-xs">
+                <span class="text-green-600 font-medium">主菜:</span>
+                <%= names[1].strip %>
+              </p>
+              <% end %>
+              <% if names[2].present? %>
+              <p class="text-xs mt-1">
+                <span class="text-yellow-600 font-medium">副菜:</span>
+                <%= names[2].strip %>
+              </p>
+              <% end %>
+
+              <% if current_user.present? && plan&.user_id == current_user.id %>
+              <div class="mt-2 pt-2 border-t border-gray-100 flex justify-end space-x-1">
+                <%= link_to edit_calendar_plan_path(plan),
+                              class: "p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-full transition-colors" do %>
+                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+                <% end %>
+                <%= link_to calendar_plan_path(plan),
+                              data: {
+                                turbo_method: :delete,
+                                turbo_confirm: "この献立を削除してもよろしいですか？"
+                              },
+                              class: "p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors" do %>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                <% end %>
+              </div>
+              <% end %>
             </div>
             <% end %>
           </div>
           <% end %>
-        </td>
-        <% else %>
-        <td class="p-4 border border-gray-300 bg-gray-100"></td>
+        </div>
         <% end %>
-        <% end %>
-      </tr>
+      </div>
       <% end %>
-    </tbody>
-  </table>
+    </div>
+  </div>
 </div>
-
-<style>
-  /* スマートフォン用レイアウト調整 */
-  @media (max-width: 768px) {
-    .simple-calendar table {
-      font-size: 0.9rem;
-    }
-
-    .simple-calendar td {
-      padding: 2px;
-    }
-
-    .simple-calendar .calendar-title {
-      font-size: 1.5rem;
-    }
-  }
-</style>
