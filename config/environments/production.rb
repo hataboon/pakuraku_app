@@ -25,6 +25,8 @@ Rails.application.configure do
   config.active_storage.service = :local
   config.active_storage.variant_processor = :mini_magick
   config.hosts << "pakuraku-app.onrender.com"
+  config.hosts << "eyemeshi.com"
+  config.hosts << "www.eyemeshi.com"
   config.asset_host = ENV["RENDER_EXTERNAL_URL"] || "https://pakuraku-app.onrender.com"
   config.assets.compile = true  # 動的コンパイルを有効化
   config.assets.version = "1.0" # アセットバージョンを設定
@@ -36,7 +38,7 @@ Rails.application.configure do
 
   # メール設定のホストを修正
   config.action_mailer.default_url_options = {
-    host: "pakuraku-app.onrender.com",
+    host: "eyemeshi.com",
     protocol: "https"
   }
   # Active Storageのルーティング設定
