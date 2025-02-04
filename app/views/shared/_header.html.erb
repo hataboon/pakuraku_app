@@ -21,13 +21,12 @@
             <%= image_tag current_user.avatar, class: "w-8 h-8 rounded-full object-cover" %>
             <% else %>
             <div class="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white font-medium">
-              <%= current_user.nickname.first.upcase %>
-            </div>
-            <% end %>
-            <span class="hidden sm:block"><%= current_user.nickname %></span>
-            <svg class="w-4 h-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="m6 9 6 6 6-6" />
-            </svg>
+              <%= current_user.nickname&.first&.upcase || 'U' %>
+              <% end %>
+              <span class="hidden sm:block"><%= current_user.nickname %></span>
+              <svg class="w-4 h-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m6 9 6 6 6-6" />
+              </svg>
           </button>
 
           <div class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-50" data-dropdown-target="menu">
