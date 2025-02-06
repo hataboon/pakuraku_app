@@ -40,6 +40,12 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432
+      GOOGLE_CLIENT_ID: test_client_id
+      GOOGLE_CLIENT_SECRET: test_client_secret
+
     services:
       postgres:
         image: postgres
