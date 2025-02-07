@@ -104,4 +104,15 @@ Rails.application.configure do
   #
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+
+  # CORS設定を追加
+  config.middleware.insert_before 0, Rack::Cors do
+    allow do
+      origins "https://eyemeshi.com", "https://pakuraku-app.onrender.com", "https://www.eyemeshi.com"
+      resource "*",
+               headers: :any,
+               methods: [ :get, :post, :put, :patch, :delete, :options, :head ],
+               credentials: true
+    end
+  end
 end
