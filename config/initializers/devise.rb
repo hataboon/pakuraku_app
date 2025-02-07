@@ -272,14 +272,9 @@ Devise.setup do |config|
   OmniAuth.config.logger = Rails.logger
 
   config.omniauth :google_oauth2,
-                ENV["GOOGLE_CLIENT_ID"] || Rails.application.credentials.google[:client_id],
-                ENV["GOOGLE_CLIENT_SECRET"] || Rails.application.credentials.google[:client_secret],
-                {
-                  name: :google,
-                  scope: %w[email profile],
-                  skip_jwt: true,
-                  prompt: "select_account"
-                }
+                  (Rails.env.test? ? "test_client_id" : Rails.application.credentials.google[:client_id]),
+                  (Rails.env.test? ? "test_client_secret" : Rails.application.credentials.google[:client_secret])
+
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or
   # change the failure app, you can configure them inside the config.warden block.
