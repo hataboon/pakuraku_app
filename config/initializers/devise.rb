@@ -272,8 +272,8 @@ Devise.setup do |config|
   OmniAuth.config.logger = Rails.logger
 
   config.omniauth :google_oauth2,
-                  (Rails.env.test? ? 'test_client_id' : Rails.application.credentials.google[:client_id]),
-                  (Rails.env.test? ? 'test_client_secret' : Rails.application.credentials.google[:client_secret])
+                  (Rails.env.test? ? "test_client_id" : Rails.application.credentials.google[:client_id]),
+                  (Rails.env.test? ? "test_client_secret" : Rails.application.credentials.google[:client_secret])
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or
