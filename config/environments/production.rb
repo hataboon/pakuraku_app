@@ -41,6 +41,20 @@ Rails.application.configure do
     host: "eyemeshi.com",
     protocol: "https"
   }
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.perform_caching = false
+  config.action_mailer.raise_delivery_errors = true
+
+  # Gmail用のSMTP設定を追加
+  config.action_mailer.smtp_settings = {
+    address: "smtp.gmail.com",
+    port: 587,
+    domain: "eyemeshi.com",  # あなたの本番環境のドメイン
+    user_name: ENV["MAILER_SENDER"],
+    password: ENV["MAILER_PASSWORD"],
+    authentication: "plain",
+    enable_starttls_auto: true
+  }
   # Active Storageのルーティング設定
   config.active_storage.resolve_model_to_route = :rails_storage_proxy
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
