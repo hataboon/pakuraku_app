@@ -12,21 +12,29 @@ class RecipesController < ApplicationController
 
   def create
     selected_dates = params[:selected_dates] || {}
-    selected_nutrients = params[:nutrients] || []
+    main_nutrients = params[:main_nutrients] || []
+    side_nutrients = params[:side_nutrients] || []
 
     # パラメータのバリデーション
     if selected_dates.empty?
       redirect_to new_recipe_path, alert: "日付を選択してください" and return
     end
 
-    normalized_nutrients = selected_nutrients.map do |n|
-      n.to_s.strip.tr("ァ-ン", "ぁ-ん").downcase
-    end.reject(&:blank?)
+    if !session[:main_nutrients] && main_nutrients.empty?
+      redirect_to new_recipe_path, alert: "主菜の栄養素を1つ以上選択してください" and return
+    end
+
+    session[:main_nutrients] = main_nutrients
+    session[:side_nutrients] = side_nutrients
 
     recipe_service = RecipeService.new(current_user)
 
     begin
-      calendar_plans = recipe_service.create_meal_plans(selected_dates, normalized_nutrients)
+      calendar_plans = recipe_service.create_meal_plans(
+        selected_dates,
+        main_nutrients,
+        side_nutrients
+      )
 
       if calendar_plans.present?
         redirect_to recipe_path(id: calendar_plans.first.date),
