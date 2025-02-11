@@ -134,32 +134,59 @@
       </div>
     </div>
 
-    <%# 栄養素選択セクション - 変更なし %>
+    <%# 栄養素選択セクション %>
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
       <div class="p-4 sm:p-6">
-        <h2 class="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">栄養素を選択 (最大5つ)</h2>
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3">
-          <% ["ミネラル", "たんぱく質", "炭水化物", "ビタミン", "脂質"].each do |nutrient| %>
-          <div class="form-check flex items-center bg-white p-2 sm:p-3 rounded-lg border border-gray-200 hover:border-blue-300 transition-colors">
-            <%= check_box_tag "nutrients[]", 
-                          nutrient, 
-                          false, 
-                          id: "nutrient_#{nutrient}", 
-                          class: "form-check-input w-4 h-4 sm:w-5 sm:h-5" %>
-            <%= label_tag "nutrient_#{nutrient}", 
-                          nutrient, 
-                          class: "ml-2 text-xs sm:text-sm cursor-pointer flex-grow" %>
+        <h2 class="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">栄養素を選択</h2>
+
+        <%# 主菜の栄養素選択 %>
+        <div class="mb-6">
+          <h3 class="text-base font-semibold text-gray-800 mb-3">主菜の栄養素（必須）</h3>
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3">
+            <% ["ミネラル", "たんぱく質", "炭水化物", "ビタミン", "脂質"].each do |nutrient| %>
+            <div class="form-check flex items-center bg-white p-2 sm:p-3 rounded-lg border border-gray-200 hover:border-blue-300 transition-colors">
+              <%= check_box_tag "main_nutrients[]", 
+                            nutrient, 
+                            false, 
+                            id: "main_nutrient_#{nutrient}", 
+                            class: "form-check-input w-4 h-4 sm:w-5 sm:h-5" %>
+              <%= label_tag "main_nutrient_#{nutrient}", 
+                         nutrient, 
+                         class: "ml-2 text-xs sm:text-sm cursor-pointer flex-grow" %>
+            </div>
+            <% end %>
           </div>
-          <% end %>
         </div>
 
-        <%# 送信ボタン %>
-        <div class="mt-6 sm:mt-8 flex justify-center">
-          <%= form.submit '献立を生成する', 
-                    class: 'w-full sm:w-auto inline-flex items-center justify-center px-4 sm:px-6 py-2 sm:py-3 border border-transparent text-sm sm:text-base font-medium rounded-lg shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors duration-150' %>
+        <%# 副菜の栄養素選択 %>
+        <div class="mb-6">
+          <h3 class="text-base font-semibold text-gray-800 mb-3">副菜の栄養素（任意）</h3>
+          <p class="text-sm text-gray-600 mb-3">選択しない場合、主菜の栄養バランスを考慮して自動的に決定されます</p>
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3">
+            <% ["ミネラル", "たんぱく質", "炭水化物", "ビタミン", "脂質"].each do |nutrient| %>
+            <div class="form-check flex items-center bg-white p-2 sm:p-3 rounded-lg border border-gray-200 hover:border-blue-300 transition-colors">
+              <%= check_box_tag "side_nutrients[]", 
+                            nutrient, 
+                            false, 
+                            id: "side_nutrient_#{nutrient}", 
+                            class: "form-check-input w-4 h-4 sm:w-5 sm:h-5" %>
+              <%= label_tag "side_nutrient_#{nutrient}", 
+                         nutrient, 
+                         class: "ml-2 text-xs sm:text-sm cursor-pointer flex-grow" %>
+            </div>
+            <% end %>
+          </div>
         </div>
       </div>
     </div>
-    <% end %>
+
+    <%# 送信ボタン %>
+    <div class="mt-6 sm:mt-8 flex justify-center">
+      <%= form.submit '献立を生成する', 
+                    class: 'w-full sm:w-auto inline-flex items-center justify-center px-4 sm:px-6 py-2 sm:py-3 border border-transparent text-sm sm:text-base font-medium rounded-lg shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors duration-150' %>
+    </div>
   </div>
+</div>
+<% end %>
+</div>
 </div>

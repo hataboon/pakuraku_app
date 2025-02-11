@@ -12,9 +12,9 @@ RSpec.describe Recipe, type: :model do
       it "レシピを削除したら紐づく食材も削除されること" do
         recipe = create(:recipe)
         food = create(:food, recipe: recipe)
-        expect {recipe.destroy }.to change(Food, :count).by(-1)
+        expect { recipe.destroy }.to change(Food, :count).by(-1)
       end
-      
+
       it "レシピを削除すると、紐づくカレンダープランも削除されること" do
         recipe = create(:recipe)
         calendar_plan = create(:calendar_plan, recipe: recipe)

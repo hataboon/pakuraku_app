@@ -19,7 +19,7 @@ RSpec.describe User, type: :model do
         user = build(:user, nickname: "a" * 30)
         expect(user).to be_valid
       end
-      
+
       it "passwordが6文字以上であれば有効であること" do
         user = build(:user, password: "a" * 6, password_confirmation: "a" * 6)
         expect(user).to be_valid
