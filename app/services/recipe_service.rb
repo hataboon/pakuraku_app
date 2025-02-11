@@ -6,7 +6,8 @@ class RecipeService
     @user = user
   end
 
-  def create_meal_plans(selected_dates, main_nutrients, side_nutrients = nil)
+  def create_meal_plans(selected_dates, main_nutrients, side_nutrients = nil, category = nil)
+    Rails.logger.info("Category in create_meal_plans: #{category}")
     if main_nutrients.empty?
       raise ValidationError.new("主菜の栄養素を一つ以上選択してください")
     end
@@ -14,7 +15,9 @@ class RecipeService
     plans = []
     selected_dates.each do |date, meal_times|
       meal_times.each do |meal_time|
-        meal_plan = generate_meal_plan(main_nutrients, side_nutrients, meal_time)
+        Rails.logger.info("Calling generate_meal_plan with: #{main_nutrients}, #{side_nutrients}, #{meal_time}, #{category}")
+
+        meal_plan = generate_meal_plan(main_nutrients, side_nutrients, meal_time, category)
         if meal_plan
           calendar_plan = save_meal_plan(meal_plan, date, meal_time)
           plans << calendar_plan if calendar_plan
@@ -27,9 +30,10 @@ class RecipeService
   private
 
 
-  def create_prompt(main_nutrients, side_nutrients, meal_time)
+  def create_prompt(main_nutrients, side_nutrients, meal_time, category)
     <<~PROMPT
       #{meal_time_to_japanese(meal_time)}の献立を提案してください。
+      #{category ? "【料理のジャンル】\n・#{Recipe::CATEGORIES[category.to_sym]}の料理を提案してください\n" : ""}
 
       【主菜の要件】
       ・重点的に取り入れる栄養素: #{main_nutrients.join('、')}
@@ -105,27 +109,32 @@ class RecipeService
     requirements.join("\n")
   end
 
-  def generate_meal_plan(main_nutrients, side_nutrients, meal_time)
-    max_attempts = 5  # 最大5回まで試行します
+  def generate_meal_plan(main_nutrients, side_nutrients, meal_time, category = nil)
+    max_attempts = 5
     attempts = 0
 
     while attempts < max_attempts
-      # 過去2週間の献立を取得
       recent_meals = CalendarPlan.where(
         user: @user,
         created_at: 2.weeks.ago..Time.current
       ).map { |plan| JSON.parse(plan.meal_plan) }
 
-      # 料理のジャンル選択
-      cuisine_types = [ "洋食", "和食", "中華" ]
-      last_cuisine = recent_meals.first&.dig("cuisine_type")
-      available_cuisines = cuisine_types - [ last_cuisine ].compact
-      selected_cuisine = available_cuisines.sample || cuisine_types.sample
+      # カテゴリー選択をシンプルに
+      selected_cuisine = if category
+        # カテゴリーが指定されていれば、その料理を選択
+        category == "japanese" ? "和食" : category == "chinese" ? "中華" : "洋食"
+      else
+        # 指定がなければランダムに選択（既存のロジック）
+        cuisine_types = [ "和食", "中華", "洋食" ]
+        last_cuisine = recent_meals.first&.dig("cuisine_type")
+        available_cuisines = cuisine_types - [ last_cuisine ].compact
+        available_cuisines.sample || cuisine_types.sample
+      end
 
       # OpenAI APIで献立を生成
       openai_client = OpenAI::Client.new(access_token: ENV["OPENAI_API_KEY"])
       system_message = "あなたは料理のプロフェッショナルとして、指定された栄養素を考慮しながら、主菜と副菜のバランスの取れた献立を提案してください。"
-      user_message = create_prompt(main_nutrients, side_nutrients, meal_time)
+      user_message = create_prompt(main_nutrients, side_nutrients, meal_time, category)
 
       begin
         response = openai_client.chat(
@@ -208,10 +217,18 @@ class RecipeService
       )
       existing_plan&.destroy
 
+      # カテゴリーを判定（cuisine_typeから適切なカテゴリーに変換）
+      category = case meal_plan[:cuisine_type]
+      when "和食" then "japanese"
+      when "中華" then "chinese"
+      when "洋食" then "western"
+      end
+
       # レシピの作成と保存
       recipe = Recipe.create!(
         name: "#{meal_plan[:main]}、#{meal_plan[:side]}",
-        description: meal_plan.to_json
+        description: meal_plan.to_json,
+        category: category
       )
 
       # 献立の保存

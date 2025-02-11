@@ -14,6 +14,7 @@ class RecipesController < ApplicationController
     selected_dates = params[:selected_dates] || {}
     main_nutrients = params[:main_nutrients] || []
     side_nutrients = params[:side_nutrients] || []
+    category = params[:category]
 
     # パラメータのバリデーション
     if selected_dates.empty?
@@ -26,6 +27,7 @@ class RecipesController < ApplicationController
 
     session[:main_nutrients] = main_nutrients
     session[:side_nutrients] = side_nutrients
+    session[:category] = category
 
     recipe_service = RecipeService.new(current_user)
 
@@ -33,7 +35,8 @@ class RecipesController < ApplicationController
       calendar_plans = recipe_service.create_meal_plans(
         selected_dates,
         main_nutrients,
-        side_nutrients
+        side_nutrients,
+        category
       )
 
       if calendar_plans.present?

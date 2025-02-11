@@ -134,6 +134,29 @@
       </div>
     </div>
 
+    <%# カテゴリー選択セクション %>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div class="p-4 sm:p-6">
+        <h2 class="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">料理のカテゴリー（任意）</h2>
+        <p class="text-sm text-gray-600 mb-3">選択しない場合、バランスの良い組み合わせで自動的に決定されます</p>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
+          <% Recipe::CATEGORIES.each do |key, value| %>
+          <div class="form-check flex items-center bg-white p-2 sm:p-3 rounded-lg border border-gray-200 hover:border-blue-300 transition-colors">
+            <%= radio_button_tag "category", 
+                          key, 
+                          false, 
+                          id: "category_#{key}", 
+                          class: "form-check-input w-4 h-4 sm:w-5 sm:h-5" %>
+            <%= label_tag "category_#{key}", 
+                       value, 
+                       class: "ml-2 text-xs sm:text-sm cursor-pointer flex-grow" %>
+          </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
     <%# 栄養素選択セクション %>
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
       <div class="p-4 sm:p-6">
