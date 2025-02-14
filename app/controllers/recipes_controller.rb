@@ -25,6 +25,11 @@ class RecipesController < ApplicationController
       redirect_to new_recipe_path, alert: "主菜の栄養素を1つ以上選択してください" and return
     end
 
+    if params[:category].is_a?(Array)
+      flash[:error] = "カテゴリーは１つだけ選択してください"
+      redirect_to new_recipe_path and return
+    end
+
     session[:main_nutrients] = main_nutrients
     session[:side_nutrients] = side_nutrients
     session[:category] = category
