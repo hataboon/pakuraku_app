@@ -10,6 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+
 ActiveRecord::Schema[8.0].define(version: 2025_02_11_064911) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
@@ -52,6 +53,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_11_064911) do
     t.text "meal_plan"
     t.index ["recipe_id"], name: "index_calendar_plans_on_recipe_id"
     t.index ["user_id"], name: "index_calendar_plans_on_user_id"
+  end
+
+  create_table "favorites", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "calendar_plan_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["calendar_plan_id"], name: "index_favorites_on_calendar_plan_id"
+    t.index ["user_id", "calendar_plan_id"], name: "index_favorites_on_user_id_and_calendar_plan_id", unique: true
+    t.index ["user_id"], name: "index_favorites_on_user_id"
   end
 
   create_table "foods", force: :cascade do |t|
@@ -129,6 +140,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_11_064911) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "calendar_plans", "recipes"
   add_foreign_key "calendar_plans", "users"
+  add_foreign_key "favorites", "calendar_plans"
+  add_foreign_key "favorites", "users"
   add_foreign_key "foods", "recipes"
   add_foreign_key "nutritions", "recipes"
 end
