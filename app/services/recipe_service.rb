@@ -6,11 +6,18 @@ class RecipeService
     @user = user
   end
 
-  def create_meal_plans(selected_dates, nutrients)
+  def create_meal_plans(selected_dates, main_nutrients, side_nutrients = nil, category = nil)
+    Rails.logger.info("Category in create_meal_plans: #{category}")
+    if main_nutrients.empty?
+      raise ValidationError.new("主菜の栄養素を一つ以上選択してください")
+    end
+
     plans = []
     selected_dates.each do |date, meal_times|
       meal_times.each do |meal_time|
-        meal_plan = generate_meal_plan(nutrients, meal_time)
+        Rails.logger.info("Calling generate_meal_plan with: #{main_nutrients}, #{side_nutrients}, #{meal_time}, #{category}")
+
+        meal_plan = generate_meal_plan(main_nutrients, side_nutrients, meal_time, category)
         if meal_plan
           calendar_plan = save_meal_plan(meal_plan, date, meal_time)
           plans << calendar_plan if calendar_plan
@@ -23,9 +30,18 @@ class RecipeService
   private
 
 
-  def create_prompt(nutrients, meal_time)
+  def create_prompt(main_nutrients, side_nutrients, meal_time, category)
     <<~PROMPT
       #{meal_time_to_japanese(meal_time)}の献立を提案してください。
+      #{category ? "【料理のジャンル】\n・#{Recipe::CATEGORIES[category.to_sym]}の料理を提案してください\n" : ""}
+
+      【主菜の要件】
+      ・重点的に取り入れる栄養素: #{main_nutrients.join('、')}
+      #{format_nutrient_requirements(main_nutrients)}
+
+      【副菜の要件】
+      #{side_nutrients.present? ? "・重点的に取り入れる栄養素: #{side_nutrients.join('、')}" : "・主菜の栄養バランスを補完する栄養素を使用"}
+      #{format_nutrient_requirements(side_nutrients) if side_nutrients.present?}
 
       【重要：栄養価の計算手順】
       1. 主食の栄養価（特に注意が必要）：
@@ -72,61 +88,88 @@ class RecipeService
     PROMPT
   end
 
-def generate_meal_plan(nutrients, meal_time)
-  max_attempts = 5  # 最大5回まで試行します
-  attempts = 0
+  def format_nutrient_requirements(nutrients)
+    return "" unless nutrients.present?
 
-  while attempts < max_attempts
-    # 過去2週間の献立を取得
-    recent_meals = CalendarPlan.where(
-      user: @user,
-      created_at: 2.weeks.ago..Time.current
-    ).map { |plan| JSON.parse(plan.meal_plan) }
-
-    # 料理のジャンル選択
-    cuisine_types = [ "洋食", "和食", "中華" ]
-    last_cuisine = recent_meals.first&.dig("cuisine_type")
-    available_cuisines = cuisine_types - [ last_cuisine ].compact
-    selected_cuisine = available_cuisines.sample || cuisine_types.sample
-
-    # OpenAI APIで献立を生成
-    openai_client = OpenAI::Client.new(access_token: ENV["OPENAI_API_KEY"])
-    system_message = "あなたは料理のプロフェッショナルとして、栄養バランスがよく、調理時間の短い献立を提案してください。"
-    user_message = create_prompt(nutrients, meal_time)
-
-    begin
-      response = openai_client.chat(
-        parameters: {
-          model: "gpt-3.5-turbo",
-          messages: [
-            { role: "system", content: system_message },
-            { role: "user", content: user_message }
-          ],
-          temperature: 1.0,
-          max_tokens: 500
-        }
-      )
-
-      result = response.dig("choices", 0, "message", "content")
-      Rails.logger.info("API Response: #{result}")
-
-      if result.present?
-        parsed_result = JSON.parse(result, symbolize_names: true)
-        if valid_meal_plan?(parsed_result) && !duplicate_meal?(parsed_result, recent_meals)
-          return parsed_result  # 有効な献立が見つかったら返す
-        end
-        # 重複または無効な場合は再試行
-        Rails.logger.info("献立が重複または無効なため再生成します（#{attempts + 1}回目）")
+    requirements = nutrients.map do |nutrient|
+      case nutrient
+      when "タンパク質"
+        "・タンパク質が豊富な食材を使用（目安：15-25g）"
+      when "脂質"
+        "・適度な脂質を含む調理法（目安：10-15g）"
+      when "炭水化物"
+        "・適度な炭水化物を含む食材選択（目安：20-30g）"
+      when "ビタミン"
+        "・ビタミン類が豊富な野菜を使用"
+      when "ミネラル"
+        "・ミネラルを含む食材を積極的に使用"
       end
-    rescue => e
-      Rails.logger.error("エラーが発生しました: #{e.message}")
     end
 
-    attempts += 1  # 試行回数を増やす
+    requirements.join("\n")
   end
 
-  nil  # 最大試行回数を超えた場合はnilを返す
-end
+  def generate_meal_plan(main_nutrients, side_nutrients, meal_time, category = nil)
+    max_attempts = 5
+    attempts = 0
+
+    while attempts < max_attempts
+      recent_meals = CalendarPlan.where(
+        user: @user,
+        created_at: 2.weeks.ago..Time.current
+      ).map { |plan| JSON.parse(plan.meal_plan) }
+
+      # カテゴリー選択をシンプルに
+      selected_cuisine = if category
+        # カテゴリーが指定されていれば、その料理を選択
+        category == "japanese" ? "和食" : category == "chinese" ? "中華" : "洋食"
+      else
+        # 指定がなければランダムに選択（既存のロジック）
+        cuisine_types = [ "和食", "中華", "洋食" ]
+        last_cuisine = recent_meals.first&.dig("cuisine_type")
+        available_cuisines = cuisine_types - [ last_cuisine ].compact
+        available_cuisines.sample || cuisine_types.sample
+      end
+
+      # OpenAI APIで献立を生成
+      openai_client = OpenAI::Client.new(access_token: ENV["OPENAI_API_KEY"])
+      system_message = "あなたは料理のプロフェッショナルとして、指定された栄養素を考慮しながら、主菜と副菜のバランスの取れた献立を提案してください。"
+      user_message = create_prompt(main_nutrients, side_nutrients, meal_time, category)
+
+      begin
+        response = openai_client.chat(
+          parameters: {
+            model: "gpt-3.5-turbo",
+            messages: [
+              { role: "system", content: system_message },
+              { role: "user", content: user_message }
+            ],
+            temperature: 1.0,
+            max_tokens: 500
+          }
+        )
+
+        result = response.dig("choices", 0, "message", "content")
+        Rails.logger.info("API Response: #{result}")
+
+        if result.present?
+          parsed_result = JSON.parse(result, symbolize_names: true)
+          if valid_meal_plan?(parsed_result) && !duplicate_meal?(parsed_result, recent_meals)
+            return parsed_result  # 有効な献立が見つかったら返す
+          end
+          # 重複または無効な場合は再試行
+          Rails.logger.info("献立が重複または無効なため再生成します（#{attempts + 1}回目）")
+        end
+      rescue => e
+        Rails.logger.error("エラーが発生しました: #{e.message}")
+      end
+
+      attempts += 1  # 試行回数を増やす
+    end
+
+    nil  # 最大試行回数を超えた場合はnilを返す
+  end
+
   def valid_meal_plan?(plan)
     # まず基本的な構造チェック
     return false unless plan.is_a?(Hash)
@@ -174,10 +217,18 @@ end
       )
       existing_plan&.destroy
 
+      # カテゴリーを判定（cuisine_typeから適切なカテゴリーに変換）
+      category = case meal_plan[:cuisine_type]
+      when "和食" then "japanese"
+      when "中華" then "chinese"
+      when "洋食" then "western"
+      end
+
       # レシピの作成と保存
       recipe = Recipe.create!(
         name: "#{meal_plan[:main]}、#{meal_plan[:side]}",
-        description: meal_plan.to_json
+        description: meal_plan.to_json,
+        category: category
       )
 
       # 献立の保存
