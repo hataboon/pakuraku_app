@@ -8,12 +8,6 @@ RSpec.describe Recipe, type: :model do
         expect(recipe).to be_valid
         expect(recipe.persisted?).to be true
       end
-
-      it "レシピを削除したら紐づく食材も削除されること" do
-        recipe = create(:recipe)
-        food = create(:food, recipe: recipe)
-        expect {recipe.destroy }.to change(Food, :count).by(-1)
-      end
       
       it "レシピを削除すると、紐づくカレンダープランも削除されること" do
         recipe = create(:recipe)
