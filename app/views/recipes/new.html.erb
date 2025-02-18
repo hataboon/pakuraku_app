@@ -8,7 +8,6 @@
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h2 class="text-2xl font-bold bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent">献立カレンダー</h2>
-            <p class="mt-2 text-sm text-gray-600">日付と時間帯を選択してください</p>
           </div>
 
           <%# 月切り替えナビゲーション %>
@@ -50,9 +49,12 @@
 
           <%# カレンダー日付 %>
           <div class="grid grid-cols-7 gap-2 sm:gap-4">
+            <% @start_date.wday.times do %>
+            <div class="min-h-[120px]"></div>
+            <% end %>
             <% (@start_date..@end_date).each do |date| %>
             <% has_meal_plan = @calendar_plans.any? { |p| p.date == date } %>
-            <div class="relative bg-white rounded-xl border <%= date == Date.today ? 'border-orange-300 ring-2 ring-orange-100' : 'border-gray-100' %> 
+            <div class="relative bg-white rounded-xl border <%= date == Time.zone.today ? 'border-orange-300 ring-2 ring-orange-100' : 'border-gray-100' %> 
                             <%= has_meal_plan ? 'min-h-[240px]' : 'min-h-[120px]' %> p-3 hover:shadow-md transition-all duration-200">
               <%# 日付表示 %>
               <div class="flex justify-between items-center mb-3">
