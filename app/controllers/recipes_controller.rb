@@ -21,7 +21,7 @@ class RecipesController < ApplicationController
       redirect_to new_recipe_path, alert: "日付を選択してください" and return
     end
 
-    if !session[:main_nutrients] && main_nutrients.empty?
+    if main_nutrients.empty?
       redirect_to new_recipe_path, alert: "主菜の栄養素を1つ以上選択してください" and return
     end
 
@@ -78,7 +78,7 @@ class RecipesController < ApplicationController
   private
 
   def set_date_range
-    @date = params[:date].present? ? Date.parse(params[:date]) : Date.today
+    @date = params[:date].present? ? Time.zone.parse(params[:date]).to_date : Time.zone.today
     @start_date = @date.beginning_of_month
     @end_date = @date.end_of_month
   end
