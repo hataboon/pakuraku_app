@@ -208,12 +208,24 @@ class RecipeService
   end
 
   def save_meal_plan(meal_plan, date, meal_time)
+    Rails.logger.debug "Saving meal plan with: date=#{date}, meal_time=#{meal_time}"
+
+    numeric_meal_time = case meal_time.to_s.downcase
+    when "morning" then 0
+    when "afternoon" then 1
+    when "evening" then 2
+    else 0
+    end
+
+    Rails.logger.debug "Converting meal_time '#{meal_time}' to numeric_meal_time: #{numeric_meal_time}"
+
     ActiveRecord::Base.transaction do
       # 同じ日時の献立を確認して削除
       existing_plan = CalendarPlan.find_by(
         user: @user,
         date: date,
-        meal_time: meal_time
+        meal_time: numeric_meal_time,
+        meal_plan: meal_plan.to_json
       )
       existing_plan&.destroy
 
@@ -231,14 +243,15 @@ class RecipeService
         category: category
       )
 
-      # 献立の保存
+      # 献立の保存（ここを修正）
       CalendarPlan.create!(
         user: @user,
         recipe: recipe,
         date: Date.parse(date),
-        meal_time: meal_time,
+        meal_time: numeric_meal_time,  # ← meal_time ではなく numeric_meal_time を使用
         meal_plan: meal_plan.to_json
       )
+
     rescue ActiveRecord::RecordInvalid => e
       Rails.logger.error("保存エラー: #{e.message}")
       raise

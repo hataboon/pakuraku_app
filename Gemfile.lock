@@ -173,6 +173,18 @@ GEM
       sshkit (>= 1.23.0, < 2.0)
       thor (~> 1.3)
       zeitwerk (>= 2.6.18, < 3.0)
+    kaminari (1.2.2)
+      activesupport (>= 4.1.0)
+      kaminari-actionview (= 1.2.2)
+      kaminari-activerecord (= 1.2.2)
+      kaminari-core (= 1.2.2)
+    kaminari-actionview (1.2.2)
+      actionview
+      kaminari-core (= 1.2.2)
+    kaminari-activerecord (1.2.2)
+      activerecord
+      kaminari-core (= 1.2.2)
+    kaminari-core (1.2.2)
     language_server-protocol (3.17.0.3)
     launchy (3.1.0)
       addressable (~> 2.8)
@@ -326,6 +338,10 @@ GEM
       zeitwerk (~> 2.6)
     rainbow (3.1.1)
     rake (13.2.1)
+    ransack (4.3.0)
+      activerecord (>= 6.1.5)
+      activesupport (>= 6.1.5)
+      i18n
     rdoc (6.10.0)
       psych (>= 4.0.0)
     regexp_parser (2.10.0)
@@ -468,6 +484,7 @@ DEPENDENCIES
   jbuilder
   jsbundling-rails
   kamal
+  kaminari
   letter_opener_web
   meta-tags
   omniauth-google-oauth2
@@ -478,6 +495,7 @@ DEPENDENCIES
   rack-cors
   rails (~> 8.0.1)
   rails-i18n
+  ransack
   rspec-rails
   rubocop-rails-omakase
   ruby-openai

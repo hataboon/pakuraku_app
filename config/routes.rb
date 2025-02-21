@@ -6,7 +6,7 @@ Rails.application.routes.draw do
     passwords: "users/passwords"
   }
   root "static_pages#top"
-
+  get "recipes/search", to: "recipes#search", as: "search_recipes"
   resources :foods, only: [ :index, :new, :create, :edit, :update, :destroy ]
   resources :recipes, only: [ :index, :new, :create, :show, :edit, :update ]
   resources :calendar_plans, only: [ :destroy ]

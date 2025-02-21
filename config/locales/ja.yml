@@ -21,3 +21,10 @@ ja:
       short: "%m/%d %H:%M"
     am: "午前"
     pm: "午後"
+
+  enums:
+    calendar_plan:
+      meal_time:
+        morning: "朝食"
+        afternoon: "昼食"
+        evening: "夕食"
