@@ -1,0 +1,39 @@
+<!-- app/views/recipes/_search_form.html.erb -->
+
+<div class="bg-white rounded-2xl shadow-lg border border-orange-100 overflow-hidden mb-8">
+  <div class="p-6">
+    <h2 class="text-2xl font-bold bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent mb-6">過去の献立から検索</h2>
+
+    <%= search_form_for q, url: new_recipe_path do |f| %>
+    <%# 検索バー %>
+    <div class="flex flex-col sm:flex-row gap-4">
+      <div class="flex-grow">
+        <%= f.search_field :meal_plan_cont, 
+              placeholder: "献立名で検索（例：カレー、サラダ）", 
+              class: "w-full px-4 py-3 rounded-xl border border-orange-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200" %>
+      </div>
+      <%= f.submit "検索", 
+            class: "px-8 py-3 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-xl hover:from-orange-700 hover:to-orange-600 transition-all duration-200" %>
+    </div>
+
+    <%# フィルターオプション %>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <%# カテゴリーフィルター %>
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-gray-700">カテゴリー</h3>
+        <div class="flex flex-wrap gap-2">
+          <% Recipe::CATEGORIES.each do |key, value| %>
+          <label class="inline-flex items-center px-4 py-2 rounded-lg bg-orange-50 hover:bg-orange-100 cursor-pointer transition-colors">
+            <%= f.check_box "meal_plan_cont_any", 
+                    { multiple: true }, 
+                    key, 
+                    nil %>
+            <span class="ml-2 text-sm text-gray-700"><%= value %></span>
+          </label>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <% end %>
+  </div>
+</div>

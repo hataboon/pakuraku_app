@@ -6,37 +6,95 @@ class RecipesController < ApplicationController
   before_action :set_date_range, only: [ :new, :show ]
 
   def new
-    @calendar_plans = CalendarPlan.where(user: current_user).includes(:recipe)
+    @start_date = @date.beginning_of_month
+    @end_date = @date.end_of_month
+
+    # カレンダー表示用のデータ取得
+    @calendar_plans = CalendarPlan.where(user: current_user, date: @start_date..@end_date)
+    Rails.logger.debug "Total calendar plans: #{@calendar_plans.count}"
+    @calendar_plans.each do |plan|
+      Rails.logger.debug "Plan: date=#{plan.date}, meal_time=#{plan.meal_time}, meal_plan=#{plan.meal_plan}"
+    end
     @nutrients = %w[ミネラル たんぱく質 炭水化物 ビタミン 脂質]
+    @q = current_user.calendar_plans.ransack(params[:q])
+    @q.sorts = "created_at desc" if @q.sorts.empty?
+    @search_results = if params[:q].present?
+      @q.result.includes(:recipe).page(params[:page]).per(12)
+    else
+      nil
+    end
   end
 
   def create
-    selected_dates = params[:selected_dates] || {}
-    main_nutrients = params[:main_nutrients] || []
-    side_nutrients = params[:side_nutrients] || []
-    category = params[:category]
+    Rails.logger.debug "フォーム送信パラメータ: #{params.inspect}"
 
-    # パラメータのバリデーション
+    # 1. 必要なパラメーターを取得する
+    main_nutrients = Array(params[:main_nutrients])
+    side_nutrients = Array(params[:side_nutrients])
+    category = params[:category].presence || "default"
+
+    # 2. 日付と時間帯の処理
+    selected_dates = {}
+
+    if params[:selected_dates].present?
+      # ここが重要！特別なパラメーターから普通のハッシュに変換する
+      dates_hash = params[:selected_dates].to_unsafe_h
+
+      # 各日付を処理する
+      dates_hash.each do |date_str, time_hash|
+        # time_hashも同様に変換が必要かもしれないので、念のため変換する
+        times = time_hash.is_a?(Hash) ? time_hash : time_hash.to_unsafe_h
+
+        # 選択された時間帯を収集する
+        selected_times = []
+
+        # 各時間帯をチェックする
+        times.each do |time_name, value|
+          Rails.logger.debug "  チェック: #{time_name} => #{value}"
+          # チェックボックスがオンなら（値が"1"なら）追加する
+          if value == "1"
+            selected_times << time_name
+            Rails.logger.debug "  時間帯を追加しました: #{time_name}"
+          end
+        end
+
+        # 選択された時間帯があれば、日付とともに保存する
+        if selected_times.any?
+          selected_dates[date_str] = selected_times
+          Rails.logger.debug "この日付を追加しました: #{date_str} => #{selected_times.inspect}"
+        end
+      end
+    end
+
+    # 3. 結果の確認
+    Rails.logger.debug "処理後の選択日: #{selected_dates.inspect}"
+    Rails.logger.debug "選択日数: #{selected_dates.size}"
+    Rails.logger.debug "主菜栄養素: #{main_nutrients.inspect}"
+    Rails.logger.debug "副菜栄養素: #{side_nutrients.inspect}"
+    Rails.logger.debug "カテゴリー: #{category.inspect}"
+
+    # バリデーション
     if selected_dates.empty?
-      redirect_to new_recipe_path, alert: "日付を選択してください" and return
+      Rails.logger.debug "エラー: 日付が選択されていません"
+      redirect_to new_recipe_path, alert: "日付と時間帯を選択してください" and return
     end
 
     if main_nutrients.empty?
+      Rails.logger.debug "エラー: 主菜栄養素が選択されていません"
       redirect_to new_recipe_path, alert: "主菜の栄養素を1つ以上選択してください" and return
     end
 
-    if params[:category].is_a?(Array)
-      flash[:error] = "カテゴリーは１つだけ選択してください"
-      redirect_to new_recipe_path and return
-    end
-
+    # セッションに保存
     session[:main_nutrients] = main_nutrients
     session[:side_nutrients] = side_nutrients
     session[:category] = category
 
+    # レシピサービスの呼び出し
     recipe_service = RecipeService.new(current_user)
 
     begin
+      Rails.logger.debug "献立作成開始: selected_dates=#{selected_dates.inspect}"
+
       calendar_plans = recipe_service.create_meal_plans(
         selected_dates,
         main_nutrients,
@@ -45,14 +103,17 @@ class RecipesController < ApplicationController
       )
 
       if calendar_plans.present?
+        Rails.logger.debug "献立作成成功: #{calendar_plans.size}件の献立を作成"
         redirect_to recipe_path(id: calendar_plans.first.date),
                     notice: "献立を作成しました。"
       else
+        Rails.logger.debug "献立作成失敗: 生成された献立がありません"
         redirect_to new_recipe_path,
                     alert: "献立の生成に失敗しました。時間をおいて再度お試しください。"
       end
     rescue StandardError => e
       Rails.logger.error("献立作成エラー: #{e.class} - #{e.message}")
+      Rails.logger.error(e.backtrace.join("\n"))
       redirect_to new_recipe_path,
                   alert: "献立の作成中にエラーが発生しました。時間をおいて再度お試しください。"
     end
@@ -60,6 +121,12 @@ class RecipesController < ApplicationController
 
   def show
     @calendar_plans = CalendarPlan.where(user: current_user, date: params[:id])
+
+  # デバッグ用ログ
+  Rails.logger.debug "Calendar plans found: #{@calendar_plans.size}"
+  @calendar_plans.each do |plan|
+    Rails.logger.debug "Plan ID: #{plan.id}, meal_time: #{plan.meal_time.inspect} (#{plan.meal_time.class})"
+  end
 
     # 「作成せずに戻る」からのリクエストの場合
     if params[:cancel].present?
@@ -96,7 +163,7 @@ class RecipesController < ApplicationController
     }
 
     # 食事時間を取得（対応する時間帯がない場合は「食事」を使用）
-    meal_time = time_mapping[calendar_plan.meal_time.downcase] || "食事"
+    meal_time = time_mapping[calendar_plan.meal_time&.downcase] || "食事"
 
     # シェアテキストを構築
     text = "【#{meal_time}の献立】\n"
