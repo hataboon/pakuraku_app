@@ -14,14 +14,12 @@ class CalendarPlan < ApplicationRecord
     I18n.t("enums.calendar_plan.meal_time.#{meal_time}")
   end
 
-  # 日本語の表示名を取得するメソッドを追加
-  def meal_time_display
-    # read_attributeで直接データベース値を取得
-    raw_value = read_attribute("meal_time")
-    case raw_value
-    when "0" then "朝食"
-    when "1" then "昼食"
-    when "2" then "夕食"
+  def meal_time_text
+    case meal_time.to_s
+    when "", "nil" then "設定なし"
+    when "0", "0.0", "morning" then "朝食"
+    when "1", "1.0", "afternoon" then "昼食"
+    when "2", "2.0", "evening" then "夕食"
     else "設定なし"
     end
   end
