@@ -37,24 +37,20 @@ class RecipesController < ApplicationController
     selected_dates = {}
 
     if params[:selected_dates].present?
-      # ここが重要！特別なパラメーターから普通のハッシュに変換する
       dates_hash = params[:selected_dates].to_unsafe_h
 
       # 各日付を処理する
       dates_hash.each do |date_str, time_hash|
-        # time_hashも同様に変換が必要かもしれないので、念のため変換する
         times = time_hash.is_a?(Hash) ? time_hash : time_hash.to_unsafe_h
-
-        # 選択された時間帯を収集する
         selected_times = []
-
         # 各時間帯をチェックする
         times.each do |time_name, value|
           Rails.logger.debug "  チェック: #{time_name} => #{value}"
-          # チェックボックスがオンなら（値が"1"なら）追加する
           if value == "1"
             selected_times << time_name
             Rails.logger.debug "  時間帯を追加しました: #{time_name}"
+            existing_plan = current_user.calendar_plans.find_by(date: Date.parse(date_str), meal_time: time_name)
+            existing_plan&.destroy
           end
         end
 
@@ -65,13 +61,6 @@ class RecipesController < ApplicationController
         end
       end
     end
-
-    # 3. 結果の確認
-    Rails.logger.debug "処理後の選択日: #{selected_dates.inspect}"
-    Rails.logger.debug "選択日数: #{selected_dates.size}"
-    Rails.logger.debug "主菜栄養素: #{main_nutrients.inspect}"
-    Rails.logger.debug "副菜栄養素: #{side_nutrients.inspect}"
-    Rails.logger.debug "カテゴリー: #{category.inspect}"
 
     # バリデーション
     if selected_dates.empty?
