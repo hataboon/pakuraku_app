@@ -1,0 +1,455 @@
+[33mf11126b[m[33m ([m[1;36mHEAD -> [m[1;32mfix/recipe-delete[m[33m)[m HEAD@{0}: reset: moving to HEAD~1
+[33m949de48[m[33m ([m[1;31morigin/main[m[33m, [m[1;32mmain[m[33m)[m HEAD@{1}: checkout: moving from main to fix/recipe-delete
+[33m949de48[m[33m ([m[1;31morigin/main[m[33m, [m[1;32mmain[m[33m)[m HEAD@{2}: pull origin main: Fast-forward
+[33mf11126b[m[33m ([m[1;36mHEAD -> [m[1;32mfix/recipe-delete[m[33m)[m HEAD@{3}: checkout: moving from feature/recipe-search to main
+[33m2a18048[m[33m ([m[1;31morigin/feature/recipe-search[m[33m, [m[1;32mfeature/recipe-search[m[33m)[m HEAD@{4}: commit: オートコンプリート機能追加
+[33mf11126b[m[33m ([m[1;36mHEAD -> [m[1;32mfix/recipe-delete[m[33m)[m HEAD@{5}: checkout: moving from main to feature/recipe-search
+[33mf11126b[m[33m ([m[1;36mHEAD -> [m[1;32mfix/recipe-delete[m[33m)[m HEAD@{6}: pull origin main: Fast-forward
+[33m376bfc1[m HEAD@{7}: checkout: moving from chore/misc-updates to main
+[33mf8532d9[m[33m ([m[1;31morigin/chore/misc-updates[m[33m, [m[1;32mchore/misc-updates[m[33m)[m HEAD@{8}: commit: 曜日ずれ、タイトル修正
+[33m376bfc1[m HEAD@{9}: checkout: moving from main to chore/misc-updates
+[33m376bfc1[m HEAD@{10}: pull origin main: Fast-forward
+[33mda7ca9b[m HEAD@{11}: checkout: moving from model-spec to main
+[33m0c3b46b[m[33m ([m[1;31morigin/model-spec[m[33m, [m[1;32mmodel-spec[m[33m)[m HEAD@{12}: pull origin model-spec: Merge made by the 'ort' strategy.
+[33m60f3fa8[m HEAD@{13}: commit: factories-calendar/recipe/user & spec/model/user add
+[33m6ee6b6f[m HEAD@{14}: commit: RSpecのテスト
+[33m35deddf[m HEAD@{15}: commit: RSpecのテスト
+[33m214701c[m[33m ([m[1;32mfeature/recipe-favorites[m[33m)[m HEAD@{16}: checkout: moving from 340cc8b89590165a4e40595731307f2da8fce9d9 to model-spec
+[33m340cc8b[m[33m ([m[1;31morigin/RSpec-setup[m[33m, [m[1;32mRSpec-setup[m[33m)[m HEAD@{17}: checkout: moving from model-spec to 340cc8b
+[33m214701c[m[33m ([m[1;32mfeature/recipe-favorites[m[33m)[m HEAD@{18}: reset: moving to 214701c
+[33m214701c[m[33m ([m[1;32mfeature/recipe-favorites[m[33m)[m HEAD@{19}: checkout: moving from feature/recipe-favorites to model-spec
+[33m214701c[m[33m ([m[1;32mfeature/recipe-favorites[m[33m)[m HEAD@{20}: reset: moving to 214701c
+[33md8603ea[m HEAD@{21}: reset: moving to d8603ea
+[33md8603ea[m HEAD@{22}: checkout: moving from feature/recipe-favorites to feature/recipe-favorites
+[33md8603ea[m HEAD@{23}: reset: moving to d8603ea
+[33md8603ea[m HEAD@{24}: checkout: moving from main to feature/recipe-favorites
+[33mda7ca9b[m HEAD@{25}: reset: moving to origin/main
+[33mda7ca9b[m HEAD@{26}: checkout: moving from main to main
+[33mda7ca9b[m HEAD@{27}: checkout: moving from feature/recipe-favorites to main
+[33md8603ea[m HEAD@{28}: checkout: moving from main to feature/recipe-favorites
+[33mda7ca9b[m HEAD@{29}: pull origin main: Fast-forward
+[33md8603ea[m HEAD@{30}: checkout: moving from feature/recipe-favorites to main
+[33md8603ea[m HEAD@{31}: reset: moving to HEAD
+[33md8603ea[m HEAD@{32}: checkout: moving from main to feature/recipe-favorites
+[33md8603ea[m HEAD@{33}: pull origin main: Fast-forward
+[33m0449f44[m HEAD@{34}: checkout: moving from main to main
+[33m0449f44[m HEAD@{35}: pull origin main: Fast-forward
+[33mefcbd73[m HEAD@{36}: checkout: moving from fix/newレイアウト修正 to main
+[33me8d4f18[m[33m ([m[1;31morigin/fix/newレイアウト修正[m[33m, [m[1;32mfix/newレイアウト修正[m[33m)[m HEAD@{37}: commit: カレンダー部分を修正
+[33mefcbd73[m HEAD@{38}: checkout: moving from main to fix/newレイアウト修正
+[33mefcbd73[m HEAD@{39}: pull origin main: Fast-forward
+[33m60bb5b0[m HEAD@{40}: checkout: moving from feature/multi-generation-cuisine-type to main
+[33m39b185f[m[33m ([m[1;31morigin/feature/multi-generation-cuisine-type[m[33m, [m[1;32mfeature/multi-generation-cuisine-type[m[33m)[m HEAD@{41}: commit: recipe/modelのcatagoryカラムを追加し和風、中華、洋風別に献立生成追加
+[33m60bb5b0[m HEAD@{42}: checkout: moving from main to feature/multi-generation-cuisine-type
+[33m60bb5b0[m HEAD@{43}: pull origin main: Fast-forward
+[33m7a20683[m HEAD@{44}: checkout: moving from feature/multi-generation-dish-type to main
+[33m6067c87[m[33m ([m[1;31morigin/feature/multi-generation-dish-type[m[33m, [m[1;32mfeature/multi-generation-dish-type[m[33m)[m HEAD@{45}: reset: moving to HEAD
+[33m6067c87[m[33m ([m[1;31morigin/feature/multi-generation-dish-type[m[33m, [m[1;32mfeature/multi-generation-dish-type[m[33m)[m HEAD@{46}: commit: 主菜と副菜別の生成
+[33m214701c[m[33m ([m[1;32mfeature/recipe-favorites[m[33m)[m HEAD@{47}: reset: moving to HEAD^
+[33m4b3bae1[m HEAD@{48}: commit: 主菜と副菜別の生成
+[33m214701c[m[33m ([m[1;32mfeature/recipe-favorites[m[33m)[m HEAD@{49}: checkout: moving from model-spec to feature/multi-generation-dish-type
+[33m214701c[m[33m ([m[1;32mfeature/recipe-favorites[m[33m)[m HEAD@{50}: commit: WIP: RSpecのモデルテスト実装中
+[33m7a20683[m HEAD@{51}: checkout: moving from main to model-spec
+[33m7a20683[m HEAD@{52}: pull origin main: Fast-forward
+[33m7671333[m HEAD@{53}: checkout: moving from RSpec-setup to main
+[33m340cc8b[m[33m ([m[1;31morigin/RSpec-setup[m[33m, [m[1;32mRSpec-setup[m[33m)[m HEAD@{54}: commit: RSpecのセットアップ
+[33m7671333[m HEAD@{55}: checkout: moving from main to RSpec-setup
+[33m7671333[m HEAD@{56}: pull origin main: Fast-forward
+[33me3d87c6[m HEAD@{57}: checkout: moving from feature/password-reset to main
+[33m94f7c68[m[33m ([m[1;31morigin/feature/password-reset[m[33m, [m[1;32mfeature/password-reset[m[33m)[m HEAD@{58}: commit: 日本語対応
+[33mcf7e0a5[m HEAD@{59}: commit: パスワードリセットの機能追加
+[33me3d87c6[m HEAD@{60}: checkout: moving from main to feature/password-reset
+[33me3d87c6[m HEAD@{61}: pull origin main: Fast-forward
+[33mc794fbe[m HEAD@{62}: checkout: moving from main to main
+[33mc794fbe[m HEAD@{63}: pull origin main: Fast-forward
+[33m26ffada[m HEAD@{64}: checkout: moving from feature/google-login to main
+[33mcf5bb90[m[33m ([m[1;31morigin/feature/google-login[m[33m, [m[1;32mfeature/google-login[m[33m)[m HEAD@{65}: commit: gem-rack-cors追加
+[33m8d6e39c[m HEAD@{66}: commit: 認証情報をcredentials.yml.encから直接読み取り
+[33m7f5d88f[m HEAD@{67}: commit: 認証情報をcredentials.yml.encから直接読み取り
+[33ma7220eb[m HEAD@{68}: commit: 認証情報をcredentials.yml.encから直接読み取り
+[33m5418d6e[m HEAD@{69}: commit: authclient add
+[33m1fba94c[m HEAD@{70}: commit: 開発環境と本番環境で異なる設定を使用
+[33ma1d4669[m HEAD@{71}: commit: 開発環境と本番環境で異なる設定を使用
+[33me0df752[m HEAD@{72}: commit: google認証の追加
+[33m26ffada[m HEAD@{73}: checkout: moving from main to feature/google-login
+[33m26ffada[m HEAD@{74}: pull origin main: Fast-forward
+[33m838ad1a[m HEAD@{75}: checkout: moving from feature/custom-domain to main
+[33mb90a478[m[33m ([m[1;31morigin/feature/custom-domain[m[33m, [m[1;32mfeature/custom-domain[m[33m)[m HEAD@{76}: commit: カスタムドメインの追加
+[33m838ad1a[m HEAD@{77}: checkout: moving from main to feature/custom-domain
+[33m838ad1a[m HEAD@{78}: pull origin main: Fast-forward
+[33m84f0668[m HEAD@{79}: checkout: moving from fix/user-calendar to main
+[33me4942cf[m[33m ([m[1;31morigin/fix/user-calendar[m[33m, [m[1;32mfix/user-calendar[m[33m)[m HEAD@{80}: commit: ニックネーム修正
+[33m4277b68[m HEAD@{81}: commit: ユーザーごとに表示
+[33m84f0668[m HEAD@{82}: checkout: moving from main to fix/user-calendar
+[33m84f0668[m HEAD@{83}: commit: トグルｊｓの修正
+[33m586cccc[m HEAD@{84}: commit: publicカラム追加
+[33mde403b6[m HEAD@{85}: pull origin main: Fast-forward
+[33m74d9840[m HEAD@{86}: checkout: moving from main to main
+[33m74d9840[m HEAD@{87}: pull origin main: Fast-forward
+[33m52c8ea5[m HEAD@{88}: checkout: moving from fix/calendar to main
+[33mfc78ccc[m[33m ([m[1;31morigin/fix/calendar[m[33m, [m[1;32mfix/calendar[m[33m)[m HEAD@{89}: commit: 栄養素、レイアウトの微調整
+[33m52c8ea5[m HEAD@{90}: checkout: moving from main to fix/calendar
+[33m52c8ea5[m HEAD@{91}: pull origin main: Fast-forward
+[33m826bd04[m HEAD@{92}: checkout: moving from fix/recipe-nutrion to main
+[33mb906d42[m[33m ([m[1;31morigin/fix/recipe-nutrion[m[33m, [m[1;32mfix/recipe-nutrion[m[33m)[m HEAD@{93}: commit: 栄養素の解析の改良
+[33m826bd04[m HEAD@{94}: reset: moving to main
+[33m826bd04[m HEAD@{95}: reset: moving to main
+[33m826bd04[m HEAD@{96}: checkout: moving from main to fix/recipe-nutrion
+[33m826bd04[m HEAD@{97}: pull origin main: Fast-forward
+[33mcd799a4[m HEAD@{98}: checkout: moving from fix/recipe-pattern to main
+[33mda91b8f[m[33m ([m[1;31morigin/fix/recipe-pattern[m[33m, [m[1;32mfix/recipe-pattern[m[33m)[m HEAD@{99}: commit: 献立の精度を向上
+[33mcd799a4[m HEAD@{100}: checkout: moving from main to fix/recipe-pattern
+[33mcd799a4[m HEAD@{101}: pull origin main: Fast-forward
+[33m575ed57[m HEAD@{102}: checkout: moving from fix/recipe-create to main
+[33mbb576e2[m[33m ([m[1;31morigin/fix/recipe-create[m[33m, [m[1;32mfix/recipe-create[m[33m)[m HEAD@{103}: commit: 主菜の削除
+[33m575ed57[m HEAD@{104}: reset: moving to origin/main
+[33m575ed57[m HEAD@{105}: checkout: moving from main to fix/recipe-create
+[33m575ed57[m HEAD@{106}: checkout: moving from fix/recipe-create to main
+[33m575ed57[m HEAD@{107}: reset: moving to origin/main
+[33m575ed57[m HEAD@{108}: checkout: moving from main to fix/recipe-create
+[33m575ed57[m HEAD@{109}: checkout: moving from fix/recipe-create to main
+[33m575ed57[m HEAD@{110}: reset: moving to HEAD
+[33m575ed57[m HEAD@{111}: checkout: moving from main to fix/recipe-create
+[33m575ed57[m HEAD@{112}: pull origin main: Fast-forward
+[33m3cf2c40[m HEAD@{113}: checkout: moving from feature/add-favicon to main
+[33m46b3cb2[m[33m ([m[1;31morigin/feature/add-favicon[m[33m, [m[1;32mfeature/add-favicon[m[33m)[m HEAD@{114}: commit: ファビコンの設定
+[33m3cf2c40[m HEAD@{115}: checkout: moving from main to feature/add-favicon
+[33m3cf2c40[m HEAD@{116}: pull origin main: Fast-forward
+[33m6900dd1[m HEAD@{117}: checkout: moving from fix/assets-error to main
+[33m210b0b1[m[33m ([m[1;31morigin/fix/assets-error[m[33m, [m[1;32mfix/assets-error[m[33m)[m HEAD@{118}: commit: エラーの解決
+[33m6900dd1[m HEAD@{119}: checkout: moving from main to fix/assets-error
+[33m6900dd1[m HEAD@{120}: pull origin main: Fast-forward
+[33m4f8b1e5[m HEAD@{121}: checkout: moving from main to main
+[33m4f8b1e5[m HEAD@{122}: pull origin main: Fast-forward
+[33m87dd808[m HEAD@{123}: checkout: moving from feature/add-ogp-image to main
+[33m08f8456[m[33m ([m[1;31morigin/feature/add-ogp-image[m[33m, [m[1;32mfeature/add-ogp-image[m[33m)[m HEAD@{124}: commit: default_meta_tagsの修正
+[33mc1dd317[m HEAD@{125}: commit: default_meta_tagsの修正
+[33m23b550a[m HEAD@{126}: commit: default_meta_tagsの修正
+[33m1a75380[m HEAD@{127}: commit: 画像をアセットからパブリックへ移動
+[33m968490b[m HEAD@{128}: commit: OGP画像の追加
+[33mcdec2af[m HEAD@{129}: commit: OGP画像の追加
+[33m87dd808[m HEAD@{130}: checkout: moving from main to feature/add-ogp-image
+[33m87dd808[m HEAD@{131}: pull origin main: Fast-forward
+[33m4f54dd0[m HEAD@{132}: checkout: moving from feature/add-terms-of-service to main
+[33mcf9470c[m[33m ([m[1;31morigin/feature/add-terms-of-service[m[33m, [m[1;32mfeature/add-terms-of-service[m[33m)[m HEAD@{133}: commit: 利用規約の追加
+[33m4f54dd0[m HEAD@{134}: checkout: moving from main to feature/add-terms-of-service
+[33m4f54dd0[m HEAD@{135}: pull origin main: Fast-forward
+[33mfa94320[m HEAD@{136}: checkout: moving from fix/dropdown-top-page-new to main
+[33m9583749[m[33m ([m[1;31morigin/fix/dropdown-top-page-new[m[33m, [m[1;32mfix/dropdown-top-page-new[m[33m)[m HEAD@{137}: commit: ドロップダウンの修正
+[33mfa94320[m HEAD@{138}: checkout: moving from main to fix/dropdown-top-page-new
+[33mfa94320[m HEAD@{139}: checkout: moving from fix/dropdown-top-page to main
+[33mfa94320[m HEAD@{140}: reset: moving to HEAD
+[33mfa94320[m HEAD@{141}: checkout: moving from main to fix/dropdown-top-page
+[33mfa94320[m HEAD@{142}: pull origin main: Fast-forward
+[33m23cb00b[m HEAD@{143}: checkout: moving from feature/add-privacy-polic to main
+[33m7c4c183[m[33m ([m[1;31morigin/feature/add-privacy-polic[m[33m, [m[1;32mfeature/add-privacy-polic[m[33m)[m HEAD@{144}: commit: プライバシーポリシーの追加
+[33m23cb00b[m HEAD@{145}: checkout: moving from main to feature/add-privacy-polic
+[33m23cb00b[m HEAD@{146}: pull origin main: Fast-forward
+[33m51c9d29[m HEAD@{147}: checkout: moving from feature/share-recipes to main
+[33maecefae[m[33m ([m[1;31morigin/feature/share-recipes[m[33m, [m[1;32mfeature/share-recipes[m[33m)[m HEAD@{148}: commit: Update production settings and CSP configuration
+[33m0617c84[m HEAD@{149}: commit: Remove invalid asset_host from CSP config
+[33m55a8ba7[m HEAD@{150}: commit: Add Twitter share button and CSP settings
+[33m0562afd[m HEAD@{151}: commit: Add Twitter share button and CSP settings
+[33mf255d66[m HEAD@{152}: commit: Xへのシェア機能の追加
+[33m13528bf[m HEAD@{153}: commit: Xへのシェア機能の追加
+[33m51c9d29[m HEAD@{154}: checkout: moving from main to feature/share-recipes
+[33m51c9d29[m HEAD@{155}: pull origin main: Fast-forward
+[33m368a07c[m HEAD@{156}: checkout: moving from fix/css-optimization to main
+[33m0455c30[m[33m ([m[1;31morigin/fix/css-optimization[m[33m, [m[1;32mfix/css-optimization[m[33m)[m HEAD@{157}: commit: CSSの読み込み最適化とpreload警告の対応
+[33m368a07c[m HEAD@{158}: checkout: moving from main to fix/css-optimization
+[33m368a07c[m HEAD@{159}: reset: moving to HEAD
+[33m368a07c[m HEAD@{160}: pull origin main: Fast-forward
+[33m91cbf08[m HEAD@{161}: checkout: moving from feature/user-edit to main
+[33mcea5e20[m[33m ([m[1;31morigin/feature/user-edit[m[33m, [m[1;32mfeature/user-edit[m[33m)[m HEAD@{162}: commit: プロフィール画像、ニックネームの追加
+[33m91cbf08[m HEAD@{163}: checkout: moving from main to feature/user-edit
+[33m91cbf08[m HEAD@{164}: pull origin main: Fast-forward
+[33me3fdb38[m[33m ([m[1;32mfeature/nutrition-chart[m[33m)[m HEAD@{165}: checkout: moving from feature/nutrition-chart-show to main
+[33m52841d6[m[33m ([m[1;31morigin/feature/nutrition-chart-show[m[33m, [m[1;32mfeature/nutrition-chart-show[m[33m)[m HEAD@{166}: commit: 栄養素グラフでグラフを表示
+[33me3fdb38[m[33m ([m[1;32mfeature/nutrition-chart[m[33m)[m HEAD@{167}: checkout: moving from main to feature/nutrition-chart-show
+[33me3fdb38[m[33m ([m[1;32mfeature/nutrition-chart[m[33m)[m HEAD@{168}: pull origin main: Fast-forward
+[33m31708ff[m HEAD@{169}: checkout: moving from main to main
+[33m31708ff[m HEAD@{170}: checkout: moving from feature/nutrition-chart to main
+[33me3fdb38[m[33m ([m[1;32mfeature/nutrition-chart[m[33m)[m HEAD@{171}: pull origin main: Fast-forward
+[33med44628[m[33m ([m[1;31morigin/feature/nutrition-chart[m[33m)[m HEAD@{172}: commit: chat.jsを追加し、recipe.showでグラフ化
+[33me1b19b5[m HEAD@{173}: commit: chat.jsを追加し、recipe.showでグラフ化
+[33m6d87956[m HEAD@{174}: commit: chat.jsを追加し、recipe.showでグラフ化
+[33m31708ff[m HEAD@{175}: checkout: moving from main to feature/nutrition-chart
+[33m31708ff[m HEAD@{176}: pull origin main: Merge made by the 'ort' strategy.
+[33m636e3b0[m HEAD@{177}: commit: READMEの更新
+[33ma7b6d6b[m HEAD@{178}: pull origin main: Fast-forward
+[33m5bf3afa[m HEAD@{179}: checkout: moving from feature/rebuild_environment to main
+[33m263d447[m[33m ([m[1;31morigin/feature/rebuild_environment[m[33m, [m[1;32mfeature/rebuild_environment[m[33m)[m HEAD@{180}: commit: Fix CSS loading warning by optimizing stylesheet_link_tag
+[33m09cc129[m HEAD@{181}: commit: Refactor Turbo and JavaScript initialization
+[33m9a8521e[m HEAD@{182}: commit: Change ActiveJob queue adapter to async
+[33m3cc608e[m HEAD@{183}: commit: Change cache store configuration in production
+[33m3fc069d[m HEAD@{184}: commit: Remove solid_queue configuration from production environment
+[33m3748f07[m HEAD@{185}: commit: Remove unnecessary gems and simplify database configuration
+[33m32f25cb[m HEAD@{186}: commit: Add queue database configuration for solid_queue
+[33m406e8f8[m HEAD@{187}: commit: Add cable configuration to database.yml
+[33mb884414[m HEAD@{188}: commit: Update database.yml with proper configuration for all environments
+[33m09c602d[m HEAD@{189}: commit: Add Node.js version specification to package.json
+[33mf51157e[m HEAD@{190}: commit: Simplify database configuration for production
+[33m1953e73[m HEAD@{191}: commit: Update database configuration for Render deployment
+[33m88bcb94[m HEAD@{192}: commit: Update credentials
+[33m1149a09[m HEAD@{193}: commit: Add render build script
+[33m902905a[m HEAD@{194}: commit: Apply rubocop auto-corrections
+[33me94d877[m HEAD@{195}: commit: 環境を再構築
+[33m5bf3afa[m HEAD@{196}: checkout: moving from main to feature/rebuild_environment
+[33m5bf3afa[m HEAD@{197}: checkout: moving from nutrition-Visual to main
+[33m586b93c[m[33m ([m[1;32mnutrition-Visual[m[33m)[m HEAD@{198}: commit: 環境再構築前の最終コミット
+[33mc2fe93f[m[33m ([m[1;32mdbedit[m[33m)[m HEAD@{199}: checkout: moving from main to nutrition-Visual
+[33m5bf3afa[m HEAD@{200}: pull origin main: Fast-forward
+[33mc2fe93f[m[33m ([m[1;32mdbedit[m[33m)[m HEAD@{201}: checkout: moving from nutrition-Visual to main
+[33mc2fe93f[m[33m ([m[1;32mdbedit[m[33m)[m HEAD@{202}: checkout: moving from dependabot-update-selenium-webdriver to nutrition-Visual
+[33m20fc817[m[33m ([m[1;32mdependabot-update-selenium-webdriver[m[33m)[m HEAD@{203}: checkout: moving from main to dependabot-update-selenium-webdriver
+[33mc2fe93f[m[33m ([m[1;32mdbedit[m[33m)[m HEAD@{204}: checkout: moving from nutrition-Visual to main
+[33mc2fe93f[m[33m ([m[1;32mdbedit[m[33m)[m HEAD@{205}: checkout: moving from main to nutrition-Visual
+[33mc2fe93f[m[33m ([m[1;32mdbedit[m[33m)[m HEAD@{206}: reset: moving to HEAD
+[33mc2fe93f[m[33m ([m[1;32mdbedit[m[33m)[m HEAD@{207}: pull origin main: Fast-forward
+[33me8836a3[m HEAD@{208}: checkout: moving from dbedit to main
+[33mc2fe93f[m[33m ([m[1;32mdbedit[m[33m)[m HEAD@{209}: pull origin main: Fast-forward
+[33mabf8ddb[m[33m ([m[1;31morigin/dbedit[m[33m)[m HEAD@{210}: commit: Update render-build.sh to configure bundler settings
+[33me18e863[m HEAD@{211}: commit: Update render-build.sh to configure bundler settings
+[33medbea4c[m HEAD@{212}: commit: Update render-build.sh to configure bundler settings
+[33m31b2de0[m HEAD@{213}: commit: Fix Rubocop style issues manually
+[33m01c19fa[m HEAD@{214}: commit: Fix code style issues detected by Rubocop
+[33m38cdbd4[m HEAD@{215}: commit: Fix code style issues detected by Rubocop
+[33mf3cc1bf[m HEAD@{216}: commit: Fix Rubocop style issues manually
+[33mabacd69[m HEAD@{217}: commit: Fix code style issues detected by Rubocop
+[33m060ddfa[m HEAD@{218}: commit: Update CI workflow to configure bundler settings
+[33m61cae42[m HEAD@{219}: commit: Update CI workflow to configure bundler settings
+[33m47439f9[m HEAD@{220}: commit: Update bundle configuration without deployment mode
+[33m4200e3c[m HEAD@{221}: commit: データベース設定の更新と環境分離の実装
+[33m394763c[m HEAD@{222}: commit: データベース設定の更新と環境分離の実装
+[33mc55b116[m HEAD@{223}: commit: データベース設定の更新と環境分離の実装
+[33m296efa7[m HEAD@{224}: commit: データベース設定の更新と環境分離の実装
+[33m6ce1851[m HEAD@{225}: commit: データベース設定の更新と環境分離の実装
+[33me8836a3[m HEAD@{226}: checkout: moving from main to dbedit
+[33me8836a3[m HEAD@{227}: commit: データベースの設定
+[33m7c38c47[m HEAD@{228}: commit: css設定の修正
+[33mcb6b3c9[m HEAD@{229}: commit: css設定の修正
+[33m646f10d[m HEAD@{230}: commit: 本番環境へのcss設定修正
+[33mb0eeba9[m HEAD@{231}: commit: 本番環境へのcss設定修正
+[33m3448392[m HEAD@{232}: commit: 本番環境へのcss設定修正
+[33mac88162[m HEAD@{233}: commit: css設定の修正
+[33m8ef0e7d[m HEAD@{234}: commit: デプロイ修正
+[33m269a06a[m HEAD@{235}: commit: データベース修正
+[33m2288974[m HEAD@{236}: commit: フラッシュメッセージ修正
+[33ma591ca1[m HEAD@{237}: commit: ヘッダー編集。栄養素非表示
+[33mca5c063[m HEAD@{238}: commit: 削除機能修正
+[33m7586f4b[m HEAD@{239}: commit: データベース修正
+[33mfe9dd52[m[33m ([m[1;32mswiper-add[m[33m)[m HEAD@{240}: checkout: moving from swiper-add to main
+[33mfe9dd52[m[33m ([m[1;32mswiper-add[m[33m)[m HEAD@{241}: reset: moving to HEAD
+[33mfe9dd52[m[33m ([m[1;32mswiper-add[m[33m)[m HEAD@{242}: checkout: moving from main to swiper-add
+[33mfe9dd52[m[33m ([m[1;32mswiper-add[m[33m)[m HEAD@{243}: commit: ゴミ箱マーク追加
+[33m33fe23b[m HEAD@{244}: commit: チェックアウトの追加
+[33m1a971e8[m[33m ([m[1;32mUIedit[m[33m)[m HEAD@{245}: checkout: moving from main to main
+[33m1a971e8[m[33m ([m[1;32mUIedit[m[33m)[m HEAD@{246}: pull origin main: Fast-forward
+[33m2ad54af[m HEAD@{247}: checkout: moving from UIedit to main
+[33m1a971e8[m[33m ([m[1;32mUIedit[m[33m)[m HEAD@{248}: pull origin main: Fast-forward
+[33m4500cf6[m[33m ([m[1;31morigin/UIedit[m[33m)[m HEAD@{249}: commit: カレンダーのUI改善
+[33m2ad54af[m HEAD@{250}: checkout: moving from main to UIedit
+[33m2ad54af[m HEAD@{251}: commit: 献立のバリエーションを追加
+[33mf727925[m HEAD@{252}: commit: 献立を立てると既存の献立が削除される問題を対処
+[33m0074085[m[33m ([m[1;32mbackup-main[m[33m)[m HEAD@{253}: checkout: moving from b61c0a1c94775fa012ff89919c9b8c0557680049 to main
+[33mb61c0a1[m HEAD@{254}: checkout: moving from 379e8a204a137f78a3dd3ebc7fbfcaf110270dd4 to b61c0a1
+[33m379e8a2[m HEAD@{255}: commit: 一時的なcompose.ymlの変更
+[33mab34bb0[m HEAD@{256}: checkout: moving from main to ab34bb0
+[33m0074085[m[33m ([m[1;32mbackup-main[m[33m)[m HEAD@{257}: commit: README変更
+[33m5d84551[m HEAD@{258}: commit: CalendarPlansController にdestroyアクションを移動
+[33md253bd6[m HEAD@{259}: commit: plan.recipe_idに変更
+[33m70c5996[m HEAD@{260}: commit: current_user削除
+[33m423ef96[m HEAD@{261}: commit: current_user追記
+[33m8c825f5[m HEAD@{262}: commit: Update database.yml to use DATABASE_URL
+[33mab34bb0[m HEAD@{263}: commit: Update database.yml to use DATABASE_URL
+[33m71ad00d[m HEAD@{264}: commit: authenticate_user! を destroy に追加
+[33m0ff183d[m HEAD@{265}: commit: 本番環境の修正: 削除機能の改善
+[33m9e96a7b[m HEAD@{266}: commit: ログアウト状態でも献立削除機能の追加
+[33m4b88bd2[m HEAD@{267}: commit: ログアウト状態でも献立削除機能の追加
+[33mac044d2[m HEAD@{268}: commit: authenticate_userの追加
+[33mc0971cd[m HEAD@{269}: commit: deploy edit
+[33m037ad69[m HEAD@{270}: commit: deploy edit
+[33m0c8cf95[m HEAD@{271}: commit: デプロイ
+[33m890f987[m HEAD@{272}: commit: デプロイ
+[33mb61c0a1[m HEAD@{273}: commit: デプロイのためapp.html.erbを編集
+[33mb5ed226[m HEAD@{274}: commit: Temporarily skip remove_reference to fix migration error
+[33m5076fb8[m HEAD@{275}: commit: Fix migration and successfully remove recipe reference
+[33m3b82048[m HEAD@{276}: commit: Fix remove_reference in nutritions table with foreign_key_exists check
+[33mc173692[m HEAD@{277}: commit: Fix remove_reference in nutritions table with foreign_key_exists check
+[33m242a759[m HEAD@{278}: commit: calendar.js削除
+[33mff590fd[m HEAD@{279}: pull origin main: Fast-forward
+[33md20b1ee[m HEAD@{280}: checkout: moving from recipe/delete to main
+[33mea158ae[m[33m ([m[1;31morigin/recipe/delete[m[33m, [m[1;32mrecipe/delete[m[33m)[m HEAD@{281}: commit: テストを一時的に無効化
+[33md6c12f9[m HEAD@{282}: commit: 献立削除機能追加
+[33md20b1ee[m HEAD@{283}: checkout: moving from main to recipe/delete
+[33md20b1ee[m HEAD@{284}: pull origin main: Fast-forward
+[33ma6a3335[m HEAD@{285}: checkout: moving from feature/recipe-calendar to main
+[33ma6ef584[m[33m ([m[1;31morigin/feature/recipe-calendar[m[33m, [m[1;32mfeature/recipe-calendar[m[33m)[m HEAD@{286}: commit: 献立作成、カレンダー機能
+[33ma7254a2[m HEAD@{287}: commit: 献立作成、カレンダー機能
+[33mbcc60e5[m HEAD@{288}: commit: 献立作成、カレンダー機能
+[33mef4811c[m HEAD@{289}: commit: 献立作成、カレンダー機能
+[33md800701[m HEAD@{290}: commit: 献立作成、カレンダー機能
+[33ma6a3335[m HEAD@{291}: checkout: moving from main to feature/recipe-calendar
+[33ma6a3335[m HEAD@{292}: pull origin main: Fast-forward
+[33mb5d81cf[m HEAD@{293}: checkout: moving from feature/recipe-with-oepnAI-Only to main
+[33ma6bc306[m[33m ([m[1;31morigin/feature/recipe-with-oepnAI-Only[m[33m, [m[1;32mfeature/recipe-with-oepnAI-Only[m[33m)[m HEAD@{294}: commit: openAIで献立作成
+[33me0a8db1[m HEAD@{295}: commit: openAIで献立作成
+[33me0f1b8d[m[33m ([m[1;31morigin/feature/recipe-date[m[33m, [m[1;32mfeature/recipe-date[m[33m)[m HEAD@{296}: checkout: moving from main to feature/recipe-with-oepnAI-Only
+[33mb5d81cf[m HEAD@{297}: pull origin main: Fast-forward
+[33m248ab2a[m HEAD@{298}: checkout: moving from feature/recipe-with-oepnAI-Only to main
+[33me0f1b8d[m[33m ([m[1;31morigin/feature/recipe-date[m[33m, [m[1;32mfeature/recipe-date[m[33m)[m HEAD@{299}: reset: moving to HEAD
+[33me0f1b8d[m[33m ([m[1;31morigin/feature/recipe-date[m[33m, [m[1;32mfeature/recipe-date[m[33m)[m HEAD@{300}: checkout: moving from feature/recipe-date to feature/recipe-with-oepnAI-Only
+[33me0f1b8d[m[33m ([m[1;31morigin/feature/recipe-date[m[33m, [m[1;32mfeature/recipe-date[m[33m)[m HEAD@{301}: commit: 献立生成及び栄養、食材の表示
+[33ma6fa380[m[33m ([m[1;31morigin/add-logo-link[m[33m, [m[1;32madd-logo-link[m[33m)[m HEAD@{302}: checkout: moving from add-logo-link to feature/recipe-date
+[33ma6fa380[m[33m ([m[1;31morigin/add-logo-link[m[33m, [m[1;32madd-logo-link[m[33m)[m HEAD@{303}: commit: トップページへのリンク
+[33m248ab2a[m HEAD@{304}: checkout: moving from main to add-logo-link
+[33m248ab2a[m HEAD@{305}: pull origin main: Fast-forward
+[33m695122b[m HEAD@{306}: checkout: moving from feature/recipe-rakutenAPI-nutrition to main
+[33mf22ce94[m[33m ([m[1;31morigin/feature/recipe-rakutenAPI-nutrition[m[33m, [m[1;32mfeature/recipe-rakutenAPI-nutrition[m[33m)[m HEAD@{307}: commit: 栄養情報の反映成功
+[33mfd5a67d[m[33m ([m[1;31morigin/feature/recipe-rakutenAPI-add[m[33m, [m[1;32mfeature/recipe-rakutenAPI-add[m[33m)[m HEAD@{308}: checkout: moving from feature/recipe-rakutenAPI-add to feature/recipe-rakutenAPI-nutrition
+[33mfd5a67d[m[33m ([m[1;31morigin/feature/recipe-rakutenAPI-add[m[33m, [m[1;32mfeature/recipe-rakutenAPI-add[m[33m)[m HEAD@{309}: commit: アセットプリコンパイル
+[33m5125f0c[m HEAD@{310}: commit: edamamのapiを辞め、楽天レシピで献立を作成し、openAIで栄養素を抽出
+[33m52f0770[m HEAD@{311}: commit: edamamのapiを辞め、楽天レシピで献立を作成し、openAIで栄養素を抽出
+[33md37bf7f[m HEAD@{312}: commit: edamamの栄養素apiを導入（途中）
+[33m695122b[m HEAD@{313}: checkout: moving from main to feature/recipe-rakutenAPI-add
+[33m695122b[m HEAD@{314}: pull origin main: Fast-forward
+[33m86a373b[m HEAD@{315}: checkout: moving from feature/recipe-openAI to main
+[33m3fbf925[m[33m ([m[1;31morigin/feature/recipe-openAI[m[33m, [m[1;32mfeature/recipe-openAI[m[33m)[m HEAD@{316}: commit: openAIで献立を作成しedamamで食材や栄養素を取り込む
+[33m5094d83[m HEAD@{317}: commit: openAIで献立を作成しedamamで食材や栄養素を取り込む
+[33m86a373b[m HEAD@{318}: Branch: renamed refs/heads/feature/recipe-rakutenAPI-add to refs/heads/feature/recipe-openAI
+[33m86a373b[m HEAD@{320}: checkout: moving from main to feature/recipe-rakutenAPI-add
+[33m86a373b[m HEAD@{321}: pull origin main: Fast-forward
+[33mc064c45[m[33m ([m[1;31morigin/feature/calendar-deploy[m[33m, [m[1;32mfeature/calendar-deploy[m[33m)[m HEAD@{322}: checkout: moving from feature/recipe-show to main
+[33m81522d7[m[33m ([m[1;31morigin/feature/recipe-show[m[33m, [m[1;32mfeature/recipe-show[m[33m)[m HEAD@{323}: commit: 詳細画面の日本語訳
+[33mc064c45[m[33m ([m[1;31morigin/feature/calendar-deploy[m[33m, [m[1;32mfeature/calendar-deploy[m[33m)[m HEAD@{324}: checkout: moving from main to feature/recipe-show
+[33mc064c45[m[33m ([m[1;31morigin/feature/calendar-deploy[m[33m, [m[1;32mfeature/calendar-deploy[m[33m)[m HEAD@{325}: checkout: moving from feature/calendar-deploy to main
+[33mc064c45[m[33m ([m[1;31morigin/feature/calendar-deploy[m[33m, [m[1;32mfeature/calendar-deploy[m[33m)[m HEAD@{326}: checkout: moving from feature/calendar-deploy to feature/calendar-deploy
+[33mc064c45[m[33m ([m[1;31morigin/feature/calendar-deploy[m[33m, [m[1;32mfeature/calendar-deploy[m[33m)[m HEAD@{327}: rebase (finish): returning to refs/heads/feature/calendar-deploy
+[33mc064c45[m[33m ([m[1;31morigin/feature/calendar-deploy[m[33m, [m[1;32mfeature/calendar-deploy[m[33m)[m HEAD@{328}: rebase (start): checkout origin/main
+[33m4fa9274[m HEAD@{329}: reset: moving to origin/feature/calendar-deploy
+[33m4fa9274[m HEAD@{330}: rebase (abort): updating HEAD
+[33m4fa9274[m HEAD@{331}: rebase (abort): updating HEAD
+[33m46df28c[m HEAD@{332}: rebase (skip): updating HEAD
+[33m46df28c[m HEAD@{333}: rebase (continue) (pick): デプロイのための空のコミット
+[33mac61f47[m HEAD@{334}: rebase (continue): 本番環境用アセットのプリコンパイル
+[33mcf2fb47[m HEAD@{335}: rebase (skip) (pick): 本番環境用アセットのプリコンパイル
+[33mbeefb45[m HEAD@{336}: rebase (skip) (pick): デプロイのための空のコミット
+[33m6c154a0[m HEAD@{337}: rebase (skip): updating HEAD
+[33m6c154a0[m HEAD@{338}: rebase (skip): updating HEAD
+[33m6c154a0[m HEAD@{339}: rebase (skip) (pick): デプロイのための空のコミット
+[33mfb258f9[m HEAD@{340}: rebase (skip): updating HEAD
+[33mfb258f9[m HEAD@{341}: rebase (continue) (pick): デプロイのための空のコミット
+[33m6ee6b6d[m HEAD@{342}: rebase (skip) (pick): デプロイのための空のコミット
+[33m4fa9274[m HEAD@{343}: rebase (skip): updating HEAD
+[33m4fa9274[m HEAD@{344}: rebase (skip): updating HEAD
+[33m4fa9274[m HEAD@{345}: checkout: moving from main to feature/calendar-deploy
+[33mc064c45[m[33m ([m[1;31morigin/feature/calendar-deploy[m[33m, [m[1;32mfeature/calendar-deploy[m[33m)[m HEAD@{346}: pull origin main: Fast-forward
+[33mff88a6b[m HEAD@{347}: checkout: moving from 62c013d91bb1581daa992934c8e1d2052c820594 to main
+[33m62c013d[m HEAD@{348}: commit: 本番環境用アセットのプリコンパイル
+[33mabbedf4[m HEAD@{349}: rebase (start): checkout HEAD~20
+[33m4fa9274[m HEAD@{350}: rebase (finish): returning to refs/heads/feature/calendar-deploy
+[33m4fa9274[m HEAD@{351}: rebase (start): checkout HEAD~
+[33m4fa9274[m HEAD@{352}: commit: 本番環境用アセットのプリコンパイル
+[33mefa4a00[m HEAD@{353}: commit: デプロイのための空のコミット
+[33m50a342e[m HEAD@{354}: commit: 本番環境用アセットのプリコンパイル
+[33m5b1d86f[m HEAD@{355}: commit: 本番環境用アセットのプリコンパイル
+[33m028903d[m HEAD@{356}: commit: 本番環境用アセットのプリコンパイル
+[33mdda66a5[m HEAD@{357}: commit: 本番環境用アセットのプリコンパイル
+[33m4a2b687[m HEAD@{358}: commit: 本番環境用アセットのプリコンパイル
+[33ma80b3fb[m HEAD@{359}: commit: デプロイのための空のコミット
+[33m6be58b6[m HEAD@{360}: commit: 本番環境用アセットのプリコンパイル
+[33m9daaee2[m HEAD@{361}: commit: 本番環境用アセットのプリコンパイル
+[33mf7bcb76[m HEAD@{362}: commit: デプロイのための空のコミット
+[33m58f2b71[m HEAD@{363}: commit: 本番環境用アセットのプリコンパイル
+[33m590a81d[m HEAD@{364}: commit: 本番環境用アセットのプリコンパイル
+[33m9c58b49[m HEAD@{365}: commit: デプロイのための空のコミット
+[33m8c4feb1[m HEAD@{366}: commit: toastui-calendar.js を読み込む
+[33mb3f3512[m HEAD@{367}: commit: toastui-calendar.js を読み込む
+[33m14c9d68[m HEAD@{368}: commit: デプロイのための空のコミット
+[33mca46def[m[33m ([m[1;31morigin/feature/recipe-create[m[33m, [m[1;32mfeature/recipe-create[m[33m)[m HEAD@{369}: checkout: moving from main to feature/calendar-deploy
+[33mff88a6b[m HEAD@{370}: pull origin main: Fast-forward
+[33m385a49a[m HEAD@{371}: checkout: moving from feature/recipe-japanese to main
+[33mc061fa8[m[33m ([m[1;32mfeature/recipe-japanese[m[33m)[m HEAD@{372}: commit: カレンダー表示に関する修正を feature/recipe-japanese ブランチに適用
+[33mca46def[m[33m ([m[1;31morigin/feature/recipe-create[m[33m, [m[1;32mfeature/recipe-create[m[33m)[m HEAD@{373}: checkout: moving from feature/calendar-deploy to feature/recipe-japanese
+[33mca46def[m[33m ([m[1;31morigin/feature/recipe-create[m[33m, [m[1;32mfeature/recipe-create[m[33m)[m HEAD@{374}: reset: moving to HEAD
+[33mca46def[m[33m ([m[1;31morigin/feature/recipe-create[m[33m, [m[1;32mfeature/recipe-create[m[33m)[m HEAD@{375}: checkout: moving from feature/recipe-japanese to feature/calendar-deploy
+[33mca46def[m[33m ([m[1;31morigin/feature/recipe-create[m[33m, [m[1;32mfeature/recipe-create[m[33m)[m HEAD@{376}: checkout: moving from feature/recipe-create to feature/recipe-japanese
+[33mca46def[m[33m ([m[1;31morigin/feature/recipe-create[m[33m, [m[1;32mfeature/recipe-create[m[33m)[m HEAD@{377}: commit: 献立生成確認
+[33m11ad5bc[m HEAD@{378}: commit: Update Gemfile.lock with faraday-net_http
+[33m586f134[m HEAD@{379}: pull --no-rebase: Merge made by the 'ort' strategy.
+[33mabbedf4[m HEAD@{380}: commit: 献立生成確認
+[33m49eea55[m HEAD@{381}: commit: 献立生成確認
+[33m4391725[m HEAD@{382}: checkout: moving from feature/recipe-view to feature/recipe-create
+[33mc317407[m[33m ([m[1;31morigin/feature/recipe-view[m[33m, [m[1;32mfeature/recipe-view[m[33m)[m HEAD@{383}: checkout: moving from feature/recipe-create to feature/recipe-view
+[33m4391725[m HEAD@{384}: checkout: moving from feature/recipe-view to feature/recipe-create
+[33mc317407[m[33m ([m[1;31morigin/feature/recipe-view[m[33m, [m[1;32mfeature/recipe-view[m[33m)[m HEAD@{385}: commit: recipe_view
+[33m4391725[m HEAD@{386}: checkout: moving from feature/recipe-create to feature/recipe-view
+[33m4391725[m HEAD@{387}: commit: openAI APIの導入
+[33m385a49a[m HEAD@{388}: checkout: moving from main to feature/recipe-create
+[33m385a49a[m HEAD@{389}: pull origin main: Fast-forward
+[33m450ff98[m HEAD@{390}: checkout: moving from feature/foodAPI to main
+[33mf7b5339[m[33m ([m[1;31morigin/feature/foodAPI[m[33m, [m[1;32mfeature/foodAPI[m[33m)[m HEAD@{391}: commit: edamamAPIの導入
+[33m0d317a4[m HEAD@{392}: commit: edamamAPIの導入
+[33m450ff98[m HEAD@{393}: Branch: renamed refs/heads/feature/PDFdata to refs/heads/feature/foodAPI
+[33m450ff98[m HEAD@{395}: checkout: moving from main to feature/PDFdata
+[33m450ff98[m HEAD@{396}: pull origin main: Fast-forward
+[33m568eeab[m HEAD@{397}: checkout: moving from feature/calender to main
+[33m82be3f7[m[33m ([m[1;31morigin/feature/calender[m[33m, [m[1;32mfeature/calender[m[33m)[m HEAD@{398}: commit: カレンダー表示
+[33m9597423[m HEAD@{399}: commit: カレンダー表示
+[33m12d726d[m HEAD@{400}: commit: カレンダー表示
+[33m4cea930[m HEAD@{401}: commit: カレンダー表示
+[33m57334ce[m HEAD@{402}: commit: カレンダー表示
+[33m568eeab[m HEAD@{403}: checkout: moving from main to feature/calender
+[33m568eeab[m HEAD@{404}: pull origin main: Fast-forward
+[33m623e668[m HEAD@{405}: checkout: moving from dependabot/bundler/importmap-rails-2.0.3 to main
+[33ma7bfa85[m[33m ([m[1;31morigin/dependabot/bundler/importmap-rails-2.0.3[m[33m, [m[1;32mdependabot/bundler/importmap-rails-2.0.3[m[33m)[m HEAD@{406}: commit: lintチェック
+[33m69c19a0[m HEAD@{407}: checkout: moving from main to dependabot/bundler/importmap-rails-2.0.3
+[33m623e668[m HEAD@{408}: pull origin main: Fast-forward
+[33mc5a5616[m HEAD@{409}: checkout: moving from feature/flash-message to main
+[33m87180d2[m[33m ([m[1;31morigin/feature/flash-message[m[33m, [m[1;32mfeature/flash-message[m[33m)[m HEAD@{410}: commit: フラッシュメッセージ追加
+[33m5ffdbfb[m HEAD@{411}: commit: フラッシュメッセージ追加
+[33mc5a5616[m HEAD@{412}: checkout: moving from main to feature/flash-message
+[33mc5a5616[m HEAD@{413}: pull origin main: Fast-forward
+[33m145302b[m HEAD@{414}: checkout: moving from feature/devise-view to main
+[33m29fb480[m[33m ([m[1;32mfeature/devise-view[m[33m)[m HEAD@{415}: commit: セッションコントローラー
+[33mc5a5616[m HEAD@{416}: pull origin main: Fast-forward
+[33mdd947cc[m[33m ([m[1;31morigin/feature/devise-view[m[33m)[m HEAD@{417}: commit: 新規登録・ログインのview
+[33m145302b[m HEAD@{418}: checkout: moving from main to feature/devise-view
+[33m145302b[m HEAD@{419}: pull origin main: Fast-forward
+[33m9bc1287[m HEAD@{420}: checkout: moving from feature/devise-install to main
+[33m339cb6a[m[33m ([m[1;31morigin/feature/devise-install[m[33m, [m[1;32mfeature/devise-install[m[33m)[m HEAD@{421}: commit: ユーザー登録・ログイン、ログアウト完了
+[33m534450f[m HEAD@{422}: commit: ユーザー登録・ログイン、ログアウト完了
+[33m9bc1287[m HEAD@{423}: checkout: moving from main to feature/devise-install
+[33m9bc1287[m HEAD@{424}: commit: アプリ名変更
+[33mc9dc37c[m HEAD@{425}: commit: manifest add
+[33mfd35e19[m HEAD@{426}: pull origin main: Fast-forward
+[33m6848577[m HEAD@{427}: checkout: moving from feature/top-page to main
+[33mbb56233[m[33m ([m[1;31morigin/feature/top-page[m[33m, [m[1;32mfeature/top-page[m[33m)[m HEAD@{428}: commit: トップページ
+[33mfd4afee[m HEAD@{429}: commit: トップページ
+[33m6848577[m HEAD@{430}: checkout: moving from main to feature/top-page
+[33m6848577[m HEAD@{431}: commit: README change
+[33md959cd7[m HEAD@{432}: commit: render to deploy
+[33m7179063[m HEAD@{433}: pull origin main --no-rebase: Merge made by the 'ort' strategy.
+[33meb349d2[m HEAD@{434}: commit: rails new
+[33m6f006ac[m HEAD@{435}: pull origin main: Fast-forward
+[33m6d37b4d[m HEAD@{436}: checkout: moving from feature/screen-add-readme to main
+[33m985cd6e[m[33m ([m[1;31morigin/feature/screen-add-readme[m[33m, [m[1;32mfeature/screen-add-readme[m[33m)[m HEAD@{437}: checkout: moving from main to feature/screen-add-readme
+[33m6d37b4d[m HEAD@{438}: pull origin main: Fast-forward
+[33m4a77caf[m HEAD@{439}: checkout: moving from feature/readme to main
+[33m90c32aa[m[33m ([m[1;31morigin/feature/readme[m[33m, [m[1;32mfeature/readme[m[33m)[m HEAD@{440}: checkout: moving from feature/ERscreen-add-readme to feature/readme
+[33mb6e4b9d[m[33m ([m[1;31morigin/feature/ERscreen-add-readme[m[33m, [m[1;32mfeature/ERscreen-add-readme[m[33m)[m HEAD@{441}: commit: ER図の追加
+[33m985cd6e[m[33m ([m[1;31morigin/feature/screen-add-readme[m[33m, [m[1;32mfeature/screen-add-readme[m[33m)[m HEAD@{442}: checkout: moving from feature/screen-add-readme to feature/ERscreen-add-readme
+[33m985cd6e[m[33m ([m[1;31morigin/feature/screen-add-readme[m[33m, [m[1;32mfeature/screen-add-readme[m[33m)[m HEAD@{443}: commit: 画面遷移図の追加
+[33m90c32aa[m[33m ([m[1;31morigin/feature/readme[m[33m, [m[1;32mfeature/readme[m[33m)[m HEAD@{444}: checkout: moving from feature/readme to feature/screen-add-readme
+[33m90c32aa[m[33m ([m[1;31morigin/feature/readme[m[33m, [m[1;32mfeature/readme[m[33m)[m HEAD@{445}: commit: 冷蔵庫の食材登録削、および実装機能一部修正
+[33m9eedffa[m HEAD@{446}: commit: 冷蔵庫の食材登録削、および実装機能一部修正
+[33med43ace[m HEAD@{447}: commit: 修正 README
+[33mee841a3[m HEAD@{448}: checkout: moving from main to feature/readme
+[33m4a77caf[m HEAD@{449}: reset: moving to HEAD~1
+[33mee841a3[m HEAD@{450}: checkout: moving from feature/readme to main
+[33mee841a3[m HEAD@{451}: checkout: moving from main to feature/readme
+[33mee841a3[m HEAD@{452}: commit: README作成
+[33m4a77caf[m HEAD@{453}: commit: Update front submodule to the latest version
+[33m8be4808[m HEAD@{454}: commit: 環境構築
+[33m02cbcd3[m HEAD@{455}: commit: Add: submolues
+[33m99dbf90[m HEAD@{456}: commit (initial): first commit
