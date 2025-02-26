@@ -69,20 +69,8 @@
     <!-- 日付と時間帯の表示 -->
     <h2 class="text-2xl font-bold mb-4">
       日付: <%= calendar_plan.date.strftime('%Y年%m月%d日') %> /
-      <% 
-    # データベースから実際の値を直接取得
-    meal_time_db_value = ActiveRecord::Base.connection.select_one(
-      "SELECT meal_time FROM calendar_plans WHERE id = #{calendar_plan.id}"
-    )["meal_time"]
-  %>
-      時間帯: <%= 
-    case meal_time_db_value
-    when "0" then "朝食"
-    when "1" then "昼食" 
-    when "2" then "夕食"
-    else "設定なし (#{meal_time_db_value.inspect})" 
-    end 
-  %>
+      時間帯: <%= calendar_plan.meal_time_text %>
+
 
       <!-- 献立内容 -->
       <div class="mb-6">
