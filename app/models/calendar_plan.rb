@@ -36,7 +36,6 @@ class CalendarPlan < ApplicationRecord
     %w[created_at date id meal_plan meal_time user_id]
   end
 
-  # 関連付けを検索可能にする
   def self.ransackable_associations(auth_object = nil)
     [ "recipe", "user" ]
   end
