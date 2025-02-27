@@ -13,6 +13,8 @@ Rails.application.routes.draw do
   resource :nutrition, only: [ :show ]
   resources :calendar_plans, only: [ :destroy, :edit, :update ]
 
+  post "calendar_plans/reuse", to: "calendar_plans#reuse"
+
   if Rails.env.development?
     mount LetterOpenerWeb::Engine, at: "/letter_opener"
   end

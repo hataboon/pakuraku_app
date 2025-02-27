@@ -32,9 +32,9 @@
         <p class="text-gray-800"><%= meal_data['side'] %></p>
       </div>
 
-      <%# カレンダーに追加するボタン %>
-      <button onclick="selectMealPlan('<%= plan.date %>', '<%= plan.meal_time %>')" class="w-full mt-4 px-4 py-2 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-lg hover:from-orange-700 hover:to-orange-600 transition-all duration-200">
-        カレンダーに追加
+      <%# カレンダーに再利用するボタン %>
+      <button data-controller="meal-plan-selector" data-action="click->meal-plan-selector#reuse" data-meal-plan-selector-id-value="<%= plan.id %>" class="w-full mt-4 px-4 py-2 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-lg hover:from-orange-700 hover:to-orange-600 transition-all duration-200">
+        この献立を再利用
       </button>
     </div>
   </div>
