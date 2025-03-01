@@ -1,7 +1,7 @@
 <!-- views/simple_calendar/_month_calendar.html.erb -->
 <div class="simple-calendar bg-white shadow-lg rounded-2xl overflow-hidden" data-controller="calendar">
   <%# カレンダーヘッダー %>
-  <div class="p-6 border-b border-orange-100">
+  <div class="p-4 sm:p-6 border-b border-orange-100">
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
         <h2 class="text-2xl font-bold bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent">献立カレンダー</h2>
@@ -32,12 +32,12 @@
     </div>
   </div>
 
-  <div class="p-4 sm:p-6">
+  <div class="p-2 sm:p-4">
     <div class="calendar-grid">
       <%# 曜日ヘッダー %>
-      <div class="grid grid-cols-7 mb-4">
+      <div class="grid grid-cols-7 mb-2">
         <% date_range.slice(0, 7).each do |day| %>
-        <div class="text-center py-3 text-sm font-medium
+        <div class="text-center py-2 text-sm font-medium
                       <%= day.wday == 0 ? 'text-red-500' : 
                           day.wday == 6 ? 'text-blue-500' : 
                           'text-gray-600' %>">
@@ -47,13 +47,13 @@
       </div>
 
       <%# カレンダー日付 %>
-      <div class="grid grid-cols-7 gap-2 sm:gap-4">
+      <div class="grid grid-cols-7 gap-1 sm:gap-2">
         <% date_range.each do |date| %>
         <% has_meal_plan = calendar_plans.any? { |p| p.date == date } %>
         <div class="relative bg-white rounded-xl border <%= date == Date.today ? 'border-orange-300 ring-2 ring-orange-100' : 'border-gray-100' %> 
-                      <%= has_meal_plan ? 'min-h-[240px]' : 'min-h-[120px]' %> p-3 hover:shadow-md transition-all duration-200">
+                      <%= has_meal_plan ? 'min-h-[280px]' : 'min-h-[120px]' %> p-2 hover:shadow-md transition-all duration-200 group">
           <%# 日付表示 %>
-          <div class="flex justify-between items-center mb-3">
+          <div class="flex justify-between items-center mb-2">
             <span class="text-base font-medium
                          <%= date.sunday? ? 'text-red-500' : 
                              date.saturday? ? 'text-blue-500' : 
@@ -64,60 +64,71 @@
           </div>
 
           <%# 食事時間ごとの献立表示 %>
-          <div class="space-y-3">
-            <% ["朝", "昼", "夜"].each do |time| %>
+          <div class="space-y-0">
+            <% ["朝食", "昼食", "夕食"].each_with_index do |time, index| %>
             <% meal_time = case time
-                               when "朝" then "morning"
-                               when "昼" then "afternoon"
-                               when "夜" then "evening"
+                               when "朝食" then "morning"
+                               when "昼食" then "afternoon"
+                               when "夕食" then "evening"
                                end %>
             <% plan = calendar_plans.find { |p| p.date == date && p.meal_time == meal_time } %>
-            <div class="space-y-2">
+
+            <div class="<%= index > 0 ? 'border-t border-gray-100 pt-1 mt-1' : '' %>">
               <div class="flex items-center justify-between">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium
+                <span class="inline-flex items-center px-2 py-0.5 text-xs text-gray-900
                                <%= case meal_time
-                                   when 'morning'  then 'bg-gradient-to-r from-orange-100 to-orange-50 text-orange-700'
-                                   when 'afternoon' then 'bg-gradient-to-r from-yellow-100 to-yellow-50 text-yellow-700'
-                                   when 'evening'   then 'bg-gradient-to-r from-indigo-100 to-indigo-50 text-indigo-700'
+                                   when 'morning'
+                                   when 'afternoon'
+                                   when 'evening'
                                    end %>">
                   <%= time %>
                 </span>
               </div>
 
               <% if plan&.recipe %>
-              <div class="relative overflow-hidden rounded-xl bg-gray-50 p-2 transition-all hover:bg-gray-100">
-                <div class="flex items-start space-x-2">
-                  <div class="flex-1 min-w-0">
-                    <div class="flex items-center justify-between">
-                      <% if plan.recipe.name %>
-                      <% names = plan.recipe.name.split(",") %>
-                      <div class="space-y-1.5">
-                        <div class="flex items-center gap-1.5">
-                          <span class="inline-block px-2 py-0.5 text-xs font-medium bg-gradient-to-r from-emerald-100 to-emerald-50 text-emerald-700 rounded-full">主菜</span>
-                          <span class="text-xs text-gray-600 truncate"><%= names[1]&.strip %></span>
-                        </div>
-                        <div class="flex items-center gap-1.5">
-                          <span class="inline-block px-2 py-0.5 text-xs font-medium bg-gradient-to-r from-amber-100 to-amber-50 text-amber-700 rounded-full">副菜</span>
-                          <span class="text-xs text-gray-600 truncate"><%= names[2]&.strip %></span>
-                        </div>
-                      </div>
-                      <% end %>
-                      <% if current_user.present? && plan.user_id == current_user.id %>
-                      <%= link_to calendar_plan_path(plan),
-                                          data: {
-                                            turbo_method: :delete,
-                                            turbo_confirm: "この献立を削除してもよろしいですか？"
-                                          },
-                                          class: "opacity-0 group-hover:opacity-100 p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-all" do %>
-                      <svg class="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6" />
-                      </svg>
-                      <% end %>
-                      <% end %>
-                    </div>
-                  </div>
+              <% if plan.meal_plan.present? %>
+              <% meal_data = JSON.parse(plan.meal_plan) rescue nil %>
+              <% if meal_data.present? %>
+              <div class="ml-2 mt-1 space-y-1.5">
+                <!-- 主菜の表示 -->
+                <div>
+                  <span class="inline-block w-5 text-center px-0.5 text-xs font-medium bg-emerald-100 text-emerald-700 rounded">主</span>
+                  <span class="text-sm font-medium text-gray-700 ml-1"><%= meal_data["main"] %></span>
+                </div>
+                <!-- 副菜の表示 -->
+                <div>
+                  <span class="inline-block w-5 text-center px-0.5 text-xs font-medium bg-amber-100 text-amber-700 rounded">副</span>
+                  <span class="text-sm font-medium text-gray-700 ml-1"><%= meal_data["side"] %></span>
                 </div>
               </div>
+              <% else %>
+              <% if plan.recipe.name %>
+              <% names = plan.recipe.name.split(",") %>
+              <div class="ml-2 mt-1 space-y-1.5">
+                <div>
+                  <span class="text-xs font-medium text-emerald-700">主</span>
+                  <span class="text-sm font-medium text-gray-700 ml-1"><%= names[1]&.strip %></span>
+                </div>
+                <div>
+                  <span class="text-xs font-medium text-amber-700">副</span>
+                  <span class="text-sm font-medium text-gray-700 ml-1"><%= names[2]&.strip %></span>
+                </div>
+              </div>
+              <% end %>
+              <% end %>
+              <% end %>
+              <% if current_user.present? && plan.user_id == current_user.id %>
+              <%= link_to calendar_plan_path(plan),
+                    data: {
+                      turbo_method: :delete,
+                      turbo_confirm: "この献立を削除してもよろしいですか？"
+                    },
+                    class: "absolute top-2 right-2 opacity-0 group-hover:opacity-100 p-1 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-all" do %>
+              <svg class="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6" />
+              </svg>
+              <% end %>
+              <% end %>
               <% end %>
             </div>
             <% end %>
