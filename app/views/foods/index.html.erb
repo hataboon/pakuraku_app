@@ -1,8 +1,8 @@
 <!-- foods/index.html.erb -->
-<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <div class="flex flex-col lg:flex-row gap-8">
+<main class="max-w-full mx-auto px-0 sm:px-2 py-8">
+  <div class="flex flex-col lg:flex-row gap-4">
     <!-- 左サイド：今日の献立 -->
-    <div class="w-full lg:w-1/3 space-y-6">
+    <div class="w-full lg:w-1/5 px-4">
       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="relative h-40">
           <div class="absolute inset-0 bg-gradient-to-br from-orange-500 to-red-600"></div>
@@ -25,19 +25,12 @@
           <div class="meal-card group">
             <div class="flex items-center justify-between mb-3">
               <span class="text-sm font-medium text-gray-500"><%= meal %></span>
-              <% if todays_plan&.recipe %>
-              <span class="px-2 py-1 text-xs font-medium text-orange-700 bg-orange-50 rounded-full">
-                和食
-              </span>
-              <% end %>
             </div>
 
             <% if todays_plan&.recipe %>
             <div class="relative overflow-hidden rounded-xl bg-gray-50 p-4 transition-all hover:bg-gray-100">
               <div class="flex items-start space-x-4">
-                <div class="w-20 h-20 rounded-lg bg-gray-100 flex-shrink-0 overflow-hidden">
-                  <img src="https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&h=200&q=80" alt="主菜" class="w-full h-full object-cover">
-                </div>
+
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center justify-between">
                     <% if todays_plan.recipe.name %>
@@ -59,39 +52,31 @@
                   </div>
                   <% if todays_plan.meal_plan.present? %>
                   <% meal_data = JSON.parse(todays_plan.meal_plan) rescue nil %>
-                  <% if meal_data&.dig("nutrients")&.present? %>
-                  <div class="mt-1 flex flex-wrap gap-1">
-                    <% nutrients = meal_data["nutrients"] %>
-                    <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700">
-                      タンパク質: <%= nutrients["protein"] %>
-                    </span>
-                    <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700">
-                      脂質: <%= nutrients["fat"] %>
-                    </span>
-                    <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700">
-                      炭水化物: <%= nutrients["carbohydrates"] %>
-                    </span>
-                    <% if nutrients["vitamins"].present? %>
-                    <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700">
-                      ビタミン: <%= Array(nutrients["vitamins"]).join(", ") %>
-                    </span>
-                    <% end %>
-                    <% if nutrients["minerals"].present? %>
-                    <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700">
-                      ミネラル: <%= Array(nutrients["minerals"]).join(", ") %>
-                    </span>
-                    <% end %>
+                  <% if meal_data.present? %>
+                  <div class="mt-2 space-y-2">
+                    <!-- 主菜の表示 - 指定されたスタイルで -->
+                    <div class="flex items-start">
+                      <span class="inline-block w-5 text-center px-0.5 text-xs font-medium bg-emerald-100 text-emerald-700 rounded">主</span>
+                      <span class="ml-2 text-sm text-gray-700"><%= meal_data['main'] %></span>
+                    </div>
+
+                    <!-- 副菜の表示 - 指定されたスタイルで -->
+                    <div class="flex items-start">
+                      <span class="inline-block w-5 text-center px-0.5 text-xs font-medium bg-amber-100 text-amber-700 rounded">副</span>
+                      <span class="ml-2 text-sm text-gray-700"><%= meal_data['side'] %></span>
+                    </div>
                   </div>
-                  <% end %>
-                  <% end %>
+                  <% else %>
                   <div class="mt-2 text-sm text-gray-500">
                     <% if names[1].present? %>
-                    <p class="truncate">主菜：<%= names[1].strip %></p>
+                    <p class="text-base">主菜：<%= names[1].strip %></p>
                     <% end %>
                     <% if names[2].present? %>
-                    <p class="truncate">副菜：<%= names[2].strip %></p>
+                    <p class="text-sm">副菜：<%= names[2].strip %></p>
                     <% end %>
                   </div>
+                  <% end %>
+                  <% end %>
                 </div>
               </div>
             </div>
@@ -118,7 +103,7 @@
     </div>
 
     <!-- 右サイド：カレンダー -->
-    <div class="w-full lg:w-2/3">
+    <div class="w-full lg:w-4/5 px-4 sm:px-2 lg:px-0">
       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <%= render partial: 'simple_calendar/month_calendar', locals: { 
           calendar_plans: @calendar_plans,
