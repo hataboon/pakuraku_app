@@ -40,13 +40,24 @@ class RecipesController < ApplicationController
       dates_hash = params[:selected_dates].to_unsafe_h
 
       # 各日付を処理する
-      dates_hash.each do |date_str, time_hash|
-        times = time_hash.is_a?(Hash) ? time_hash : time_hash.to_unsafe_h
+      dates_hash.each do |date_str, time_data|
         selected_times = []
-        # 各時間帯をチェックする
-        times.each do |time_name, value|
-          Rails.logger.debug "  チェック: #{time_name} => #{value}"
-          if value == "1"
+
+        # 時間帯データの形式に応じた処理
+        if time_data.is_a?(Hash)
+          # 通常のフォーム送信形式: {"morning"=>"1"}
+          time_data.each do |time_name, value|
+            Rails.logger.debug "  チェック: #{time_name} => #{value}"
+            if value == "1"
+              selected_times << time_name
+              Rails.logger.debug "  時間帯を追加しました: #{time_name}"
+              existing_plan = current_user.calendar_plans.find_by(date: Date.parse(date_str), meal_time: time_name)
+              existing_plan&.destroy
+            end
+          end
+        elsif time_data.is_a?(Array)
+          # 再生成ボタンからの形式: ["morning"]
+          time_data.each do |time_name|
             selected_times << time_name
             Rails.logger.debug "  時間帯を追加しました: #{time_name}"
             existing_plan = current_user.calendar_plans.find_by(date: Date.parse(date_str), meal_time: time_name)
