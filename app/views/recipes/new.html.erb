@@ -103,30 +103,30 @@ app\views\recipes\new.html.erb
                       <% time_plans.each do |plan| %>
                       <% begin %>
                       <% meal_data = JSON.parse(plan.meal_plan) %>
-                      <div class="group relative p-1 rounded-lg hover:bg-orange-50 transition-colors">
+                      <div class="relative group">
+                        <%= link_to recipe_path(id: plan.date, from_calendar: true), class: "block p-1 rounded-lg hover:bg-orange-50 transition-colors" do %>
                         <div class="flex items-start gap-1">
                           <span class="inline-block w-5 text-center px-0.5 text-xs font-medium bg-emerald-100 text-emerald-700 rounded">主</span>
                           <span class="text-xs text-gray-600 truncate"><%= meal_data["main"] %></span>
-
-                          <%# 削除ボタン部分を以下のように変更 %>
-                          <% if current_user.present? && plan.user_id == current_user.id %>
-                          <%= link_to calendar_plan_path(plan),
-              data: {
-                turbo_method: :delete,
-                turbo_confirm: "この献立を削除してもよろしいですか？"
-              },
-              class: "absolute right-1 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 p-1 rounded-full hover:bg-red-50 transition-all" do %>
-                          <svg class="w-3.5 h-3.5 text-red-400 hover:text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6" />
-                          </svg>
-                          <% end %>
-                          <% end %>
-
                         </div>
                         <div class="flex items-start gap-1 mt-0.5">
                           <span class="inline-block w-5 text-center px-0.5 text-xs font-medium bg-amber-100 text-amber-700 rounded">副</span>
                           <span class="text-xs text-gray-600 truncate"><%= meal_data["side"] %></span>
                         </div>
+                        <% end %>
+                        <%# 削除ボタン %>
+                        <% if current_user.present? && plan.user_id == current_user.id %>
+                        <%= link_to calendar_plan_path(plan),
+                            data: {
+                              turbo_method: :delete,
+                              turbo_confirm: "この献立を削除してもよろしいですか？"
+                            },
+                            class: "absolute right-1 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 p-1 rounded-full hover:bg-red-50 transition-all" do %>
+                        <svg class="w-3.5 h-3.5 text-red-400 hover:text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6" />
+                        </svg>
+                        <% end %>
+                        <% end %>
                       </div>
                       <% rescue => e %>
                       <div class="text-xs text-red-500">データエラー: <%= e.message %></div>
