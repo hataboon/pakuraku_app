@@ -50,19 +50,10 @@ class RecipesController < ApplicationController
             Rails.logger.debug "  チェック: #{time_name} => #{value}"
             if value == "1"
               selected_times << time_name
-              Rails.logger.debug "  時間帯を追加しました: #{time_name}"
-              existing_plan = current_user.calendar_plans.find_by(date: Date.parse(date_str), meal_time: time_name)
-              existing_plan&.destroy
             end
           end
         elsif time_data.is_a?(Array)
-          # 再生成ボタンからの形式: ["morning"]
-          time_data.each do |time_name|
-            selected_times << time_name
-            Rails.logger.debug "  時間帯を追加しました: #{time_name}"
-            existing_plan = current_user.calendar_plans.find_by(date: Date.parse(date_str), meal_time: time_name)
-            existing_plan&.destroy
-          end
+          selected_times = time_data
         end
 
         # 選択された時間帯があれば、日付とともに保存する
@@ -93,7 +84,7 @@ class RecipesController < ApplicationController
     recipe_service = RecipeService.new(current_user)
 
     begin
-      Rails.logger.debug "献立作成開始: selected_dates=#{selected_dates.inspect}"
+      generation_time = Time.current
 
       calendar_plans = recipe_service.create_meal_plans(
         selected_dates,
@@ -104,8 +95,27 @@ class RecipesController < ApplicationController
 
       if calendar_plans.present?
         Rails.logger.debug "献立作成成功: #{calendar_plans.size}件の献立を作成"
-        redirect_to recipe_path(id: calendar_plans.first.date),
-                    notice: "献立を作成しました。"
+
+        # 日付をキーとして、その日に作成された献立を集計
+        created_dates = calendar_plans.map { |cp| cp.date.to_s }.uniq
+        if created_dates.size == 1
+          # 1つの日付だけの場合、その日付のshowページへリダイレクト
+          redirect_to recipe_path(
+            id: created_dates.first,
+            meal_time: calendar_plans.first.meal_time,
+            generated_at: generation_time.iso8601
+          ),
+          notice: "#{calendar_plans.size}件の献立を作成しました。"
+        else
+          # 複数の日付にまたがる場合
+          redirect_to recipe_path(
+            id: created_dates.first,
+            all_dates: created_dates.join(","),
+            meal_time: calendar_plans.first.meal_time,
+            generated_at: generation_time.iso8601
+          ),
+          notice: "#{calendar_plans.size}件の献立を作成しました。#{created_dates.size}日分の献立が含まれています。"
+        end
       else
         Rails.logger.debug "献立作成失敗: 生成された献立がありません"
         redirect_to new_recipe_path,
@@ -120,19 +130,51 @@ class RecipesController < ApplicationController
   end
 
   def show
-    @calendar_plans = CalendarPlan.where(user: current_user, date: params[:id])
+    base_date = params[:id]
 
-  # デバッグ用ログ
-  Rails.logger.debug "Calendar plans found: #{@calendar_plans.size}"
-  @calendar_plans.each do |plan|
-    Rails.logger.debug "Plan ID: #{plan.id}, meal_time: #{plan.meal_time.inspect} (#{plan.meal_time.class})"
-  end
+    # all_datesパラメータがある場合は、それらの日付の献立も含める
+    if params[:all_dates].present?
+      all_dates = params[:all_dates].split(",")
+      @calendar_plans = CalendarPlan.where(user: current_user, date: all_dates)
+    else
+      # 単一日付の場合（従来通り）
+      @calendar_plans = CalendarPlan.where(user: current_user, date: base_date)
+    end
+
+    # デバッグ用ログ
+    Rails.logger.debug "Calendar plans found: #{@calendar_plans.size}"
+    @calendar_plans.each do |plan|
+      Rails.logger.debug "Plan ID: #{plan.id}, meal_time: #{plan.meal_time.inspect} (#{plan.meal_time.class})"
+    end
 
     # 「作成せずに戻る」からのリクエストの場合
     if params[:cancel].present?
-      # 最新の献立を削除
-      @calendar_plans&.last&.destroy
-      redirect_to new_recipe_path, notice: "献立作成をキャンセルしました" and return
+      # cancelボタンが押された場合、最後に生成された献立を特定して削除
+      # 日付と時間帯の両方を考慮してフィルタリング
+      if params[:meal_time].present? && params[:generated_at].present?
+        # 指定された日付、時間帯、生成時間に基づいて献立を削除
+        time_threshold = Time.zone.parse(params[:generated_at])
+        matching_plan = CalendarPlan.where(
+          user: current_user,
+          date: base_date,
+          meal_time: params[:meal_time]
+        ).where("created_at >= ?", time_threshold).order(created_at: :desc).first
+
+        if matching_plan
+          matching_plan.destroy
+          redirect_to new_recipe_path, notice: "献立作成をキャンセルしました" and return
+        else
+          redirect_to new_recipe_path, alert: "キャンセルする献立が見つかりませんでした" and return
+        end
+      else
+        latest_plan = @calendar_plans.order(created_at: :desc).first
+        if latest_plan
+          latest_plan.destroy
+          redirect_to new_recipe_path, notice: "献立作成をキャンセルしました" and return
+        else
+          redirect_to new_recipe_path, alert: "キャンセルする献立が見つかりませんでした" and return
+        end
+      end
     end
 
     if @calendar_plans.present?
