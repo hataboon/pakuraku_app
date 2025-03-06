@@ -2,27 +2,46 @@
 <div class="container mx-auto px-4 py-8">
   <h1 class="text-2xl font-bold mb-6">栄養バランス</h1>
 
-  <!-- 日付選択部分 -->
+  <!-- 期間選択ボタンを追加 -->
   <div class="mb-6 bg-white rounded-lg shadow-lg p-6">
-    <%= form_with url: nutrition_path, method: :get, local: true, class: "flex flex-wrap items-center gap-4" do |f| %>
-    <div class="flex items-center gap-2">
-      <%= f.label :start_date, "開始日:", class: "text-gray-700" %>
-      <%= f.date_field :start_date, value: @start_date, class: "rounded border-gray-300" %>
-    </div>
+    <div class="flex flex-wrap gap-2 mb-4">
+      <%= link_to "今日", nutrition_path(period: "today"), 
+            class: "px-4 py-2 rounded-md #{@period == 'today' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'} hover:bg-blue-500 hover:text-white transition-colors" %>
 
-    <div class="flex items-center gap-2">
-      <%= f.label :end_date, "終了日:", class: "text-gray-700" %>
-      <%= f.date_field :end_date, value: @end_date, class: "rounded border-gray-300" %>
-    </div>
+      <%= link_to "過去7日間", nutrition_path(period: "week"), 
+            class: "px-4 py-2 rounded-md #{@period == 'week' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'} hover:bg-blue-500 hover:text-white transition-colors" %>
 
-    <%= f.submit "表示", class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" %>
-    <% end %>
+      <%= link_to "今月", nutrition_path(period: "month"), 
+            class: "px-4 py-2 rounded-md #{@period == 'month' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'} hover:bg-blue-500 hover:text-white transition-colors" %>
+
+      <%= link_to "先月", nutrition_path(period: "last_month"), 
+            class: "px-4 py-2 rounded-md #{@period == 'last_month' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'} hover:bg-blue-500 hover:text-white transition-colors" %>
+    </div>
 
     <!-- グラフ部分 -->
-    <div class="mb-6 bg-blue-50 p-4 rounded-lg">
+    <div class="mt-8 bg-blue-50 p-4 rounded-lg">
+      <% period_days = (@end_date - @start_date).to_i + 1 %>
+      <p class="text-center text-sm text-gray-600 mb-4">
+        <%= period_days %>日間の栄養摂取平均値
+        (<%= @start_date.strftime('%Y/%m/%d') %> 〜 <%= @end_date.strftime('%Y/%m/%d') %>)
+      </p>
+
       <div style="width: 400px; height: 400px;" class="mx-auto">
-        <canvas data-controller="nutrition-chart" data-nutrition-chart-data='<%= @nutrition_data.to_json %>' width="400" height="400">
+        <canvas data-controller="nutrition-chart" data-nutrition-chart-data='<%= @nutrition_data.to_json %>' data-nutrition-chart-recommended='<%= @recommended_values.to_json %>' width="400" height="400">
         </canvas>
+      </div>
+
+      <!-- 注意書きを追加 -->
+      <div class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+        <h3 class="text-sm font-semibold text-yellow-800 mb-2">※ グラフの見方と注意事項</h3>
+        <ul class="text-xs text-gray-600 space-y-1 list-disc pl-4">
+          <li>青線は実際の栄養摂取量の推定値を、赤破線は推奨摂取量を示しています</li>
+          <li>栄養値はAIによる献立生成を基に算出されており、実際の調理方法や食材の量により異なる場合があります</li>
+          <li>推奨値は一般的な成人の目安であり、年齢・性別・活動量などの個人差を考慮していません</li>
+          <li>このグラフは健康管理の参考情報であり、正確な栄養評価には専門家への相談をお勧めします</li>
+          <li>ビタミン・ミネラルの値は摂取している食材から推定した概算値です</li>
+        </ul>
       </div>
     </div>
   </div>
+</div>
