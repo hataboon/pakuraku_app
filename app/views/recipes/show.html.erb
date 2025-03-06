@@ -172,7 +172,21 @@
           <% else %>
           <!-- 通常の食材リスト -->
           <% meal_plan[:ingredients].each do |ingredient| %>
+          <% if ingredient.is_a?(Hash) && ingredient[:name] && ingredient[:ingredients] %>
+          <!-- メインとサブ料理の構造化データ -->
+          <li class="font-medium"><%= ingredient[:name] %>:</li>
+          <% if ingredient[:ingredients].is_a?(Array) %>
+          <% ingredient[:ingredients].each do |sub_ingredient| %>
+          <% if sub_ingredient.is_a?(Hash) %>
+          <li class="ml-4"><%= sub_ingredient[:name] %>: <%= sub_ingredient[:amount] %></li>
+          <% else %>
+          <li class="ml-4"><%= sub_ingredient %></li>
+          <% end %>
+          <% end %>
+          <% end %>
+          <% else %>
           <li><%= ingredient %></li>
+          <% end %>
           <% end %>
           <% end %>
         </ul>
