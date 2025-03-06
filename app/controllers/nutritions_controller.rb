@@ -2,15 +2,15 @@ class NutritionsController < ApplicationController
   before_action :authenticate_user!
 
   def show
-    @period = params[:period] || 'week'  # デフォルトは過去7日間
-    
+    @period = params[:period] || "week"  # デフォルトは過去7日間
+
     # 期間に基づいて日付範囲を設定
     set_date_range
-    
+
     # 栄養データと推奨値を計算
     @nutrition_data = calculate_nutrition_data(@start_date, @end_date)
     @recommended_values = get_recommended_values
-    
+
     respond_to do |format|
       format.html
       format.json { render json: { data: @nutrition_data, recommended: @recommended_values } }
@@ -18,19 +18,19 @@ class NutritionsController < ApplicationController
   end
 
   private
-  
+
   def set_date_range
     case @period
-    when 'today'
+    when "today"
       @start_date = Date.today
       @end_date = Date.today
-    when 'week'
+    when "week"
       @start_date = 6.days.ago.to_date
       @end_date = Date.today
-    when 'month'
+    when "month"
       @start_date = Date.today.beginning_of_month
       @end_date = Date.today
-    when 'last_month'
+    when "last_month"
       @start_date = Date.today.last_month.beginning_of_month
       @end_date = Date.today.last_month.end_of_month
     else
@@ -77,7 +77,7 @@ class NutritionsController < ApplicationController
     # 日数で割って平均値を算出
     period_days = (end_date - start_date).to_i + 1
     days = period_days > 0 ? period_days : 1
-    
+
     # 1日あたりの平均値を計算
     {
       values: {
@@ -86,8 +86,8 @@ class NutritionsController < ApplicationController
         fat: (total_nutrients[:fat] / days).round(1)
       },
       percentages: {
-        vitamins: [(total_nutrients[:vitamins] / days).round(1), 100].min,
-        minerals: [(total_nutrients[:minerals] / days).round(1), 100].min
+        vitamins: [ (total_nutrients[:vitamins] / days).round(1), 100 ].min,
+        minerals: [ (total_nutrients[:minerals] / days).round(1), 100 ].min
       }
     }
   end
@@ -97,14 +97,14 @@ class NutritionsController < ApplicationController
     count = nutrient_str.split(",").size
     [ count * 33, 100 ].min
   end
-  
+
   # 推奨栄養値を取得するメソッド
   def get_recommended_values
     # ユーザーの性別や年齢から推奨値を計算（仮の値）
-    gender = current_user.gender || 'female'  # デフォルトは女性
+    gender = current_user.gender || "female"  # デフォルトは女性
     age = current_user.age || 30  # デフォルトは30歳
-    
-    if gender == 'male'
+
+    if gender == "male"
       {
         protein: 65,           # 男性の1日あたりのタンパク質推奨量（g）
         carbohydrates: 325,    # 男性の1日あたりの炭水化物推奨量（g）
