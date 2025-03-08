@@ -11,10 +11,7 @@ class FoodsController < ApplicationController
         .where(date: @start_date..@end_date)
         .order(date: :asc, meal_time: :asc)
     else
-      CalendarPlan.includes(:recipe)
-        .where(public: true)
-        .where(date: @start_date..@end_date)
-        .order(date: :asc, meal_time: :asc)
+      CalendarPlan.none
     end
 
     # 今日の献立を取得
