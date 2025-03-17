@@ -5,9 +5,13 @@ class ApplicationController < ActionController::Base
   protected
 
   def configure_permitted_parameters
-    # 新規登録時のパラメータ
     devise_parameter_sanitizer.permit(:sign_up, keys: [ :name, :nickname, :avatar ])  # avatarとnicknameを追加
-    # アカウント更新時のパラメータ
     devise_parameter_sanitizer.permit(:account_update, keys: [ :name, :nickname, :avatar ])  # avatarとnicknameを追加
+  end
+
+  def set_date_range
+    @date = params[:date].present? ? Time.zone.parse(params[:date]).to_date : Time.zone.today
+    @start_date = @date.beginning_of_month
+    @end_date = @date.end_of_month
   end
 end

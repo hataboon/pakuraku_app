@@ -1,9 +1,7 @@
 class FoodsController < ApplicationController
-  def index
-    @date = params[:date].present? ? Date.parse(params[:date]) : Date.today
-    @start_date = @date.beginning_of_month
-    @end_date = @date.end_of_month
+  before_action :set_date_range, only: [ :index ]
 
+  def index
     # ログインユーザーの場合は自分の献立のみ、未ログインの場合は公開された献立を表示
     @calendar_plans = if user_signed_in?
       current_user.calendar_plans

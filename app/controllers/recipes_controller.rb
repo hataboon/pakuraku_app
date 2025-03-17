@@ -6,9 +6,6 @@ class RecipesController < ApplicationController
   before_action :set_date_range, only: [ :new, :show ]
 
   def new
-    @start_date = @date.beginning_of_month
-    @end_date = @date.end_of_month
-
     # カレンダー表示用のデータ取得
     @calendar_plans = CalendarPlan.where(user: current_user, date: @start_date..@end_date)
     Rails.logger.debug "Total calendar plans: #{@calendar_plans.count}"
@@ -188,8 +185,10 @@ class RecipesController < ApplicationController
 
   def set_date_range
     @date = params[:date].present? ? Time.zone.parse(params[:date]).to_date : Time.zone.today
-    @start_date = @date.beginning_of_month
-    @end_date = @date.end_of_month
+
+    # 修正部分: 月の最初と最後の日から、週の始め（日曜日）と終わり（土曜日）を計算
+    @start_date = @date.beginning_of_month.beginning_of_week(:sunday)
+    @end_date = @date.end_of_month.end_of_week(:sunday)
   end
 
   # 献立のシェアテキストを生成するメソッド
