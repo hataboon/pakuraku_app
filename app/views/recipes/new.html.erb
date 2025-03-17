@@ -59,16 +59,25 @@ app\views\recipes\new.html.erb
 
             <%# 日付の配置 %>
             <div class="grid grid-cols-7 gap-2 sm:gap-4">
-              <% (@start_date..@end_date).each do |date| %>
+              <% current_month_dates = (@start_date..@end_date).select { |d| d.month == @date.month } %>
+
+              <% # 月の初日の曜日に合わせて空白セルを追加 %>
+              <% first_day_of_month = current_month_dates.first %>
+              <% first_day_of_month.wday.times do %>
+              <div class="empty-cell min-h-[120px]"></div>
+              <% end %>
+
+              <% # 現在の月の日付を表示 %>
+              <% current_month_dates.each do |date| %>
               <div class="relative bg-white rounded-xl border <%= date == Date.today ? 'border-orange-300 ring-2 ring-orange-100' : 'border-gray-100' %> 
-                            p-3 hover:shadow-md transition-all duration-200">
+                  p-3 hover:shadow-md transition-all duration-200">
                 <%# 日付表示 %>
                 <div class="flex justify-between items-center mb-3">
                   <span class="text-base font-medium
-                               <%= date.sunday? ? 'text-red-500' : 
-                                   date.saturday? ? 'text-blue-500' : 
-                                   'text-gray-900' %>
-                               <%= date == Date.today ? 'font-bold' : '' %>">
+                     <%= date.sunday? ? 'text-red-500' : 
+                         date.saturday? ? 'text-blue-500' : 
+                         'text-gray-900' %>
+                     <%= date == Date.today ? 'font-bold' : '' %>">
                     <%= date.day %>
                   </span>
 
