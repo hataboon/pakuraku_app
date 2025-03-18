@@ -70,7 +70,6 @@ class NutritionsController < ApplicationController
         total_nutrients[:vitamins] += calculate_nutrient_score(nutrients["vitamins"])
         total_nutrients[:minerals] += calculate_nutrient_score(nutrients["minerals"])
       rescue => e
-        Rails.logger.error "栄養データの解析エラー: #{e.message}"
       end
     end
 
