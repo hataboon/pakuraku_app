@@ -2,8 +2,8 @@ class RecipesController < ApplicationController
   include NutritionsHelper
   include ApplicationHelper
 
-  before_action :authenticate_user!, except: [:show]
-  before_action :set_date_range, only: [:new, :show]
+  before_action :authenticate_user!, except: [ :show ]
+  before_action :set_date_range, only: [ :new, :show ]
 
   def new
     @start_date = @date.beginning_of_month
@@ -11,7 +11,7 @@ class RecipesController < ApplicationController
 
     # カレンダー表示用のデータ取得
     @calendar_plans = CalendarPlan.where(user: current_user, date: @start_date..@end_date)
-    
+
     @nutrients = %w[ミネラル たんぱく質 炭水化物 ビタミン 脂質]
     @q = current_user.calendar_plans.ransack(params[:q])
     @q.sorts = "created_at desc" if @q.sorts.empty?
@@ -119,14 +119,14 @@ class RecipesController < ApplicationController
       meal_time: calendar_plans.first.meal_time,
       generated_at: generation_time.iso8601
     }
-    
+
     notice = "#{calendar_plans.size}件の献立を作成しました。"
-    
+
     if created_dates.size > 1
       params[:all_dates] = created_dates.join(",")
       notice += "#{created_dates.size}日分の献立が含まれています。"
     end
-    
+
     redirect_to recipe_path(params), notice: notice
   end
 
@@ -217,7 +217,7 @@ class RecipesController < ApplicationController
       total_score += weight
     end
 
-    [total_score, 100].min
+    [ total_score, 100 ].min
   end
 
   def calculate_minerals_score(minerals)
@@ -233,6 +233,6 @@ class RecipesController < ApplicationController
       total_score += weight
     end
 
-    [total_score, 100].min
+    [ total_score, 100 ].min
   end
 end
