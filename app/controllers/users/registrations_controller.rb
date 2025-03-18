@@ -34,7 +34,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
       end
     else
       # 失敗時の処理
-      Rails.logger.info "User registration failed: #{resource.errors.full_messages.join(", ")}"
       flash[:alert] = resource.errors.full_messages.join(", ") # フラッシュにエラーメッセージを表示
       clean_up_passwords resource
       set_minimum_password_length
